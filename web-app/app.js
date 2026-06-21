@@ -11,6 +11,8 @@ window.addEventListener('DOMContentLoaded', () => {
     let panierContenu = ""; 
     let fichierImageSelectionne = null;
 
+    const mainHeader = document.getElementById('main-header');
+
     // ==========================================
     // 1. GESTION DE LA SPLASH PAGE
     // ==========================================
@@ -23,9 +25,9 @@ window.addEventListener('DOMContentLoaded', () => {
     }, 2500);
 
     // ==========================================
-    // 2. CONFIGURATIONS DYNAMIQUES DU SITE & CONTACTS
+    // 2. CONFIGURATIONS DYNAMIQUES ET CONTACTS
     // ==========================================
-    async function chargerConfigurationGlobaleSite() {
+    async function chargerLesParametresDeLaBase() {
         const { data, error } = await supabaseClient.from('site_settings').select('*');
         if (error) { console.error(error); return; }
 
@@ -33,11 +35,9 @@ window.addEventListener('DOMContentLoaded', () => {
         let rentreeTitre = "Rentrée scolaire";
 
         data.forEach(setting => {
-            // Configuration Onglet Rentrée
             if (setting.key === 'rentree_enabled') rentreeActive = setting.value;
             if (setting.key === 'rentree_title') rentreeTitre = setting.value;
 
-            // 🍊 Injection dynamique des coordonnées de contact reçues de la BDD
             if (setting.key === 'contact_address') document.getElementById('info-address').textContent = setting.value;
             if (setting.key === 'contact_email') {
                 document.getElementById('info-email').textContent = setting.value;
@@ -46,13 +46,11 @@ window.addEventListener('DOMContentLoaded', () => {
             if (setting.key === 'contact_phone') document.getElementById('info-phone').textContent = setting.value;
             if (setting.key === 'contact_whatsapp') document.getElementById('link-whatsapp').href = `https://wa.me/${setting.value}`;
             
-            // Liens Réseaux Sociaux
             if (setting.key === 'contact_facebook') document.getElementById('link-facebook').href = setting.value;
             if (setting.key === 'contact_instagram') document.getElementById('link-instagram').href = setting.value;
             if (setting.key === 'contact_linkedin') document.getElementById('link-linkedin').href = setting.value;
         });
 
-        // Application Titres Rentrée
         const navDesktop = document.getElementById('nav-rentree-desktop');
         const navMobile = document.getElementById('nav-rentree-mobile');
         const h2TitrePage = document.getElementById('display-page-title');
@@ -70,10 +68,31 @@ window.addEventListener('DOMContentLoaded', () => {
             if(ctaHero) ctaHero.classList.add('hidden');
         }
     }
-    chargerConfigurationGlobaleSite();
+    chargerLesParametresDeLaBase();
 
     // ==========================================
-    // 3. GESTION DES ONGLETS (NAVIGATION)
+    // 3. TECHNIQUE DU STICKY SCROLL HEADER
+    // ==========================================
+    function gererEffetHeaderFlottant() {
+        const isAccueilActive = !document.getElementById('section-accueil').classList.contains('hidden');
+
+        if (isAccueilActive) {
+            if (window.scrollY > 30) {
+                mainHeader.classList.remove('bg-transparent', 'border-transparent');
+                mainHeader.classList.add('bg-white', 'border-gray-100', 'shadow-sm');
+            } else {
+                mainHeader.classList.remove('bg-white', 'border-gray-100', 'shadow-sm');
+                mainHeader.classList.add('bg-transparent', 'border-transparent');
+            }
+        } else {
+            mainHeader.classList.remove('bg-transparent', 'border-transparent');
+            mainHeader.classList.add('bg-white', 'border-gray-100', 'shadow-sm');
+        }
+    }
+    window.addEventListener('scroll', gererEffetHeaderFlottant);
+
+    // ==========================================
+    // 4. GESTION DES ONGLETS (TOUS MAINTENUS EN ORANGE)
     // ==========================================
     const tabButtons = document.querySelectorAll('.tab-btn');
     const contentSections = document.querySelectorAll('.content-section');
@@ -86,17 +105,20 @@ window.addEventListener('DOMContentLoaded', () => {
             const targetSection = document.getElementById(targetId);
             if (targetSection) targetSection.classList.remove('hidden');
 
+            // Ajustement : On ne touche plus à la couleur orange, on alterne juste l'épaisseur du texte
             tabButtons.forEach(btn => {
-                btn.classList.remove('text-[#E75C25]', 'font-semibold', 'font-bold');
-                btn.classList.add('text-gray-600');
+                btn.classList.remove('font-bold', 'font-semibold');
+                btn.classList.add('font-medium');
             });
-            button.classList.remove('text-gray-600');
-            button.classList.add('text-[#E75C25]', 'font-semibold', 'font-bold');
+            button.classList.remove('font-medium');
+            button.classList.add('font-bold');
+
+            gererEffetHeaderFlottant();
         });
     });
 
     // ==========================================
-    // 4. OPTION A : LOGIQUE DES LISTES ÉCOLES DYNAMIQUES
+    // 5. OPTION A : LOGIQUE DES LISTES ÉCOLES
     // ==========================================
     const selectEcole = document.getElementById('select-ecole');
     const selectNiveau = document.getElementById('select-niveau');
@@ -207,7 +229,7 @@ window.addEventListener('DOMContentLoaded', () => {
     btnChangeChoiceBottom.addEventListener('click', restaurerVueOptionsInitiales);
 
     // ==========================================
-    // 5. OPTION B : LOGIQUE D'UPLOAD DE PHOTO
+    // 6. OPTION B : LOGIQUE D'UPLOAD DE PHOTO
     // ==========================================
     const imageInput = document.getElementById('image-file-input');
     const uploadStatusText = document.getElementById('upload-status-text');
@@ -230,7 +252,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 6. SOUMISSION ET ENREGISTREMENT À SUPABASE
+    // 7. SOUMISSION ET ENREGISTREMENT À SUPABASE
     // ==========================================
     const orderForm = document.getElementById('order-submit-form');
     const btnSubmit = document.getElementById('btn-submit-order');
