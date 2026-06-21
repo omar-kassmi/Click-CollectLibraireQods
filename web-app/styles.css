@@ -1,0 +1,10 @@
+html {
+    scroll-behavior: smooth;
+}
+
+/* Effet de disparition fluide de l'écran de démarrage */
+.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+    pointer-events: none;
+}
