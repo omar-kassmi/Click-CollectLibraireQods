@@ -4,15 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maison Berkane — Panneau d'Administration</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SDK Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com.rproxy.goskope.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
-        .ql-toolbar.ql-snow { border-top-left-radius: 0.75rem; border-top-right-radius: 0.75rem; border-color: #e5e7eb; background: #f9fafb; }
-        .ql-container.ql-snow { border-bottom-left-radius: 0.75rem; border-bottom-right-radius: 0.75rem; border-color: #e5e7eb; height: 260px; max-height: 260px; overflow-y: auto; font-size: 0.875rem; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen flex hidden" id="admin-body">
@@ -20,7 +19,7 @@
     <!-- SIDEBAR -->
     <aside class="w-64 bg-[#E75C25] text-white flex flex-col flex-shrink-0 border-r border-orange-950">
         <div class="p-6 border-b border-orange-800/60 flex items-center space-x-3">
-            <span class="text-xl">🍊</span>
+            <span class="text-xl">⚙️</span>
             <div>
                 <h1 class="font-bold text-sm tracking-wider uppercase">Maison Berkane</h1>
                 <p class="text-[10px] text-orange-200 tracking-widest uppercase">Espace de gestion</p>
@@ -29,13 +28,13 @@
         
         <nav class="flex-grow p-4 flex flex-col space-y-1.5 text-sm font-medium">
             <button id="nav-orders" class="w-full text-left px-4 py-3 rounded-xl bg-white/10 text-white flex items-center space-x-3 transition">
-                <span>📦</span> <span>Commandes</span>
+                <span>📋</span> <span>Commandes</span>
             </button>
             <button id="nav-config" class="w-full text-left px-4 py-3 rounded-xl text-orange-100 hover:bg-white/5 hover:text-white flex items-center space-x-3 transition">
                 <span>🛠️</span> <span>Configuration commande</span>
             </button>
             <button id="nav-tabs-config" class="w-full text-left px-4 py-3 rounded-xl text-orange-100 hover:bg-white/5 hover:text-white flex items-center space-x-3 transition">
-                <span>⚙️</span> <span>Configuration Onglet</span>
+                <span>🗂️</span> <span>Configuration Onglet</span>
             </button>
         </nav>
 
@@ -48,14 +47,14 @@
     <div class="flex-grow flex flex-col min-w-0 overflow-y-auto">
         <main class="p-6 md:p-10 w-full max-w-6xl mx-auto">
             
-            <!-- SECTION 1 : COMMANDES -->
+            <!-- SECTION 1 : COMMANDES REÇUES -->
             <section id="pane-orders" class="space-y-6">
                 <div class="flex justify-between items-center">
                     <div>
                         <h2 class="text-xl font-bold text-gray-900">Commandes reçues</h2>
                         <p class="text-xs text-gray-500 mt-0.5">Consultez les fichiers et préparez les messages de validation.</p>
                     </div>
-                    <button id="btn-refresh-orders" class="bg-white border text-xs font-semibold px-4 py-2 rounded-xl hover:bg-gray-50 shadow-sm transition">🔄 Actualiser</button>
+                    <button id="btn-refresh-orders" class="bg-white border text-xs font-semibold px-4 py-2 rounded-xl hover:bg-gray-50 shadow-sm transition">Actualiser</button>
                 </div>
 
                 <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
@@ -75,36 +74,72 @@
                 </div>
             </section>
 
-            <!-- SECTION 2 : CONFIGURATION COMMANDES -->
+            <!-- SECTION 2 : CONFIGURATION DES LISTES (CONSTRUCTEUR AVEC CHAMP PRIX DÉPLOYÉ) -->
             <section id="pane-config" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm h-fit">
-                    <h3 class="text-sm font-bold text-gray-900 mb-4">🏫 Créer une liste officielle</h3>
+                <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm h-fit space-y-5">
+                    <div>
+                        <h3 class="text-sm font-bold text-gray-900">📦 Créer un pack d'objets officiel</h3>
+                        <p class="text-[11px] text-gray-400 mt-0.5">Renseignez l'établissement puis ajoutez vos fournitures avec prix.</p>
+                    </div>
+                    
                     <form id="form-add-list" class="space-y-4">
                         <div>
                             <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Nom de l'école</label>
-                            <input type="text" id="cfg-school" required placeholder="Ex: École Al Anouar" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none">
+                            <input type="text" id="cfg-school" required placeholder="Ex: École Al Anouar" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:bg-white">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Niveau</label>
-                            <input type="text" id="cfg-level" required placeholder="Ex: CP ou CE1" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none">
+                            <input type="text" id="cfg-level" required placeholder="Ex: CP / CE1" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:bg-white">
                         </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1.5">Fournitures de la classe</label>
-                            <div id="editor-container" class="bg-white"></div>
+
+                        <!-- 👑 BLOC D'AJOUT D'ARTICLE REFAIT AVEC L'INPUT PRIX DÉDIÉ -->
+                        <div class="border border-orange-100 bg-orange-50/20 rounded-xl p-4 space-y-3">
+                            <span class="block text-[11px] font-bold text-orange-700 uppercase tracking-wider">Ajouter un élément au pack :</span>
+                            <div class="grid grid-cols-12 gap-2 items-end">
+                                <div class="col-span-4">
+                                    <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Catégorie</label>
+                                    <select id="admin-item-category" class="w-full px-2 py-2 bg-white border border-gray-200 rounded-lg text-xs outline-none">
+                                        <option value="Livre">📚 Livre</option>
+                                        <option value="Cahier">📔 Cahier</option>
+                                        <option value="Fournitures">✏️ Fournitures</option>
+                                    </select>
+                                </div>
+                                <div class="col-span-5">
+                                    <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Libellé</label>
+                                    <input type="text" id="admin-item-name" placeholder="Ex: Cahier 96p" class="w-full px-2 py-2 bg-white border border-gray-200 rounded-lg text-xs outline-none">
+                                </div>
+                                <div class="col-span-3">
+                                    <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Prix (DH)</label>
+                                    <input type="number" id="admin-item-price" step="0.01" min="0" placeholder="0.00" class="w-full px-2 py-2 bg-white border border-gray-200 rounded-lg text-xs font-bold text-emerald-700 outline-none">
+                                </div>
+                            </div>
+                            <button type="button" id="btn-add-item" class="w-full bg-[#E75C25] hover:bg-[#CE4E1D] text-white text-xs font-bold py-2 rounded-lg transition-all shadow-sm">
+                                + Insérer l'article au sac temporaire
+                            </button>
                         </div>
-                        <button type="submit" class="w-full bg-[#E75C25] text-white text-xs font-semibold py-3.5 rounded-xl hover:bg-[#CE4E1D] transition shadow-sm">Mettre en ligne la liste</button>
+
+                        <!-- Zone d'affichage des articles saisis en attente d'enregistrement -->
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-400 uppercase">Articles ajoutés à la liste</label>
+                            <div id="admin-items-preview" class="border border-gray-200 bg-gray-50 rounded-xl p-3 min-h-[80px] max-h-[220px] overflow-y-auto text-xs space-y-1.5 text-gray-400">
+                                Aucun article ajouté pour le moment.
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-[#E75C25] text-white text-xs font-semibold py-3.5 rounded-xl hover:bg-[#CE4E1D] transition shadow-sm">
+                            Mettre en ligne le Pack d'objets
+                        </button>
                     </form>
                 </div>
+
                 <div class="lg:col-span-2 space-y-4">
                     <h3 class="text-sm font-bold text-gray-900">Listes actuellement actives</h3>
                     <div id="config-lists-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                 </div>
             </section>
 
-            <!-- ⚙️ SECTION 3 : NOUVELLE GRILLE CONFIGURATION ONGLETS & INFOS ACCUEIL -->
+            <!-- SECTION 3 : CONFIGURATION ONGLETS & INFOS ACCUEIL -->
             <section id="pane-tabs-config" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                
-                <!-- Bloc de gauche : Statut Rentrée (Prend 5 colonnes) -->
                 <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm lg:col-span-5 space-y-4">
                     <div>
                         <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider">Saisonnalité Rentrée</h2>
@@ -114,8 +149,8 @@
                         <div>
                             <label class="block text-xs font-bold text-gray-500 mb-1">Affichage de l'onglet</label>
                             <select id="set-rentree-enabled" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none">
-                                <option value="true">🟢 Afficher la page Rentrée</option>
-                                <option value="false">🔴 Masquer la page Rentrée</option>
+                                <option value="true">Afficher la page Rentrée</option>
+                                <option value="false">Masquer la page Rentrée</option>
                             </select>
                         </div>
                         <div>
@@ -126,7 +161,6 @@
                     </form>
                 </div>
 
-                <!-- 🍊 NOUVEAU - Bloc de droite : Modification Coordonnées Accueil (Prend 7 colonnes) -->
                 <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm lg:col-span-7 space-y-4">
                     <div>
                         <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider">Modifications Page d'Accueil & Contacts</h2>
@@ -134,48 +168,44 @@
                     </div>
                     <form id="form-home-contacts" class="space-y-4 pt-2 border-t border-gray-100 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3">
                         <div class="sm:col-span-2">
-                            <label class="block text-xs font-bold text-gray-500 mb-1">📍 Adresse Physique de la boutique</label>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Adresse Physique de la boutique</label>
                             <input type="text" id="set-contact-address" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">✉️ Adresse Mail (Pro)</label>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Adresse Mail (Pro)</label>
                             <input type="email" id="set-contact-email" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">📞 Téléphone Fixe Boutique</label>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Téléphone Fixe Boutique</label>
                             <input type="text" id="set-contact-phone" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white">
                         </div>
                         <div class="sm:col-span-2">
-                            <label class="block text-xs font-bold text-gray-500 mb-1">💬 Numéro WhatsApp (Code pays inclus sans + ni 0, Ex: 212612345678)</label>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Numéro WhatsApp (Code pays inclus, sans + ni 0)</label>
                             <input type="text" id="set-contact-whatsapp" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white">
                         </div>
-                        
-                        <!-- Réseaux Sociaux -->
                         <div class="sm:col-span-2 border-t border-stone-100 pt-3 mt-1">
                             <h4 class="text-[11px] font-bold text-stone-400 uppercase tracking-wider mb-2">Liens des Réseaux Sociaux</h4>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">🔗 Facebook URL</label>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Facebook URL</label>
                             <input type="url" id="set-contact-facebook" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">🔗 Instagram URL</label>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Instagram URL</label>
                             <input type="url" id="set-contact-instagram" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white">
                         </div>
                         <div class="sm:col-span-2">
-                            <label class="block text-xs font-bold text-gray-500 mb-1">🔗 LinkedIn URL</label>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">LinkedIn URL</label>
                             <input type="url" id="set-contact-linkedin" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white">
                         </div>
-                        
                         <div class="sm:col-span-2 pt-2">
-                            <button type="submit" class="w-full bg-[#E75C25] hover:bg-[#CE4E1D] text-white text-xs font-semibold py-3 rounded-xl transition shadow-sm shadow-orange-600/10">
+                            <button type="submit" class="w-full bg-[#E75C25] hover:bg-[#CE4E1D] text-white text-xs font-semibold py-3 rounded-xl transition shadow-sm">
                                 Mettre à jour les contacts de l'Accueil
                             </button>
                         </div>
                     </form>
                 </div>
             </section>
-
         </main>
     </div>
 

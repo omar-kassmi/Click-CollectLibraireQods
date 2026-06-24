@@ -1,319 +1,426 @@
-window.addEventListener('DOMContentLoaded', () => {
-    
+document.addEventListener('DOMContentLoaded', () => {
+
     // ==========================================
-    // 0. CONFIGURATION & INITIALISATION SUPABASE
+    // 0. CONFIGURATION & MONTEUR SUPABASE
     // ==========================================
     const SUPABASE_URL = "https://jgfkshsizrtwzqsdrhhp.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_Rdn2yMULDq05BGBV-X-zCA_S934mdEh";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let panierType = ""; 
-    let panierContenu = ""; 
-    let fichierImageSelectionne = null;
+    let allSchoolData = []; 
+    let selectedPackItems = []; 
+    let isPhotoOrder = false; 
 
-    const mainHeader = document.getElementById('main-header');
-
-    // ==========================================
-    // 1. GESTION DE LA SPLASH PAGE
-    // ==========================================
-    const splash = document.getElementById('splash-screen');
+    // Masquage progressif de la Splash Page après 5 secondes
     setTimeout(() => {
+        const splash = document.getElementById('splash-screen');
         if (splash) {
-            splash.classList.add('fade-out');
-            setTimeout(() => { splash.remove(); }, 500);
+            splash.classList.add('opacity-0');
+            setTimeout(() => splash.classList.add('hidden'), 500);
         }
-    }, 2500);
+    }, 5000);
 
     // ==========================================
-    // 2. CONFIGURATIONS DYNAMIQUES ET CONTACTS
+    // 1. GESTION DES ETAPES DE LA TIMELINE (STEPPER)
     // ==========================================
-    async function chargerLesParametresDeLaBase() {
-        const { data, error } = await supabaseClient.from('site_settings').select('*');
-        if (error) { console.error(error); return; }
+    function updateStepper(step) {
+        const dot1 = document.getElementById('step-dot-1');
+        const dot2 = document.getElementById('step-dot-2');
+        const dot3 = document.getElementById('step-dot-3');
+        const txt1 = document.getElementById('step-txt-1');
+        const txt2 = document.getElementById('step-txt-2');
+        const txt3 = document.getElementById('step-txt-3');
 
-        let rentreeActive = "true";
-        let rentreeTitre = "Rentrée scolaire";
+        const activeDot = "w-9 h-9 rounded-full bg-[#E75C25] text-white flex items-center justify-center font-bold text-xs shadow-md border-2 border-[#E75C25] transition-all duration-300";
+        const inactiveDot = "w-9 h-9 rounded-full bg-white border-2 border-stone-200 text-stone-400 flex items-center justify-center font-bold text-xs transition-all duration-300";
 
-        data.forEach(setting => {
-            if (setting.key === 'rentree_enabled') rentreeActive = setting.value;
-            if (setting.key === 'rentree_title') rentreeTitre = setting.value;
+        if(dot1) dot1.className = step >= 1 ? activeDot : inactiveDot;
+        if(dot2) dot2.className = step >= 2 ? activeDot : inactiveDot;
+        if(dot3) dot3.className = step >= 3 ? activeDot : inactiveDot;
 
-            if (setting.key === 'contact_address') document.getElementById('info-address').textContent = setting.value;
-            if (setting.key === 'contact_email') {
-                document.getElementById('info-email').textContent = setting.value;
-                document.getElementById('link-email').href = `mailto:${setting.value}`;
-            }
-            if (setting.key === 'contact_phone') document.getElementById('info-phone').textContent = setting.value;
-            if (setting.key === 'contact_whatsapp') document.getElementById('link-whatsapp').href = `https://wa.me/${setting.value}`;
-            
-            if (setting.key === 'contact_facebook') document.getElementById('link-facebook').href = setting.value;
-            if (setting.key === 'contact_instagram') document.getElementById('link-instagram').href = setting.value;
-            if (setting.key === 'contact_linkedin') document.getElementById('link-linkedin').href = setting.value;
-        });
-
-        const navDesktop = document.getElementById('nav-rentree-desktop');
-        const navMobile = document.getElementById('nav-rentree-mobile');
-        const h2TitrePage = document.getElementById('display-page-title');
-
-        if(navDesktop) navDesktop.textContent = rentreeTitre;
-        if(navMobile) navMobile.textContent = rentreeTitre;
-        if(h2TitrePage) h2TitrePage.textContent = rentreeTitre;
-
-        if (rentreeActive === "false") {
-            if(navDesktop) navDesktop.classList.add('hidden');
-            if(navMobile) navMobile.classList.add('hidden');
-            const ctaHeader = document.getElementById('btn-header-cta');
-            const ctaHero = document.getElementById('btn-hero-cta');
-            if(ctaHeader) ctaHeader.classList.add('hidden');
-            if(ctaHero) ctaHero.classList.add('hidden');
-        }
+        if(txt1) txt1.className = `text-[11px] font-bold ${step >= 1 ? 'text-[#E75C25]' : 'text-stone-400'} mt-2 font-header`;
+        if(txt2) txt2.className = `text-[11px] font-bold ${step >= 2 ? 'text-[#E75C25]' : 'text-stone-400'} mt-2 font-header`;
+        if(txt3) txt3.className = `text-[11px] font-bold ${step >= 3 ? 'text-[#E75C25]' : 'text-stone-400'} mt-2 font-header`;
     }
-    chargerLesParametresDeLaBase();
 
     // ==========================================
-    // 3. TECHNIQUE DU STICKY SCROLL HEADER
+    // 2. ROUTAGE DES ONGLETS (TABS)
     // ==========================================
-    function gererEffetHeaderFlottant() {
-        const isAccueilActive = !document.getElementById('section-accueil').classList.contains('hidden');
+    const navButtons = document.querySelectorAll('.nav-tab-btn');
+    const sections = document.querySelectorAll('.content-section');
 
-        if (isAccueilActive) {
-            if (window.scrollY > 30) {
-                mainHeader.classList.remove('bg-transparent', 'border-transparent');
-                mainHeader.classList.add('bg-white', 'border-gray-100', 'shadow-sm');
+    window.switchTab = function(targetId) {
+        sections.forEach(s => s.classList.add('hidden'));
+        const targetSection = document.getElementById(targetId);
+        if(targetSection) targetSection.classList.remove('hidden');
+
+        navButtons.forEach(btn => {
+            if(btn.getAttribute('data-target') === targetId) {
+                btn.className = "nav-tab-btn font-bold text-[#E75C25] px-2";
             } else {
-                mainHeader.classList.remove('bg-white', 'border-gray-100', 'shadow-sm');
-                mainHeader.classList.add('bg-transparent', 'border-transparent');
+                btn.className = "nav-tab-btn font-medium hover:opacity-80 text-[#E75C25] px-2";
             }
-        } else {
-            mainHeader.classList.remove('bg-transparent', 'border-transparent');
-            mainHeader.classList.add('bg-white', 'border-gray-100', 'shadow-sm');
-        }
-    }
-    window.addEventListener('scroll', gererEffetHeaderFlottant);
-
-    // ==========================================
-    // 4. GESTION DES ONGLETS (TOUS MAINTENUS EN ORANGE)
-    // ==========================================
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const contentSections = document.querySelectorAll('.content-section');
-
-    tabButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const targetId = button.getAttribute('data-target');
-            contentSections.forEach(section => section.classList.add('hidden'));
-            
-            const targetSection = document.getElementById(targetId);
-            if (targetSection) targetSection.classList.remove('hidden');
-
-            // Ajustement : On ne touche plus à la couleur orange, on alterne juste l'épaisseur du texte
-            tabButtons.forEach(btn => {
-                btn.classList.remove('font-bold', 'font-semibold');
-                btn.classList.add('font-medium');
-            });
-            button.classList.remove('font-medium');
-            button.classList.add('font-bold');
-
-            gererEffetHeaderFlottant();
         });
-    });
+        if(targetId === 'section-rentree') updateStepper(1);
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    };
+
+    navButtons.forEach(btn => btn.addEventListener('click', () => switchTab(btn.getAttribute('data-target'))));
 
     // ==========================================
-    // 5. OPTION A : LOGIQUE DES LISTES ÉCOLES
+    // 3. RÉCUPÉRATION DES PARAMÈTRES ET DU FOOTER
     // ==========================================
-    const selectEcole = document.getElementById('select-ecole');
-    const selectNiveau = document.getElementById('select-niveau');
-    
-    const optionsContainer = document.getElementById('options-container');
-    const packDetailsView = document.getElementById('pack-details-view');
-    const wrapperListeItems = document.getElementById('wrapper-liste-items');
-    const checkoutFormContainer = document.getElementById('checkout-form-container');
-    
-    const btnNextToForm = document.getElementById('btn-next-to-form');
-    const btnChangeChoiceTop = document.getElementById('btn-change-choice-top');
-    const btnChangeChoiceBottom = document.getElementById('btn-change-choice-bottom');
-    
-    const displaySchoolName = document.getElementById('display-school-name');
-    const displayLevelName = document.getElementById('display-level-name');
-    const listeItemsUl = document.getElementById('liste-officielle-items');
-
-    let toutesLesListesDuServeur = [];
-
-    async function chargerLesListesDepuisSupabase() {
-        const { data, error } = await supabaseClient.from('school_lists').select('*');
-        if (error) { console.error(error); return; }
-
-        toutesLesListesDuServeur = data;
-        const ecolesUniques = [...new Set(data.map(liste => liste.school_name))];
-
-        selectEcole.innerHTML = '<option value="">-- Choisir une école --</option>';
-        ecolesUniques.forEach(nomEcole => {
-            const option = document.createElement('option');
-            option.value = nomEcole;
-            option.textContent = nomEcole;
-            selectEcole.appendChild(option);
-        });
-    }
-    chargerLesListesDepuisSupabase();
-
-    selectEcole.addEventListener('change', () => {
-        const ecoleSelectionnee = selectEcole.value;
-        selectNiveau.innerHTML = '<option value="">-- Choisir le niveau --</option>';
-        packDetailsView.classList.add('hidden');
-        checkoutFormContainer.classList.add('hidden');
-
-        if (ecoleSelectionnee) {
-            selectNiveau.disabled = false;
-            const niveauxDisponibles = toutesLesListesDuServeur
-                .filter(liste => liste.school_name === ecoleSelectionnee)
-                .map(liste => liste.level);
-
-            niveauxDisponibles.forEach(niveau => {
-                const option = document.createElement('option');
-                option.value = niveau;
-                option.textContent = niveau;
-                selectNiveau.appendChild(option);
-            });
-        } else {
-            selectNiveau.disabled = true;
-        }
-    });
-
-    selectNiveau.addEventListener('change', () => {
-        const ecole = selectEcole.value;
-        const niveau = selectNiveau.value;
-
-        if (ecole && niveau) {
-            const listeTrouvee = toutesLesListesDuServeur.find(
-                liste => liste.school_name === ecole && liste.level === niveau
-            );
-
-            if (listeTrouvee && listeTrouvee.items) {
-                panierType = "liste-officielle";
-                panierContenu = `Pack officiel : ${ecole} (Classe : ${niveau})`;
-                fichierImageSelectionne = null;
-
-                displaySchoolName.textContent = ecole;
-                displayLevelName.textContent = `Classe : ${niveau}`;
-                listeItemsUl.innerHTML = listeTrouvee.items[0];
-
-                optionsContainer.classList.add('hidden');
-                packDetailsView.classList.remove('hidden');
-                
-                wrapperListeItems.className = "md:col-span-12 transition-all duration-300";
-                checkoutFormContainer.classList.add('hidden');
-                btnNextToForm.classList.remove('hidden');
+    async function initClientData() {
+        try {
+            const { data: settings } = await supabaseClient.from('site_settings').select('*');
+            if (settings) {
+                settings.forEach(s => {
+                    const addr = document.getElementById('info-address');
+                    const phone = document.getElementById('info-phone');
+                    const email = document.getElementById('info-email');
+                    const wa = document.getElementById('link-whatsapp');
+                    if (s.key === 'contact_address' && addr) addr.innerText = s.value;
+                    if (s.key === 'contact_phone' && phone) phone.innerText = s.value;
+                    if (s.key === 'contact_email' && email) email.innerText = s.value;
+                    if (s.key === 'contact_whatsapp' && wa) wa.href = `https://wa.me/${s.value}`;
+                });
             }
-        }
-    });
-
-    btnNextToForm.addEventListener('click', () => {
-        wrapperListeItems.className = "md:col-span-7 transition-all duration-300";
-        checkoutFormContainer.classList.remove('hidden');
-        btnNextToForm.classList.add('hidden'); 
-    });
-
-    function restaurerVueOptionsInitiales() {
-        selectEcole.value = "";
-        selectNiveau.innerHTML = '<option value="">-- Choisir le niveau --</option>';
-        selectNiveau.disabled = true;
-        document.getElementById('image-file-input').value = "";
-        document.getElementById('upload-status-text').textContent = "Prendre en photo / Choisir l'image";
-        document.getElementById('image-preview-container').classList.add('hidden');
-
-        packDetailsView.classList.add('hidden');
-        checkoutFormContainer.classList.add('hidden');
-        optionsContainer.classList.remove('hidden');
-    }
-
-    btnChangeChoiceTop.addEventListener('click', restaurerVueOptionsInitiales);
-    btnChangeChoiceBottom.addEventListener('click', restaurerVueOptionsInitiales);
-
-    // ==========================================
-    // 6. OPTION B : LOGIQUE D'UPLOAD DE PHOTO
-    // ==========================================
-    const imageInput = document.getElementById('image-file-input');
-    const uploadStatusText = document.getElementById('upload-status-text');
-    const previewContainer = document.getElementById('image-preview-container');
-
-    imageInput.addEventListener('change', (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        fichierImageSelectionne = file;
-        panierType = "photo-upload";
-        panierContenu = `Photo de liste personnalisée`;
-        
-        uploadStatusText.textContent = `Fichier prêt : ${file.name}`;
-        previewContainer.classList.remove('hidden');
-        
-        packDetailsView.classList.add('hidden');
-        checkoutFormContainer.classList.remove('hidden');
-        document.getElementById('checkout-form-container').scrollIntoView({ behavior: 'smooth' });
-    });
-
-    // ==========================================
-    // 7. SOUMISSION ET ENREGISTREMENT À SUPABASE
-    // ==========================================
-    const orderForm = document.getElementById('order-submit-form');
-    const btnSubmit = document.getElementById('btn-submit-order');
-
-    orderForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const nomClient = document.getElementById('client-name').value;
-        const telClient = document.getElementById('client-phone').value;
-        const emailClient = document.getElementById('client-email').value;
-
-        btnSubmit.disabled = true;
-        btnSubmit.textContent = "Validation en cours...";
+        } catch (err) {}
 
         try {
-            let finalItemsValue = panierContenu;
-
-            if (panierType === "photo-upload" && fichierImageSelectionne) {
-                const nomFichierUnique = `${Date.now()}_${fichierImageSelectionne.name}`;
-                const uploadResponse = await supabaseClient.storage
-                    .from('listes_scolaires')
-                    .upload(nomFichierUnique, fichierImageSelectionne);
-
-                if (uploadResponse.error) throw uploadResponse.error;
-
-                const urlResponse = supabaseClient.storage
-                    .from('listes_scolaires')
-                    .getPublicUrl(nomFichierUnique);
-
-                finalItemsValue = `Photo liste : ${urlResponse.data.publicUrl}`;
+            const { data: lists } = await supabaseClient.from('school_lists').select('*');
+            if (lists) {
+                allSchoolData = lists;
+                populateSchoolsDropdown();
             }
+        } catch (err) {}
+    }
 
-            const insertResponse = await supabaseClient
-                .from('orders')
-                .insert([
-                    { 
-                        client_name: nomClient, 
-                        client_phone: telClient,
-                        client_email: emailClient,
-                        items: finalItemsValue, 
-                        status: 'en_attente' 
-                    }
-                ])
-                .select();
+    function populateSchoolsDropdown() {
+        const selectEcole = document.getElementById('select-ecole');
+        if (!selectEcole) return;
+        selectEcole.innerHTML = '<option value="">-- Choisir une école --</option>';
+        const uniqueSchools = [...new Set(allSchoolData.map(item => item.school_name).filter(Boolean))];
+        uniqueSchools.forEach(school => {
+            const opt = document.createElement('option');
+            opt.value = school; opt.innerText = school;
+            selectEcole.appendChild(opt);
+        });
+    }
 
-            if (insertResponse.error) throw insertResponse.error;
+    document.getElementById('select-ecole').addEventListener('change', (e) => {
+        const schoolName = e.target.value;
+        const selectNiveau = document.getElementById('select-niveau');
+        const btnLoadPack = document.getElementById('btn-load-pack');
+        if (!selectNiveau) return;
+        selectNiveau.innerHTML = '<option value="">-- Choisir le niveau --</option>';
+        if (btnLoadPack) btnLoadPack.classList.add('hidden');
+        if (!schoolName) { selectNiveau.disabled = true; return; }
 
-            const orderId = insertResponse.data[0].id;
-            alert(`🎉 Commande n° ${orderId} enregistrée ! Nous vous contacterons sur WhatsApp (${telClient}) dès que votre pack sera prêt.`);
-            
-            orderForm.reset();
-            restaurerVueOptionsInitiales();
-            document.querySelector('[data-target=section-accueil]').click();
+        const filteredLevels = allSchoolData.filter(item => item.school_name === schoolName);
+        filteredLevels.forEach(list => {
+            if (list.level) {
+                const opt = document.createElement('option');
+                opt.value = list.id; opt.innerText = list.level;
+                selectNiveau.appendChild(opt);
+            }
+        });
+        selectNiveau.disabled = false;
+    });
 
-        } catch (error) {
-            console.error(error);
-            alert("Une erreur s'est produite lors de la validation.");
-        } finally {
-            btnSubmit.disabled = false;
-            btnSubmit.textContent = "Confirmer ma commande";
+    document.getElementById('select-niveau').addEventListener('change', (e) => {
+        const packId = e.target.value;
+        const btnLoadPack = document.getElementById('btn-load-pack');
+        if (btnLoadPack) {
+            if (packId) btnLoadPack.classList.remove('hidden');
+            else btnLoadPack.classList.add('hidden');
         }
     });
 
+    // ==========================================
+    // 4. GESTION DE L'UPLOAD PHOTO
+    // ==========================================
+    const fileInput = document.getElementById('image-file-input');
+    const statusText = document.getElementById('upload-status-text');
+
+    if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length === 0) return;
+            
+            const file = e.target.files[0];
+            isPhotoOrder = true; 
+            if (statusText) statusText.innerText = "✓ Fichier joint : " + file.name;
+
+            const schoolLabel = document.getElementById('display-school-name');
+            const levelLabel = document.getElementById('display-level-name');
+            if (schoolLabel) schoolLabel.innerText = "Liste personnalisée (Par Photo)";
+            if (levelLabel) levelLabel.innerText = "Analyse manuelle par l'équipe El Qods";
+            
+            const itemsContainer = document.getElementById('liste-officielle-items');
+            if (itemsContainer) {
+                itemsContainer.innerHTML = `
+                    <div class="flex flex-col items-center justify-center p-8 bg-emerald-50/40 border border-dashed border-emerald-200 rounded-2xl text-center">
+                        <span class="text-4xl mb-2">📸</span>
+                        <h5 class="text-sm font-black text-emerald-800 font-header">Votre liste a été enregistrée !</h5>
+                        <p class="text-xs text-stone-500 max-w-xs mt-1">Nos préparateurs vont décoder l'image pour préparer votre panier au prix le plus juste.</p>
+                    </div>
+                `;
+            }
+
+            const totalPriceEl = document.getElementById('pack-total-price');
+            if (totalPriceEl) totalPriceEl.innerText = "Sur devis";
+
+            updateStepper(2);
+            document.getElementById('options-container').classList.add('hidden');
+            document.getElementById('pack-details-view').classList.remove('hidden');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        });
+    }
+
+    // ==========================================
+    // 5. CLIC SUR "SUIVANT" (RÉSOLUTION ET FIX DES PRIX)
+    // ==========================================
+    const btnLoadPackEl = document.getElementById('btn-load-pack');
+    if (btnLoadPackEl) {
+        btnLoadPackEl.addEventListener('click', () => {
+            const packId = document.getElementById('select-niveau').value;
+            if (!packId) return;
+
+            // Comparaison de type sécurisée texte <-> nombre
+            const selectedPack = allSchoolData.find(item => String(item.id) === String(packId));
+            if (!selectedPack) return;
+
+            const schoolDisplay = document.getElementById('display-school-name');
+            const levelDisplay = document.getElementById('display-level-name');
+            
+            if (schoolDisplay) schoolDisplay.innerText = selectedPack.school_name;
+            if (levelDisplay) levelDisplay.innerText = selectedPack.level;
+
+            isPhotoOrder = false; 
+            let parsedItems = [];
+            const rawData = selectedPack.items;
+
+            function extractItems(data) {
+                if (!data) return;
+                if (typeof data === 'string') {
+                    const trimmed = data.trim();
+                    if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
+                        try { extractItems(JSON.parse(trimmed)); return; } catch (e) {}
+                    }
+                    const cleanText = data.replace(/<\/?[^>]+(>|$)/g, "").trim();
+                    if (cleanText && cleanText !== "undefined") {
+                        parsedItems.push({ id: "leg-" + Math.random().toString(36).substr(2,4), name: cleanText, category: "Fournitures", price: 0 });
+                    }
+                } 
+                else if (Array.isArray(data)) { 
+                    data.forEach(el => extractItems(el)); 
+                } 
+                else if (typeof data === 'object') {
+                    if (data.name) {
+                        // Extraction du prix avec valeur par défaut si absent (anciennes listes)
+                        const itemPrice = data.hasOwnProperty('price') ? parseFloat(data.price) : 0;
+                        parsedItems.push({
+                            id: data.id || "item-" + Math.random().toString(36).substr(2, 5),
+                            name: data.name,
+                            category: data.category || "Fournitures",
+                            price: isNaN(itemPrice) ? 0 : itemPrice 
+                        });
+                    }
+                }
+            }
+
+            extractItems(rawData);
+            selectedPackItems = parsedItems;
+
+            renderPackChecklist(selectedPackItems);
+            calculateTotalOrderPrice(); 
+            
+            updateStepper(2);
+            document.getElementById('options-container').classList.add('hidden');
+            document.getElementById('pack-details-view').classList.remove('hidden');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        });
+    }
+
+    // INTERFACE DES COMPOSANTS (CHIPS VERTES POUR LES PRIX)
+    function renderPackChecklist(items) {
+        const container = document.getElementById('liste-officielle-items');
+        if (!container) return;
+        container.innerHTML = '';
+
+        const grouped = {};
+        items.forEach(item => {
+            const cat = item.category || "Fournitures";
+            if (!grouped[cat]) grouped[cat] = [];
+            grouped[cat].push(item);
+        });
+
+        Object.keys(grouped).forEach(category => {
+            const block = document.createElement('div');
+            block.className = "space-y-3 pb-5 border-b border-stone-100 last:border-none";
+            
+            const categoryHeader = document.createElement('div');
+            categoryHeader.className = "flex items-center justify-between mb-2.5";
+            categoryHeader.innerHTML = `<h5 class="font-header font-black text-sm text-[#E75C25] tracking-tight">${category}</h5>`;
+            block.appendChild(categoryHeader);
+
+            const grid = document.createElement('div');
+            grid.className = "grid grid-cols-1 gap-2.5";
+            block.appendChild(grid);
+
+            grouped[category].forEach(item => {
+                const row = document.createElement('label');
+                row.innerHTML = `
+                    <div class="flex items-center gap-3 flex-grow min-w-0">
+                        <input type="checkbox" data-id="${item.id}" data-price="${item.price}" checked class="pack-item-checkbox w-4 h-4 rounded text-[#E75C25] accent-[#E75C25] focus:ring-0 cursor-pointer flex-shrink-0">
+                        <span class="text-xs font-bold text-stone-800 tracking-tight truncate">${item.name}</span>
+                    </div>
+                    <span class="text-[11px] font-black text-emerald-700 bg-emerald-50 border border-emerald-200/50 px-2.5 py-0.5 rounded-lg flex-shrink-0">${item.price.toFixed(2)} DH</span>
+                `;
+
+                const box = row.querySelector('input');
+                const syncCardStyle = () => {
+                    if (!box.checked) {
+                        row.className = "flex items-center justify-between gap-3 bg-stone-50/50 opacity-40 px-4 py-3.5 rounded-xl border border-dashed border-stone-200 cursor-pointer transition-all duration-300 select-none scale-[0.98]";
+                    } else {
+                        row.className = "flex items-center justify-between gap-3 bg-gradient-to-r from-white to-stone-50/[0.02] px-4 py-3.5 rounded-xl border border-stone-200 hover:border-orange-300 cursor-pointer transition-all duration-200 shadow-sm select-none";
+                    }
+                    if(!isPhotoOrder) calculateTotalOrderPrice(); 
+                };
+
+                box.addEventListener('change', syncCardStyle);
+                syncCardStyle();
+                grid.appendChild(row);
+            });
+            container.appendChild(block);
+        });
+    }
+
+    function calculateTotalOrderPrice() {
+        if(isPhotoOrder) return;
+        const checkboxes = document.querySelectorAll('.pack-item-checkbox:checked');
+        let total = 0;
+        checkboxes.forEach(cb => {
+            total += parseFloat(cb.getAttribute('data-price')) || 0;
+        });
+        const totalDisplay = document.getElementById('pack-total-price');
+        if (totalDisplay) totalDisplay.innerText = total.toFixed(2);
+    }
+
+    // NAVIGATION DU PANIER DE COMMANDE
+    document.getElementById('btn-change-choice-top').addEventListener('click', () => {
+        updateStepper(1);
+        if (statusText) statusText.innerText = "Prendre en photo / Charger l'image";
+        document.getElementById('pack-details-view').classList.add('hidden');
+        document.getElementById('checkout-form-container').classList.add('hidden');
+        document.getElementById('options-container').classList.remove('hidden');
+    });
+
+    document.getElementById('btn-next-to-form').addEventListener('click', () => {
+        updateStepper(3);
+        const formContainer = document.getElementById('checkout-form-container');
+        if (formContainer) {
+            formContainer.classList.remove('hidden');
+            formContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+
+    document.getElementById('order-submit-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        let payloadItems = [];
+
+        if (isPhotoOrder) {
+            payloadItems = "https://jgfkshsizrtwzqsdrhhp.supabase.co/storage/v1/object/public/lists/uploaded-photo-scolaire.jpg";
+        } else {
+            const checkedBoxes = document.querySelectorAll('.pack-item-checkbox:checked');
+            const activeIds = Array.from(checkedBoxes).map(cb => cb.getAttribute('data-id'));
+            payloadItems = selectedPackItems.filter(item => activeIds.includes(item.id));
+        }
+
+        const orderPayload = {
+            client_name: document.getElementById('client-name').value.trim(),
+            client_phone: document.getElementById('client-phone').value.trim(),
+            client_email: document.getElementById('client-email').value.trim(),
+            items: payloadItems, 
+            status: 'en_attente'
+        };
+
+        const { error } = await supabaseClient.from('orders').insert([orderPayload]);
+        if (!error) { 
+            alert("Parfait ! Votre commande a été reçue."); 
+            window.location.reload(); 
+        } else {
+            alert("Erreur lors de la validation.");
+        }
+    });
+
+    // ==========================================
+    // 6. ANIMATIONS ET COMPORTEMENT DE LA NAVBAR
+    // ==========================================
+    const mainHeader = document.getElementById('main-header');
+    const scrollBtn = document.getElementById('scroll-to-top');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('is-visible');
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    window.addEventListener('scroll', () => {
+        if (mainHeader) {
+            if (window.scrollY > 40) {
+                mainHeader.classList.remove('bg-transparent', 'border-transparent', 'py-4');
+                mainHeader.classList.add('bg-white', 'shadow-md', 'border-b', 'border-gray-100', 'py-2.5');
+            } else {
+                mainHeader.classList.remove('bg-white', 'shadow-md', 'border-b', 'border-gray-100', 'py-2.5');
+                mainHeader.classList.add('bg-transparent', 'border-transparent', 'py-4');
+            }
+        }
+
+        if (scrollBtn) {
+            if (window.scrollY > 300) {
+                scrollBtn.classList.remove('opacity-0', 'translate-y-10', 'pointer-events-none');
+                scrollBtn.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
+            } else {
+                scrollBtn.classList.add('opacity-0', 'translate-y-10', 'pointer-events-none');
+                scrollBtn.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto');
+            }
+        }
+    });
+
+    // MENU CHANGER LA LANGUE
+    const langBtn = document.getElementById('lang-btn');
+    const langDropdown = document.getElementById('lang-dropdown');
+    const langOptions = {
+        'FR': document.getElementById('lang-opt-fr'),
+        'EN': document.getElementById('lang-opt-en'),
+        'AR': document.getElementById('lang-opt-ar')
+    };
+
+    if (langBtn) {
+        langBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (langDropdown) langDropdown.classList.toggle('hidden');
+        });
+    }
+
+    document.addEventListener('click', (e) => {
+        if (langDropdown && !langDropdown.contains(e.target) && e.target !== langBtn) {
+            langDropdown.classList.add('hidden');
+        }
+    });
+
+    window.switchLanguage = function(lang) {
+        if (langBtn) langBtn.innerText = lang;
+        Object.keys(langOptions).forEach(key => {
+            if (langOptions[key]) langOptions[key].className = "text-[#E75C25] hover:bg-orange-50 rounded-full w-[34px] h-[34px] flex items-center justify-center font-black text-xs font-header focus:outline-none";
+        });
+        if (langOptions[lang]) langOptions[lang].className = "bg-[#E75C25] text-white rounded-full w-[34px] h-[34px] flex items-center justify-center font-black text-xs font-header focus:outline-none";
+        if (langDropdown) langDropdown.classList.add('hidden');
+    };
+
+    initClientData();
+    updateStepper(1);
 });
