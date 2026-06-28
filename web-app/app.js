@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 5. CLIC SUR "SUIVANT" (RÉSOLUTION ET FIX DES PRIX)
+    // 5. CLIC SUR "SUIVANT" (👑 EXTRACTEUR ROBUSTE ANTI-0 DH)
     // ==========================================
     const btnLoadPackEl = document.getElementById('btn-load-pack');
     if (btnLoadPackEl) {
@@ -186,13 +186,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const packId = document.getElementById('select-niveau').value;
             if (!packId) return;
 
-            // Comparaison de type sécurisée texte <-> nombre
             const selectedPack = allSchoolData.find(item => String(item.id) === String(packId));
             if (!selectedPack) return;
 
             const schoolDisplay = document.getElementById('display-school-name');
             const levelDisplay = document.getElementById('display-level-name');
-            
             if (schoolDisplay) schoolDisplay.innerText = selectedPack.school_name;
             if (levelDisplay) levelDisplay.innerText = selectedPack.level;
 
@@ -200,36 +198,50 @@ document.addEventListener('DOMContentLoaded', () => {
             let parsedItems = [];
             const rawData = selectedPack.items;
 
-            function extractItems(data) {
-                if (!data) return;
-                if (typeof data === 'string') {
-                    const trimmed = data.trim();
-                    if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
-                        try { extractItems(JSON.parse(trimmed)); return; } catch (e) {}
-                    }
-                    const cleanText = data.replace(/<\/?[^>]+(>|$)/g, "").trim();
-                    if (cleanText && cleanText !== "undefined") {
-                        parsedItems.push({ id: "leg-" + Math.random().toString(36).substr(2,4), name: cleanText, category: "Fournitures", price: 0 });
-                    }
-                } 
-                else if (Array.isArray(data)) { 
-                    data.forEach(el => extractItems(el)); 
-                } 
-                else if (typeof data === 'object') {
-                    if (data.name) {
-                        // Extraction du prix avec valeur par défaut si absent (anciennes listes)
-                        const itemPrice = data.hasOwnProperty('price') ? parseFloat(data.price) : 0;
-                        parsedItems.push({
-                            id: data.id || "item-" + Math.random().toString(36).substr(2, 5),
-                            name: data.name,
-                            category: data.category || "Fournitures",
-                            price: isNaN(itemPrice) ? 0 : itemPrice 
-                        });
+            try {
+                let rawArray = [];
+                if (typeof rawData === 'string') {
+                    rawArray = JSON.parse(rawData);
+                } else if (Array.isArray(rawData) && rawData.length > 0) {
+                    let first = rawData[0];
+                    if (typeof first === 'string' && first.trim().startsWith('[')) {
+                        rawArray = JSON.parse(first);
+                    } else {
+                        rawArray = rawData;
                     }
                 }
+
+                // Parcours et conversion stricte pour chaque objet trouvé
+                parsedItems = rawArray.map((item, index) => {
+                    if (item && typeof item === 'object' && item.name) {
+                        
+                        // Extraction sécurisée du prix (parcours des clés en cas d'insensibilité à la casse)
+                        let extractedPrice = 0;
+                        if (item.price !== undefined && item.price !== null) {
+                            extractedPrice = item.price;
+                        } else if (item.Price !== undefined && item.Price !== null) {
+                            extractedPrice = item.Price;
+                        }
+
+                        return {
+                            id: item.id || "item-" + index + "-" + Math.random().toString(36).substr(2, 3),
+                            name: item.name,
+                            category: item.category || "Fournitures",
+                            price: parseFloat(extractedPrice) || 0 // Re-conversion forcée en float numérique
+                        };
+                    } else if (typeof item === 'string') {
+                        const cleanText = item.replace(/<\/?[^>]+(>|$)/g, "").trim();
+                        if (cleanText && cleanText !== "undefined") {
+                            return { id: "leg-" + index, name: cleanText, category: "Fournitures", price: 0 };
+                        }
+                    }
+                    return null;
+                }).filter(Boolean);
+
+            } catch (err) {
+                console.error("Échec critique du parsing des fournitures :", err);
             }
 
-            extractItems(rawData);
             selectedPackItems = parsedItems;
 
             renderPackChecklist(selectedPackItems);
