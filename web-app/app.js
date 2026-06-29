@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let allSchoolData = []; 
     let selectedPackItems = []; 
     let isPhotoOrder = false; 
+    let selectedPhotoFile = null;
 
     // Masquage progressif de la Splash Page après 5 secondes
     setTimeout(() => {
@@ -70,10 +71,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // 3. RÉCUPÉRATION DES PARAMÈTRES ET DU FOOTER
     // ==========================================
+    function applySiteSettings(settings) {
+        const settingsMap = Object.fromEntries(settings.map(s => [s.key, s.value]));
+        const rentreeEnabled = settingsMap.rentree_enabled !== 'false';
+        const rentreeTitle = settingsMap.rentree_title || 'Rentrée scolaire';
+
+        document.querySelectorAll('[data-target="section-rentree"]').forEach(btn => {
+            btn.classList.toggle('hidden', !rentreeEnabled);
+            btn.textContent = rentreeTitle;
+        });
+
+        document.querySelectorAll('[onclick*="section-rentree"]').forEach(btn => {
+            btn.classList.toggle('hidden', !rentreeEnabled);
+        });
+    }
+
     async function initClientData() {
         try {
             const { data: settings } = await supabaseClient.from('site_settings').select('*');
             if (settings) {
+                applySiteSettings(settings);
                 settings.forEach(s => {
                     const addr = document.getElementById('info-address');
                     const phone = document.getElementById('info-phone');
@@ -149,6 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const file = e.target.files[0];
             isPhotoOrder = true; 
+            selectedPhotoFile = file;
             if (statusText) statusText.innerText = "✓ Fichier joint : " + file.name;
 
             const schoolLabel = document.getElementById('display-school-name');
@@ -319,9 +337,35 @@ document.addEventListener('DOMContentLoaded', () => {
         if (totalDisplay) totalDisplay.innerText = total.toFixed(2);
     }
 
+    async function uploadSelectedPhoto() {
+        if (!selectedPhotoFile) {
+            throw new Error("Aucune photo n'a été sélectionnée.");
+        }
+
+        const safeName = selectedPhotoFile.name
+            .toLowerCase()
+            .replace(/[^a-z0-9.]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+        const filePath = `school-lists/${Date.now()}-${safeName}`;
+
+        const { error } = await supabaseClient.storage
+            .from('lists')
+            .upload(filePath, selectedPhotoFile, {
+                cacheControl: '3600',
+                upsert: false
+            });
+
+        if (error) throw error;
+
+        const { data } = supabaseClient.storage.from('lists').getPublicUrl(filePath);
+        return data.publicUrl;
+    }
+
     // NAVIGATION DU PANIER DE COMMANDE
     document.getElementById('btn-change-choice-top').addEventListener('click', () => {
         updateStepper(1);
+        selectedPhotoFile = null;
+        isPhotoOrder = false;
         if (statusText) statusText.innerText = "Prendre en photo / Charger l'image";
         document.getElementById('pack-details-view').classList.add('hidden');
         document.getElementById('checkout-form-container').classList.add('hidden');
@@ -342,7 +386,13 @@ document.addEventListener('DOMContentLoaded', () => {
         let payloadItems = [];
 
         if (isPhotoOrder) {
-            payloadItems = "https://jgfkshsizrtwzqsdrhhp.supabase.co/storage/v1/object/public/lists/uploaded-photo-scolaire.jpg";
+            try {
+                payloadItems = await uploadSelectedPhoto();
+            } catch (err) {
+                console.error("Erreur upload photo :", err);
+                alert("Impossible d'envoyer la photo. Vérifiez la configuration Supabase Storage.");
+                return;
+            }
         } else {
             const checkedBoxes = document.querySelectorAll('.pack-item-checkbox:checked');
             const activeIds = Array.from(checkedBoxes).map(cb => cb.getAttribute('data-id'));
@@ -365,6 +415,52 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("Erreur lors de la validation.");
         }
     });
+
+    function normalizePhone(phone) {
+        const digits = String(phone || '').replace(/\D/g, '');
+        if (digits.startsWith('212')) return digits;
+        if (digits.startsWith('0')) return `212${digits.slice(1)}`;
+        return digits;
+    }
+
+    const trackingForm = document.getElementById('order-tracking-form');
+    if (trackingForm) {
+        trackingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const resultBox = document.getElementById('tracking-result');
+            const orderId = document.getElementById('tracking-order-id').value.trim().replace('#', '');
+            const phone = document.getElementById('tracking-phone').value.trim();
+
+            resultBox.className = "text-sm rounded-xl border p-4 bg-stone-50 text-stone-600";
+            resultBox.textContent = "Recherche en cours...";
+
+            if (!orderId || !phone) {
+                resultBox.className = "text-sm rounded-xl border p-4 bg-red-50 text-red-700 border-red-100";
+                resultBox.textContent = "Veuillez saisir le numéro de commande et le téléphone.";
+                return;
+            }
+
+            const { data, error } = await supabaseClient
+                .from('orders')
+                .select('id, client_phone, status')
+                .eq('id', orderId)
+                .maybeSingle();
+
+            if (error || !data || normalizePhone(data.client_phone) !== normalizePhone(phone)) {
+                resultBox.className = "text-sm rounded-xl border p-4 bg-red-50 text-red-700 border-red-100";
+                resultBox.textContent = "Aucune commande trouvée avec ces informations.";
+                return;
+            }
+
+            const readableStatus = data.status === 'notifie'
+                ? "Votre commande est prête. Vous pouvez contacter ou visiter la boutique."
+                : "Votre commande est bien reçue et en cours de préparation.";
+
+            resultBox.className = "text-sm rounded-xl border p-4 bg-emerald-50 text-emerald-800 border-emerald-100";
+            resultBox.textContent = `Commande #${data.id} : ${readableStatus}`;
+        });
+    }
 
     // ==========================================
     // 6. ANIMATIONS ET COMPORTEMENT DE LA NAVBAR

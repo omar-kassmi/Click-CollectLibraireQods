@@ -10,6 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com.rproxy.goskope.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
     <style>
         body { font-family: 'Inter', sans-serif; }
     </style>
@@ -78,7 +79,7 @@
             <section id="pane-config" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm h-fit space-y-5">
                     <div>
-                        <h3 class="text-sm font-bold text-gray-900">📦 Créer un pack d'objets officiel</h3>
+                        <h3 id="pack-form-title" class="text-sm font-bold text-gray-900">📦 Créer un pack d'objets officiel</h3>
                         <p class="text-[11px] text-gray-400 mt-0.5">Renseignez l'établissement puis ajoutez vos fournitures avec prix.</p>
                     </div>
                     
@@ -126,8 +127,11 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="w-full bg-[#E75C25] text-white text-xs font-semibold py-3.5 rounded-xl hover:bg-[#CE4E1D] transition shadow-sm">
+                        <button id="btn-save-pack" type="submit" class="w-full bg-[#E75C25] text-white text-xs font-semibold py-3.5 rounded-xl hover:bg-[#CE4E1D] transition shadow-sm">
                             Mettre en ligne le Pack d'objets
+                        </button>
+                        <button id="btn-cancel-edit-pack" type="button" class="hidden w-full bg-white text-gray-600 border border-gray-200 text-xs font-semibold py-3 rounded-xl hover:bg-gray-50 transition">
+                            Annuler la modification
                         </button>
                     </form>
                 </div>
