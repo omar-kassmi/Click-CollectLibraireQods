@@ -15,7 +15,29 @@
         body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen flex hidden" id="admin-body">
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+
+    <section id="admin-login" class="min-h-screen flex items-center justify-center px-6">
+        <form id="admin-login-form" class="bg-white border border-gray-200 shadow-sm rounded-2xl p-7 w-full max-w-sm space-y-5">
+            <div class="space-y-1">
+                <h1 class="text-xl font-bold text-gray-900">Connexion admin</h1>
+                <p class="text-xs text-gray-500">Connectez-vous avec un compte admin Supabase.</p>
+            </div>
+            <div class="space-y-1">
+                <label class="block text-xs font-bold text-gray-500 uppercase">E-mail</label>
+                <input id="admin-login-email" type="email" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:bg-white focus:border-[#E75C25]">
+            </div>
+            <div class="space-y-1">
+                <label class="block text-xs font-bold text-gray-500 uppercase">Mot de passe</label>
+                <input id="admin-login-password" type="password" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:bg-white focus:border-[#E75C25]">
+            </div>
+            <button type="submit" class="w-full bg-[#E75C25] hover:bg-[#CE4E1D] text-white text-sm font-bold py-3 rounded-xl transition">Se connecter</button>
+            <p id="admin-login-error" class="hidden text-xs text-red-600 bg-red-50 border border-red-100 rounded-xl p-3"></p>
+        </form>
+    </section>
+
+    <div class="hidden" id="admin-body">
+    <div class="flex min-h-screen">
 
     <!-- SIDEBAR -->
     <aside class="w-64 bg-[#E75C25] text-white flex flex-col flex-shrink-0 border-r border-orange-950">
@@ -40,7 +62,7 @@
         </nav>
 
         <div class="p-4 border-t border-orange-800/60 text-[10px] text-orange-300 text-center tracking-wide">
-            Dashboard Professionnel v1.5
+            <button id="btn-admin-logout" class="text-orange-100 hover:text-white font-bold uppercase tracking-wider">Déconnexion</button>
         </div>
     </aside>
 
@@ -50,12 +72,47 @@
             
             <!-- SECTION 1 : COMMANDES REÇUES -->
             <section id="pane-orders" class="space-y-6">
+                <div id="dashboard-cards" class="grid grid-cols-2 lg:grid-cols-4 gap-3"></div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-sm font-bold text-gray-900">Tableau des ventes</h3>
+                            <button id="btn-export-best-products" class="text-xs font-bold text-[#E75C25]">CSV produits</button>
+                        </div>
+                        <div id="sales-dashboard" class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm"></div>
+                    </div>
+                    <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-sm font-bold text-gray-900">Rapport financier</h3>
+                            <button id="btn-export-financial" class="text-xs font-bold text-[#E75C25]">CSV finances</button>
+                        </div>
+                        <div id="financial-report" class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm"></div>
+                    </div>
+                </div>
                 <div class="flex justify-between items-center">
                     <div>
                         <h2 class="text-xl font-bold text-gray-900">Commandes reçues</h2>
                         <p class="text-xs text-gray-500 mt-0.5">Consultez les fichiers et préparez les messages de validation.</p>
                     </div>
-                    <button id="btn-refresh-orders" class="bg-white border text-xs font-semibold px-4 py-2 rounded-xl hover:bg-gray-50 shadow-sm transition">Actualiser</button>
+                    <div class="flex items-center gap-2">
+                        <button id="btn-export-orders" class="bg-white border text-xs font-semibold px-4 py-2 rounded-xl hover:bg-gray-50 shadow-sm transition">Exporter CSV</button>
+                        <button id="btn-refresh-orders" class="bg-white border text-xs font-semibold px-4 py-2 rounded-xl hover:bg-gray-50 shadow-sm transition">Actualiser</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                    <input id="orders-search" type="search" placeholder="Rechercher client, téléphone ou ID" class="md:col-span-2 bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#E75C25]">
+                    <select id="orders-status-filter" class="bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#E75C25]">
+                        <option value="">Tous les statuts</option>
+                        <option value="new">New</option>
+                        <option value="preparing">Preparing</option>
+                        <option value="ready">Ready</option>
+                        <option value="collected">Collected</option>
+                        <option value="cancelled">Cancelled</option>
+                        <option value="expired">Expired</option>
+                    </select>
+                    <input id="orders-date-filter" type="date" class="bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#E75C25]">
                 </div>
 
                 <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
@@ -67,6 +124,7 @@
                                 <th class="p-4">Téléphone</th>
                                 <th class="p-4">Contenu / Liste scolaire</th>
                                 <th class="p-4">Statut</th>
+                                <th class="p-4">Réservation</th>
                                 <th class="p-4 text-right">Actions</th>
                             </tr>
                         </thead>
@@ -112,6 +170,14 @@
                                 <div class="col-span-3">
                                     <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Prix (DH)</label>
                                     <input type="number" id="admin-item-price" step="0.01" min="0" placeholder="0.00" class="w-full px-2 py-2 bg-white border border-gray-200 rounded-lg text-xs font-bold text-emerald-700 outline-none">
+                                </div>
+                                <div class="col-span-12">
+                                    <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Disponibilité</label>
+                                    <select id="admin-item-availability" class="w-full px-2 py-2 bg-white border border-gray-200 rounded-lg text-xs outline-none">
+                                        <option value="available">Available</option>
+                                        <option value="almost_out">Almost out</option>
+                                        <option value="out_of_stock">Out of stock</option>
+                                    </select>
                                 </div>
                             </div>
                             <button type="button" id="btn-add-item" class="w-full bg-[#E75C25] hover:bg-[#CE4E1D] text-white text-xs font-bold py-2 rounded-lg transition-all shadow-sm">
@@ -211,6 +277,7 @@
                 </div>
             </section>
         </main>
+    </div>
     </div>
 
     <script src="admin.js"></script>

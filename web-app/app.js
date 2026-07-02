@@ -3,9 +3,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // 0. CONFIGURATION & MONTEUR SUPABASE
     // ==========================================
-    const SUPABASE_URL = "https://jgfkshsizrtwzqsdrhhp.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_Rdn2yMULDq05BGBV-X-zCA_S934mdEh";
+    const SUPABASE_URL = "https://plctxriaczdmjwwhfwny.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_h7UcqRKK-nqchzlzwoALaQ_7N4RGR-R";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const RESERVATION_DAYS = 5;
 
     let allSchoolData = []; 
     let selectedPackItems = []; 
@@ -245,7 +246,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             id: item.id || "item-" + index + "-" + Math.random().toString(36).substr(2, 3),
                             name: item.name,
                             category: item.category || "Fournitures",
-                            price: parseFloat(extractedPrice) || 0 // Re-conversion forcée en float numérique
+                            price: parseFloat(extractedPrice) || 0,
+                            availability: item.availability || 'available'
                         };
                     } else if (typeof item === 'string') {
                         const cleanText = item.replace(/<\/?[^>]+(>|$)/g, "").trim();
@@ -300,17 +302,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
             grouped[category].forEach(item => {
                 const row = document.createElement('label');
+                const isOutOfStock = item.availability === 'out_of_stock';
+                const isAlmostOut = item.availability === 'almost_out';
+                const availabilityText = isOutOfStock ? 'Out of stock' : isAlmostOut ? 'Almost out' : '';
                 row.innerHTML = `
                     <div class="flex items-center gap-3 flex-grow min-w-0">
-                        <input type="checkbox" data-id="${item.id}" data-price="${item.price}" checked class="pack-item-checkbox w-4 h-4 rounded text-[#E75C25] accent-[#E75C25] focus:ring-0 cursor-pointer flex-shrink-0">
+                        <input type="checkbox" data-id="${item.id}" data-price="${item.price}" ${isOutOfStock ? 'disabled' : 'checked'} class="pack-item-checkbox w-4 h-4 rounded text-[#E75C25] accent-[#E75C25] focus:ring-0 cursor-pointer flex-shrink-0">
                         <span class="text-xs font-bold text-stone-800 tracking-tight truncate">${item.name}</span>
                     </div>
-                    <span class="text-[11px] font-black text-emerald-700 bg-emerald-50 border border-emerald-200/50 px-2.5 py-0.5 rounded-lg flex-shrink-0">${item.price.toFixed(2)} DH</span>
+                    <span class="text-[11px] font-black ${isOutOfStock ? 'text-red-700 bg-red-50 border-red-100' : 'text-emerald-700 bg-emerald-50 border-emerald-200/50'} border px-2.5 py-0.5 rounded-lg flex-shrink-0">${availabilityText || item.price.toFixed(2) + ' DH'}</span>
                 `;
 
                 const box = row.querySelector('input');
                 const syncCardStyle = () => {
-                    if (!box.checked) {
+                    if (isOutOfStock) {
+                        row.className = "flex items-center justify-between gap-3 bg-red-50/40 opacity-60 px-4 py-3.5 rounded-xl border border-dashed border-red-100 cursor-not-allowed transition-all duration-300 select-none";
+                    } else if (!box.checked) {
                         row.className = "flex items-center justify-between gap-3 bg-stone-50/50 opacity-40 px-4 py-3.5 rounded-xl border border-dashed border-stone-200 cursor-pointer transition-all duration-300 select-none scale-[0.98]";
                     } else {
                         row.className = "flex items-center justify-between gap-3 bg-gradient-to-r from-white to-stone-50/[0.02] px-4 py-3.5 rounded-xl border border-stone-200 hover:border-orange-300 cursor-pointer transition-all duration-200 shadow-sm select-none";
@@ -383,7 +390,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('order-submit-form').addEventListener('submit', async (e) => {
         e.preventDefault();
+        const submitButton = e.target.querySelector('button[type="submit"]');
+        const originalButtonText = submitButton ? submitButton.textContent : '';
+        const clientName = document.getElementById('client-name').value.trim();
+        const clientPhone = document.getElementById('client-phone').value.trim();
+        const clientEmail = document.getElementById('client-email').value.trim();
         let payloadItems = [];
+
+        if (!clientName || normalizePhone(clientPhone).length < 10 || !clientEmail.includes('@')) {
+            alert("Veuillez vérifier le nom, le téléphone et l'adresse e-mail.");
+            return;
+        }
+
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = "Envoi en cours...";
+            submitButton.classList.add('opacity-70', 'cursor-not-allowed');
+        }
 
         if (isPhotoOrder) {
             try {
@@ -399,20 +422,36 @@ document.addEventListener('DOMContentLoaded', () => {
             payloadItems = selectedPackItems.filter(item => activeIds.includes(item.id));
         }
 
+        const totalAmount = Array.isArray(payloadItems)
+            ? payloadItems.reduce((sum, item) => sum + (parseFloat(item.price) || 0), 0)
+            : 0;
+
         const orderPayload = {
-            client_name: document.getElementById('client-name').value.trim(),
-            client_phone: document.getElementById('client-phone').value.trim(),
-            client_email: document.getElementById('client-email').value.trim(),
+            client_name: clientName,
+            client_phone: clientPhone,
+            client_email: clientEmail,
             items: payloadItems, 
-            status: 'en_attente'
+            status: 'new',
+            reservation_deadline: getReservationDeadline(),
+            total_amount: totalAmount,
+            payment_method: 'cash_pickup'
         };
 
-        const { error } = await supabaseClient.from('orders').insert([orderPayload]);
+        const { data, error } = await supabaseClient.from('orders').insert([orderPayload]).select('id').single();
         if (!error) { 
+            alert(`Parfait ! Votre commande a été reçue. Numéro de commande : #${data.id}`);
+            window.location.reload();
+            return;
             alert("Parfait ! Votre commande a été reçue."); 
             window.location.reload(); 
         } else {
+            console.error("Erreur validation commande :", error);
             alert("Erreur lors de la validation.");
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+                submitButton.classList.remove('opacity-70', 'cursor-not-allowed');
+            }
         }
     });
 
@@ -421,6 +460,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (digits.startsWith('212')) return digits;
         if (digits.startsWith('0')) return `212${digits.slice(1)}`;
         return digits;
+    }
+
+    function getReservationDeadline() {
+        const deadline = new Date();
+        deadline.setDate(deadline.getDate() + RESERVATION_DAYS);
+        return deadline.toISOString();
     }
 
     const trackingForm = document.getElementById('order-tracking-form');
@@ -453,9 +498,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const readableStatus = data.status === 'notifie'
+            let readableStatus = data.status === 'notifie'
                 ? "Votre commande est prête. Vous pouvez contacter ou visiter la boutique."
                 : "Votre commande est bien reçue et en cours de préparation.";
+
+            readableStatus = ({
+                en_attente: "Votre commande est bien reçue et sera traitée bientôt.",
+                new: "Votre commande est bien reçue et sera traitée bientôt.",
+                preparation: "Votre commande est en cours de préparation.",
+                preparing: "Votre commande est en cours de préparation.",
+                prete: "Votre commande est prête. Vous pouvez passer à la boutique.",
+                ready: "Votre commande est prête. Vous pouvez passer à la boutique.",
+                notifie: "Votre commande est prête et une notification a été envoyée.",
+                collected: "Votre commande a été récupérée. Merci pour votre visite.",
+                cancelled: "Cette commande a été annulée.",
+                expired: "Cette réservation a expiré. Veuillez contacter la boutique."
+            })[data.status] || "Votre commande est bien reçue.";
 
             resultBox.className = "text-sm rounded-xl border p-4 bg-emerald-50 text-emerald-800 border-emerald-100";
             resultBox.textContent = `Commande #${data.id} : ${readableStatus}`;
