@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maison Berkane — Panneau d'Administration</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- SDK Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com.rproxy.goskope.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <style>
@@ -39,7 +36,6 @@
     <div class="hidden" id="admin-body">
     <div class="flex min-h-screen">
 
-    <!-- SIDEBAR -->
     <aside class="w-64 bg-[#E75C25] text-white flex flex-col flex-shrink-0 border-r border-orange-950">
         <div class="p-6 border-b border-orange-800/60 flex items-center space-x-3">
             <span class="text-xl">⚙️</span>
@@ -66,11 +62,9 @@
         </div>
     </aside>
 
-    <!-- ZONE DE CONTENU -->
     <div class="flex-grow flex flex-col min-w-0 overflow-y-auto">
         <main class="p-6 md:p-10 w-full max-w-6xl mx-auto">
             
-            <!-- SECTION 1 : COMMANDES REÇUES -->
             <section id="pane-orders" class="space-y-6">
                 <div id="dashboard-cards" class="grid grid-cols-2 lg:grid-cols-4 gap-3"></div>
 
@@ -102,7 +96,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                    <input id="orders-search" type="search" placeholder="Rechercher client, téléphone ou ID" class="md:col-span-2 bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#E75C25]">
+                    <input id="orders-search" type="search" placeholder="Rechercher client, téléphone ou Référence" class="md:col-span-2 bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#E75C25]">
                     <select id="orders-status-filter" class="bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#E75C25]">
                         <option value="">Tous les statuts</option>
                         <option value="new">New</option>
@@ -115,11 +109,11 @@
                     <input id="orders-date-filter" type="date" class="bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#E75C25]">
                 </div>
 
-                <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+                <div class="bg-white rounded-2xl border border-gray-200 overflow-visible shadow-sm">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-gray-50 text-xs font-bold text-gray-500 border-b border-gray-200">
-                                <th class="p-4">ID</th>
+                                <th class="p-4">Référence</th>
                                 <th class="p-4">Client</th>
                                 <th class="p-4">Téléphone</th>
                                 <th class="p-4">Contenu / Liste scolaire</th>
@@ -133,7 +127,6 @@
                 </div>
             </section>
 
-            <!-- SECTION 2 : CONFIGURATION DES LISTES (CONSTRUCTEUR AVEC CHAMP PRIX DÉPLOYÉ) -->
             <section id="pane-config" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm h-fit space-y-5">
                     <div>
@@ -151,7 +144,6 @@
                             <input type="text" id="cfg-level" required placeholder="Ex: CP / CE1" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:bg-white">
                         </div>
 
-                        <!-- 👑 BLOC D'AJOUT D'ARTICLE REFAIT AVEC L'INPUT PRIX DÉDIÉ -->
                         <div class="border border-orange-100 bg-orange-50/20 rounded-xl p-4 space-y-3">
                             <span class="block text-[11px] font-bold text-orange-700 uppercase tracking-wider">Ajouter un élément au pack :</span>
                             <div class="grid grid-cols-12 gap-2 items-end">
@@ -185,7 +177,6 @@
                             </button>
                         </div>
 
-                        <!-- Zone d'affichage des articles saisis en attente d'enregistrement -->
                         <div class="space-y-1">
                             <label class="block text-xs font-bold text-gray-400 uppercase">Articles ajoutés à la liste</label>
                             <div id="admin-items-preview" class="border border-gray-200 bg-gray-50 rounded-xl p-3 min-h-[80px] max-h-[220px] overflow-y-auto text-xs space-y-1.5 text-gray-400">
@@ -208,12 +199,11 @@
                 </div>
             </section>
 
-            <!-- SECTION 3 : CONFIGURATION ONGLETS & INFOS ACCUEIL -->
             <section id="pane-tabs-config" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm lg:col-span-5 space-y-4">
                     <div>
                         <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider">Saisonnalité Rentrée</h2>
-                        <p class="text-[11px] text-gray-400">Gérez l'affichage global du bouton de commande.</p>
+                        <p class="text-[11px] text-gray-400">Gerez l'affichage global du bouton de commande.</p>
                     </div>
                     <form id="form-site-settings" class="space-y-4 pt-2 border-t border-gray-100">
                         <div>
@@ -277,6 +267,7 @@
                 </div>
             </section>
         </main>
+    </div>
     </div>
     </div>
 

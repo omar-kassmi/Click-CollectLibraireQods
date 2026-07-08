@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return toDate(order.reservation_deadline) || addDays(getCreatedDate(order), RESERVATION_DAYS);
     }
 
-    // Correction de la recherche et filtrage pour prendre en compte client_email
+    // Recherche prenant en compte le numéro de commande généré par Supabase
     function getFilteredOrders() {
         const searchTerm = document.getElementById('orders-search')?.value.trim().toLowerCase() || '';
         const statusFilter = document.getElementById('orders-status-filter')?.value || '';
@@ -195,8 +195,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return currentOrders.filter(order => {
             const status = normalizeStatus(order.status);
             const created = getCreatedDate(order);
-            // ALIGNEMENT : order.client_email à la place de order.email
-            const haystack = `#${order.id} ${order.client_name || ''} ${order.client_phone || ''} ${order.client_email || ''}`.toLowerCase();
+            
+            // Inclusion de numero_commande et id pour maximiser la recherche
+            const orderRef = order.numero_commande || order.id;
+            const haystack = `#${orderRef} #${order.id} ${order.client_name || ''} ${order.client_phone || ''} ${order.client_email || ''}`.toLowerCase();
+            
             const matchesSearch = !searchTerm || haystack.includes(searchTerm);
             const matchesStatus = !statusFilter || status === statusFilter;
             const matchesDate = !dateFilter || created.toISOString().slice(0, 10) === dateFilter;
@@ -318,6 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const tbody = document.getElementById('table-orders-body');
         const orders = getFilteredOrders();
 
+        if (!tbody) return;
         if (!orders.length) {
             tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-400">Aucune commande.</td></tr>`;
             return;
@@ -329,46 +333,59 @@ document.addEventListener('DOMContentLoaded', () => {
             const days = daysUntil(deadline);
             const items = parseItems(order.items);
             
-            // Correction de la détection de la photo d'upload
             const photoItem = items.find(i => i.type === 'photo_upload' || i.url);
             const content = photoItem
                 ? `<a href="${escapeHtml(photoItem.url)}" target="_blank" class="text-blue-600 hover:underline font-bold flex items-center gap-1">📸 Voir l'image</a>`
                 : `<span class="font-bold text-stone-700">${items.length} articles (${money(orderTotal(order))})</span>`;
                 
             const deadlineText = status === 'expired' ? 'Expired' : `${deadline.toLocaleDateString('fr-FR')} (${days}j)`;
+            const displayReference = order.numero_commande || order.id;
 
             return `
                 <tr class="hover:bg-gray-50 transition">
-                    <td class="p-4 font-bold text-gray-600">#${order.id}</td>
+                    <td class="p-4 font-bold text-gray-600">#${displayReference}</td>
                     <td class="p-4 font-semibold">${escapeHtml(order.client_name)}</td>
                     <td class="p-4 text-gray-500">${escapeHtml(order.client_phone)}</td>
                     <td class="p-4 text-xs max-w-xs truncate">${content}</td>
                     <td class="p-4">${getStatusBadge(status)}</td>
                     <td class="p-4 text-xs text-gray-500">${deadlineText}</td>
                     <td class="p-4 text-right">
-                        <div class="flex justify-end gap-2 flex-wrap">
-                            <select class="order-status-select bg-white border border-gray-200 rounded-lg px-2 py-1.5 text-xs" data-id="${order.id}">
-                                ${Object.keys(STATUS_META).map(key => `<option value="${key}" ${key === status ? 'selected' : ''}>${STATUS_META[key][0]}</option>`).join('')}
-                            </select>
-                            <button class="btn-notify bg-[#E75C25] text-white text-xs font-medium px-3 py-1.5 rounded-lg" data-id="${order.id}">Notifier</button>
+                        <div class="relative inline-block text-left">
+                            <button onclick="window.toggleMenu(this)" class="text-gray-400 hover:text-gray-600 p-2">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                            </button>
+                            <div class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-2xl z-[100] p-2 text-left menu-dropdown">
+                                <button class="btn-notify w-full text-left px-4 py-2 text-sm hover:bg-gray-50 text-blue-600" data-id="${order.id}">WhatsApp</button>
+                                <hr class="my-1 border-gray-100">
+                                <div class="px-4 py-2">
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase">Statut</span>
+                                    <select class="order-status-select w-full mt-1 border border-gray-200 rounded text-sm p-1" data-id="${order.id}">
+                                        ${Object.keys(STATUS_META).map(key => `<option value="${key}" ${key === status ? 'selected' : ''}>${STATUS_META[key][0]}</option>`).join('')}
+                                    </select>
+                                </div>
+                                <button class="btn-delete w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600" data-id="${order.id}">Supprimer</button>
+                            </div>
                         </div>
                     </td>
                 </tr>
             `;
         }).join('');
 
-        document.querySelectorAll('.order-status-select').forEach(select => {
+        // Attachement des événements
+        tbody.querySelectorAll('.order-status-select').forEach(select => {
             select.addEventListener('change', () => updateOrderStatus(select.dataset.id, select.value));
         });
 
-        document.querySelectorAll('.btn-notify').forEach(button => {
-            button.addEventListener('click', async () => {
+        tbody.querySelectorAll('.btn-notify').forEach(button => {
+            button.addEventListener('click', () => {
                 const order = currentOrders.find(entry => String(entry.id) === String(button.dataset.id));
-                if (!order) return;
-                const message = `Bonjour ${order.client_name}, votre commande n° ${order.id} est prête à la Librairie El Qods. Merci de passer avant la date limite de réservation.`;
+                const message = `Bonjour ${order.client_name}, votre commande n° ${order.numero_commande || order.id} est prête.`;
                 window.open(`https://wa.me/${formatPhoneForWhatsapp(order.client_phone)}?text=${encodeURIComponent(message)}`, '_blank');
-                await updateOrderStatus(order.id, 'ready');
             });
+        });
+
+        tbody.querySelectorAll('.btn-delete').forEach(button => {
+            button.addEventListener('click', () => deleteOrder(button.dataset.id));
         });
     }
 
@@ -423,12 +440,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('orders-date-filter')?.addEventListener('change', renderOrdersTable);
     
     document.getElementById('btn-export-orders')?.addEventListener('click', () => {
-        const rows = [['id', 'client', 'phone', 'email', 'status', 'deadline', 'total']];
+        const rows = [['id', 'numero_commande', 'client', 'phone', 'email', 'status', 'deadline', 'total']];
         getFilteredOrders().forEach(order => rows.push([
             order.id,
+            order.numero_commande || '',
             order.client_name,
             order.client_phone,
-            order.client_email, // ALIGNEMENT
+            order.client_email,
             normalizeStatus(order.status),
             getDeadline(order).toISOString().slice(0, 10),
             orderTotal(order)
@@ -668,6 +686,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 loadSchoolLists();
             });
         });
+    }
+
+    // Gestion du menu (Ouvrir/Fermer)
+    window.toggleMenu = function(button) {
+        const menu = button.nextElementSibling;
+        // Ferme les autres menus ouverts
+        document.querySelectorAll('.menu-dropdown').forEach(m => {
+            if (m !== menu) m.classList.add('hidden');
+        });
+        menu.classList.toggle('hidden');
+    };
+
+    // Ferme le menu si on clique en dehors
+    window.addEventListener('click', (e) => {
+        if (!e.target.closest('.relative')) {
+            document.querySelectorAll('.menu-dropdown').forEach(m => m.classList.add('hidden'));
+        }
+    });
+
+    // Suppression d'une commande
+    async function deleteOrder(orderId) {
+        if (!confirm("Voulez-vous vraiment supprimer cette commande ?")) return;
+        
+        const { error } = await supabaseClient.from('orders').delete().eq('id', orderId);
+        if (error) {
+            alert("Erreur : " + error.message);
+        } else {
+            loadOrders();
+        }
     }
 
     initAuth();

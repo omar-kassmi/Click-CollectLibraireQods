@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 5. CLIC SUR "SUIVANT" (👑 EXTRACTEUR ROBUSTE)
+    // 5. CLIC SUR "SUIVANT"
     // ==========================================
     const btnLoadPackEl = document.getElementById('btn-load-pack');
     if (btnLoadPackEl) {
@@ -411,7 +411,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Changement d'état visuel du bouton de validation
             if (submitButton) {
                 submitButton.disabled = true;
                 submitButton.textContent = "⏳ Envoi en cours...";
@@ -425,7 +424,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         payloadItems = [{ name: "Commande par photo", type: "photo_upload", url: photoUrl }];
                     } catch (err) {
                         console.error("Erreur critique d'upload photo Storage:", err);
-                        // Fallback : Enregistrer la commande même si le Storage échoue temporairement
                         payloadItems = [{ name: "Commande par photo (Fichier non stocké)", type: "photo_upload", file_name: selectedPhotoFile.name }];
                     }
                 } else {
@@ -449,7 +447,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const totalAmount = isPhotoOrder ? 0 : payloadItems.reduce((sum, item) => sum + (item.price || 0), 0);
 
-                // Payload aligné avec la structure SQL finale de votre Supabase
                 const orderPayload = {
                     client_name: clientName,
                     client_phone: clientPhone,
@@ -461,18 +458,28 @@ document.addEventListener('DOMContentLoaded', () => {
                     payment_method: 'cash_pickup'
                 };
 
-                const { data, error } = await supabaseClient.from('orders').insert([orderPayload]).select('id').single();
+                // REQUÊTE CORRIGÉE : On extrait explicitement la valeur générée par le trigger SQL
+                const { data, error } = await supabaseClient
+                    .from('orders')
+                    .insert([orderPayload])
+                    .select('numero_commande') 
+                    .single();
                 
                 if (error) throw error;
 
-                alert(`✨ Parfait ! Votre commande a été reçue avec succès.\nNuméro de commande : #${data.id}`);
-                window.location.reload(); 
+                if (data && data.numero_commande) {
+                    const orderReference = data.numero_commande;
+                    const encodedName = encodeURIComponent(clientName);
+                    // REDIRECTION CORRIGÉE : Utilise la clé ?order= au lieu de ?id=
+                    window.location.href = `success.html?order=${orderReference}&name=${encodedName}`;
+                } else {
+                    window.location.href = 'success.html';
+                }
 
             } catch (err) {
                 console.error("Erreur lors de la validation :", err);
                 alert("Une erreur est survenue lors de l'envoi de la commande : " + err.message);
                 
-                // Réactivation du bouton en cas d'erreur de réseau ou Supabase
                 if (submitButton) {
                     submitButton.disabled = false;
                     submitButton.textContent = originalButtonText;
@@ -489,14 +496,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return digits;
     }
 
-    function getReservationDeadline() {
-        const deadline = new Date();
-        deadline.setDate(deadline.getDate() + RESERVATION_DAYS);
-        return deadline.toISOString();
-    }
-
     // ==========================================
-    // 7. SUIVI DE COMMANDE CLIENT
+    // 7. SUIVI DE COMMANDE CLIENT (CORRIGÉ)
     // ==========================================
     const trackingForm = document.getElementById('order-tracking-form');
     if (trackingForm) {
@@ -504,7 +505,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
 
             const resultBox = document.getElementById('tracking-result');
-            const orderId = document.getElementById('tracking-order-id').value.trim().replace('#', '');
+            const orderId = document.getElementById('tracking-order-id').value.trim().toUpperCase().replace('#', '');
             const phone = document.getElementById('tracking-phone').value.trim();
 
             if (!resultBox) return;
@@ -518,15 +519,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            // SUIVI CORRIGÉ : Recherche ciblée sur la colonne unique textuelle numero_commande
             const { data, error } = await supabaseClient
                 .from('orders')
-                .select('id, client_phone, status')
-                .eq('id', orderId)
+                .select('numero_commande, client_phone, status')
+                .eq('numero_commande', orderId)
                 .maybeSingle();
 
             if (error || !data || normalizePhone(data.client_phone) !== normalizePhone(phone)) {
                 resultBox.className = "text-sm rounded-xl border p-4 bg-red-50 text-red-700 border-red-100";
-                resultBox.textContent = "Aucune commande trouvée avec ces informations.";
+                resultBox.textContent = "Aucune commande trouvée. Format attendu : EQ-2607-XXXX";
                 return;
             }
 
@@ -544,8 +546,14 @@ document.addEventListener('DOMContentLoaded', () => {
             })[data.status] || "Votre commande est bien reçue.";
 
             resultBox.className = "text-sm rounded-xl border p-4 bg-emerald-50 text-emerald-800 border-emerald-100";
-            resultBox.textContent = `Commande #${data.id} : ${readableStatus}`;
+            resultBox.textContent = `Commande ${data.numero_commande} : ${readableStatus}`;
         });
+    }
+
+    function getReservationDeadline() {
+        const deadline = new Date();
+        deadline.setDate(deadline.getDate() + RESERVATION_DAYS);
+        return deadline.toISOString();
     }
 
     // ==========================================
