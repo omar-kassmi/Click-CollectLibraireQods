@@ -3,8 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // 0. CONFIGURATION & MONTEUR SUPABASE
     // ==========================================
-    const SUPABASE_URL = "https://plctxriaczdmjwwhfwny.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_h7UcqRKK-nqchzlzwoALaQ_7N4RGR-R";
+    const SUPABASE_URL = "https://jgfkshsizrtwzqsdrhhp.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_Rdn2yMULDq05BGBV-X-zCA_S934mdEh";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const RESERVATION_DAYS = 5;
 
@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 5. CLIC SUR "SUIVANT" (👑 EXTRACTEUR ROBUSTE ANTI-0 DH)
+    // 5. CLIC SUR "SUIVANT" (👑 EXTRACTEUR ROBUSTE)
     // ==========================================
     const btnLoadPackEl = document.getElementById('btn-load-pack');
     if (btnLoadPackEl) {
@@ -230,11 +230,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                // Parcours et conversion stricte pour chaque objet trouvé
                 parsedItems = rawArray.map((item, index) => {
                     if (item && typeof item === 'object' && item.name) {
-                        
-                        // Extraction sécurisée du prix (parcours des clés en cas d'insensibilité à la casse)
                         let extractedPrice = 0;
                         if (item.price !== undefined && item.price !== null) {
                             extractedPrice = item.price;
@@ -274,7 +271,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // INTERFACE DES COMPOSANTS (CHIPS VERTES POUR LES PRIX)
     function renderPackChecklist(items) {
         const container = document.getElementById('liste-officielle-items');
         if (!container) return;
@@ -307,7 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const availabilityText = isOutOfStock ? 'Out of stock' : isAlmostOut ? 'Almost out' : '';
                 row.innerHTML = `
                     <div class="flex items-center gap-3 flex-grow min-w-0">
-                        <input type="checkbox" data-id="${item.id}" data-price="${item.price}" ${isOutOfStock ? 'disabled' : 'checked'} class="pack-item-checkbox w-4 h-4 rounded text-[#E75C25] accent-[#E75C25] focus:ring-0 cursor-pointer flex-shrink-0">
+                        <input type="checkbox" data-id="${item.id}" data-name="${item.name}" data-price="${item.price}" ${isOutOfStock ? 'disabled' : 'checked'} class="pack-item-checkbox w-4 h-4 rounded text-[#E75C25] accent-[#E75C25] focus:ring-0 cursor-pointer flex-shrink-0">
                         <span class="text-xs font-bold text-stone-800 tracking-tight truncate">${item.name}</span>
                     </div>
                     <span class="text-[11px] font-black ${isOutOfStock ? 'text-red-700 bg-red-50 border-red-100' : 'text-emerald-700 bg-emerald-50 border-emerald-200/50'} border px-2.5 py-0.5 rounded-lg flex-shrink-0">${availabilityText || item.price.toFixed(2) + ' DH'}</span>
@@ -369,91 +365,122 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // NAVIGATION DU PANIER DE COMMANDE
-    document.getElementById('btn-change-choice-top').addEventListener('click', () => {
-        updateStepper(1);
-        selectedPhotoFile = null;
-        isPhotoOrder = false;
-        if (statusText) statusText.innerText = "Prendre en photo / Charger l'image";
-        document.getElementById('pack-details-view').classList.add('hidden');
-        document.getElementById('checkout-form-container').classList.add('hidden');
-        document.getElementById('options-container').classList.remove('hidden');
-    });
+    const btnChangeChoice = document.getElementById('btn-change-choice-top');
+    if (btnChangeChoice) {
+        btnChangeChoice.addEventListener('click', () => {
+            updateStepper(1);
+            selectedPhotoFile = null;
+            isPhotoOrder = false;
+            if (statusText) statusText.innerText = "Prendre en photo / Charger l'image";
+            document.getElementById('pack-details-view').classList.add('hidden');
+            document.getElementById('checkout-form-container').classList.add('hidden');
+            document.getElementById('options-container').classList.remove('hidden');
+        });
+    }
 
-    document.getElementById('btn-next-to-form').addEventListener('click', () => {
-        updateStepper(3);
-        const formContainer = document.getElementById('checkout-form-container');
-        if (formContainer) {
-            formContainer.classList.remove('hidden');
-            formContainer.scrollIntoView({ behavior: 'smooth' });
-        }
-    });
+    const btnNextToForm = document.getElementById('btn-next-to-form');
+    if (btnNextToForm) {
+        btnNextToForm.addEventListener('click', () => {
+            updateStepper(3);
+            const formContainer = document.getElementById('checkout-form-container');
+            if (formContainer) {
+                formContainer.classList.remove('hidden');
+                formContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    }
 
-    document.getElementById('order-submit-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const submitButton = e.target.querySelector('button[type="submit"]');
-        const originalButtonText = submitButton ? submitButton.textContent : '';
-        const clientName = document.getElementById('client-name').value.trim();
-        const clientPhone = document.getElementById('client-phone').value.trim();
-        const clientEmail = document.getElementById('client-email').value.trim();
-        let payloadItems = [];
+    // ==========================================
+    // 6. SOUMISSION DU FORMULAIRE DE COMMANDE
+    // ==========================================
+    const orderForm = document.getElementById('order-submit-form');
+    if (orderForm) {
+        orderForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton ? submitButton.textContent : '🚀 Valider ma commande';
+            
+            const clientName = document.getElementById('client-name').value.trim();
+            const clientPhone = document.getElementById('client-phone').value.trim();
+            const clientEmail = document.getElementById('client-email') ? document.getElementById('client-email').value.trim() : '';
+            
+            let payloadItems = [];
 
-        if (!clientName || normalizePhone(clientPhone).length < 10 || !clientEmail.includes('@')) {
-            alert("Veuillez vérifier le nom, le téléphone et l'adresse e-mail.");
-            return;
-        }
-
-        if (submitButton) {
-            submitButton.disabled = true;
-            submitButton.textContent = "Envoi en cours...";
-            submitButton.classList.add('opacity-70', 'cursor-not-allowed');
-        }
-
-        if (isPhotoOrder) {
-            try {
-                payloadItems = await uploadSelectedPhoto();
-            } catch (err) {
-                console.error("Erreur upload photo :", err);
-                alert("Impossible d'envoyer la photo. Vérifiez la configuration Supabase Storage.");
+            if (!clientName || normalizePhone(clientPhone).length < 10) {
+                alert("Veuillez vérifier le nom complet et renseigner un numéro de téléphone valide.");
                 return;
             }
-        } else {
-            const checkedBoxes = document.querySelectorAll('.pack-item-checkbox:checked');
-            const activeIds = Array.from(checkedBoxes).map(cb => cb.getAttribute('data-id'));
-            payloadItems = selectedPackItems.filter(item => activeIds.includes(item.id));
-        }
 
-        const totalAmount = Array.isArray(payloadItems)
-            ? payloadItems.reduce((sum, item) => sum + (parseFloat(item.price) || 0), 0)
-            : 0;
-
-        const orderPayload = {
-            client_name: clientName,
-            client_phone: clientPhone,
-            client_email: clientEmail,
-            items: payloadItems, 
-            status: 'new',
-            reservation_deadline: getReservationDeadline(),
-            total_amount: totalAmount,
-            payment_method: 'cash_pickup'
-        };
-
-        const { data, error } = await supabaseClient.from('orders').insert([orderPayload]).select('id').single();
-        if (!error) { 
-            alert(`Parfait ! Votre commande a été reçue. Numéro de commande : #${data.id}`);
-            window.location.reload();
-            return;
-            alert("Parfait ! Votre commande a été reçue."); 
-            window.location.reload(); 
-        } else {
-            console.error("Erreur validation commande :", error);
-            alert("Erreur lors de la validation.");
+            // Changement d'état visuel du bouton de validation
             if (submitButton) {
-                submitButton.disabled = false;
-                submitButton.textContent = originalButtonText;
-                submitButton.classList.remove('opacity-70', 'cursor-not-allowed');
+                submitButton.disabled = true;
+                submitButton.textContent = "⏳ Envoi en cours...";
+                submitButton.classList.add('opacity-70', 'cursor-not-allowed');
             }
-        }
-    });
+
+            try {
+                if (isPhotoOrder) {
+                    try {
+                        const photoUrl = await uploadSelectedPhoto();
+                        payloadItems = [{ name: "Commande par photo", type: "photo_upload", url: photoUrl }];
+                    } catch (err) {
+                        console.error("Erreur critique d'upload photo Storage:", err);
+                        // Fallback : Enregistrer la commande même si le Storage échoue temporairement
+                        payloadItems = [{ name: "Commande par photo (Fichier non stocké)", type: "photo_upload", file_name: selectedPhotoFile.name }];
+                    }
+                } else {
+                    const checkedBoxes = document.querySelectorAll('.pack-item-checkbox:checked');
+                    payloadItems = Array.from(checkedBoxes).map(cb => ({
+                        id: cb.getAttribute('data-id'),
+                        name: cb.getAttribute('data-name'),
+                        price: parseFloat(cb.getAttribute('data-price')) || 0
+                    }));
+
+                    if (payloadItems.length === 0) {
+                        alert("Veuillez sélectionner au moins un article de la liste officielle.");
+                        if (submitButton) {
+                            submitButton.disabled = false;
+                            submitButton.textContent = originalButtonText;
+                            submitButton.classList.remove('opacity-70', 'cursor-not-allowed');
+                        }
+                        return;
+                    }
+                }
+
+                const totalAmount = isPhotoOrder ? 0 : payloadItems.reduce((sum, item) => sum + (item.price || 0), 0);
+
+                // Payload aligné avec la structure SQL finale de votre Supabase
+                const orderPayload = {
+                    client_name: clientName,
+                    client_phone: clientPhone,
+                    client_email: clientEmail || null,
+                    items: payloadItems, 
+                    status: 'new',
+                    reservation_deadline: getReservationDeadline(),
+                    total_amount: totalAmount,
+                    payment_method: 'cash_pickup'
+                };
+
+                const { data, error } = await supabaseClient.from('orders').insert([orderPayload]).select('id').single();
+                
+                if (error) throw error;
+
+                alert(`✨ Parfait ! Votre commande a été reçue avec succès.\nNuméro de commande : #${data.id}`);
+                window.location.reload(); 
+
+            } catch (err) {
+                console.error("Erreur lors de la validation :", err);
+                alert("Une erreur est survenue lors de l'envoi de la commande : " + err.message);
+                
+                // Réactivation du bouton en cas d'erreur de réseau ou Supabase
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalButtonText;
+                    submitButton.classList.remove('opacity-70', 'cursor-not-allowed');
+                }
+            }
+        });
+    }
 
     function normalizePhone(phone) {
         const digits = String(phone || '').replace(/\D/g, '');
@@ -468,6 +495,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return deadline.toISOString();
     }
 
+    // ==========================================
+    // 7. SUIVI DE COMMANDE CLIENT
+    // ==========================================
     const trackingForm = document.getElementById('order-tracking-form');
     if (trackingForm) {
         trackingForm.addEventListener('submit', async (e) => {
@@ -476,6 +506,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const resultBox = document.getElementById('tracking-result');
             const orderId = document.getElementById('tracking-order-id').value.trim().replace('#', '');
             const phone = document.getElementById('tracking-phone').value.trim();
+
+            if (!resultBox) return;
 
             resultBox.className = "text-sm rounded-xl border p-4 bg-stone-50 text-stone-600";
             resultBox.textContent = "Recherche en cours...";
@@ -498,11 +530,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            let readableStatus = data.status === 'notifie'
-                ? "Votre commande est prête. Vous pouvez contacter ou visiter la boutique."
-                : "Votre commande est bien reçue et en cours de préparation.";
-
-            readableStatus = ({
+            let readableStatus = ({
                 en_attente: "Votre commande est bien reçue et sera traitée bientôt.",
                 new: "Votre commande est bien reçue et sera traitée bientôt.",
                 preparation: "Votre commande est en cours de préparation.",
@@ -521,7 +549,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 6. ANIMATIONS ET COMPORTEMENT DE LA NAVBAR
+    // 8. ANIMATIONS ET COMPORTEMENT DE LA NAVBAR
     // ==========================================
     const mainHeader = document.getElementById('main-header');
     const scrollBtn = document.getElementById('scroll-to-top');

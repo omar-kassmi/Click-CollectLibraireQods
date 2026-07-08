@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const SUPABASE_URL = "https://plctxriaczdmjwwhfwny.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_h7UcqRKK-nqchzlzwoALaQ_7N4RGR-R";
+    // ==========================================
+    // 0. CONFIGURATION & SYNCHRONISATION SUPABASE
+    // ==========================================
+    const SUPABASE_URL = "https://jgfkshsizrtwzqsdrhhp.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_Rdn2yMULDq05BGBV-X-zCA_S934mdEh";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const RESERVATION_DAYS = 5;
@@ -183,10 +186,26 @@ document.addEventListener('DOMContentLoaded', () => {
         return toDate(order.reservation_deadline) || addDays(getCreatedDate(order), RESERVATION_DAYS);
     }
 
+    // Correction de la recherche et filtrage pour prendre en compte client_email
+    function getFilteredOrders() {
+        const searchTerm = document.getElementById('orders-search')?.value.trim().toLowerCase() || '';
+        const statusFilter = document.getElementById('orders-status-filter')?.value || '';
+        const dateFilter = document.getElementById('orders-date-filter')?.value || '';
+
+        return currentOrders.filter(order => {
+            const status = normalizeStatus(order.status);
+            const created = getCreatedDate(order);
+            // ALIGNEMENT : order.client_email à la place de order.email
+            const haystack = `#${order.id} ${order.client_name || ''} ${order.client_phone || ''} ${order.client_email || ''}`.toLowerCase();
+            const matchesSearch = !searchTerm || haystack.includes(searchTerm);
+            const matchesStatus = !statusFilter || status === statusFilter;
+            const matchesDate = !dateFilter || created.toISOString().slice(0, 10) === dateFilter;
+            return matchesSearch && matchesStatus && matchesDate;
+        });
+    }
+
     function isSameDay(a, b) {
-        return a.getFullYear() === b.getFullYear()
-            && a.getMonth() === b.getMonth()
-            && a.getDate() === b.getDate();
+        return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
     }
 
     function isSameMonth(a, b) {
@@ -208,22 +227,6 @@ document.addEventListener('DOMContentLoaded', () => {
             await supabaseClient.from('orders').update({ status: 'expired' }).eq('id', order.id);
             order.status = 'expired';
         }
-    }
-
-    function getFilteredOrders() {
-        const searchTerm = document.getElementById('orders-search')?.value.trim().toLowerCase() || '';
-        const statusFilter = document.getElementById('orders-status-filter')?.value || '';
-        const dateFilter = document.getElementById('orders-date-filter')?.value || '';
-
-        return currentOrders.filter(order => {
-            const status = normalizeStatus(order.status);
-            const created = getCreatedDate(order);
-            const haystack = `#${order.id} ${order.client_name || ''} ${order.client_phone || ''} ${order.client_email || ''}`.toLowerCase();
-            const matchesSearch = !searchTerm || haystack.includes(searchTerm);
-            const matchesStatus = !statusFilter || status === statusFilter;
-            const matchesDate = !dateFilter || created.toISOString().slice(0, 10) === dateFilter;
-            return matchesSearch && matchesStatus && matchesDate;
-        });
     }
 
     function renderDashboard() {
@@ -325,13 +328,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const deadline = getDeadline(order);
             const days = daysUntil(deadline);
             const items = parseItems(order.items);
-            const photo = typeof order.items === 'string' && order.items.includes('http');
-            const content = photo
-                ? `<a href="${escapeHtml(order.items)}" target="_blank" class="text-blue-600 hover:underline font-medium">Ouvrir la photo</a>`
+            
+            // Correction de la détection de la photo d'upload
+            const photoItem = items.find(i => i.type === 'photo_upload' || i.url);
+            const content = photoItem
+                ? `<a href="${escapeHtml(photoItem.url)}" target="_blank" class="text-blue-600 hover:underline font-bold flex items-center gap-1">📸 Voir l'image</a>`
                 : `<span class="font-bold text-stone-700">${items.length} articles (${money(orderTotal(order))})</span>`;
-            const deadlineText = status === 'expired'
-                ? 'Expired'
-                : `${deadline.toLocaleDateString('fr-FR')} (${days}j)`;
+                
+            const deadlineText = status === 'expired' ? 'Expired' : `${deadline.toLocaleDateString('fr-FR')} (${days}j)`;
 
             return `
                 <tr class="hover:bg-gray-50 transition">
@@ -384,12 +388,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadOrders() {
         const tbody = document.getElementById('table-orders-body');
-        tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-400">Chargement...</td></tr>`;
+        if (tbody) tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-400">Chargement...</td></tr>`;
 
         const { data, error } = await supabaseClient.from('orders').select('*').order('id', { ascending: false });
         if (error) {
             console.error(error);
-            tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-red-500">Erreur de chargement : ${escapeHtml(error.message)}</td></tr>`;
+            if (tbody) tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-red-500">Erreur de chargement : ${escapeHtml(error.message)}</td></tr>`;
             return;
         }
 
@@ -417,19 +421,21 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('orders-search')?.addEventListener('input', renderOrdersTable);
     document.getElementById('orders-status-filter')?.addEventListener('change', renderOrdersTable);
     document.getElementById('orders-date-filter')?.addEventListener('change', renderOrdersTable);
+    
     document.getElementById('btn-export-orders')?.addEventListener('click', () => {
         const rows = [['id', 'client', 'phone', 'email', 'status', 'deadline', 'total']];
         getFilteredOrders().forEach(order => rows.push([
             order.id,
             order.client_name,
             order.client_phone,
-            order.client_email,
+            order.client_email, // ALIGNEMENT
             normalizeStatus(order.status),
             getDeadline(order).toISOString().slice(0, 10),
             orderTotal(order)
         ]));
         downloadCsv('orders.csv', rows);
     });
+
     document.getElementById('btn-export-financial')?.addEventListener('click', () => {
         const rows = [['period', 'orders', 'revenue']];
         const grouped = {};
@@ -442,6 +448,7 @@ document.addEventListener('DOMContentLoaded', () => {
         Object.entries(grouped).forEach(([period, value]) => rows.push([period, value.orders, value.revenue]));
         downloadCsv('financial-report.csv', rows);
     });
+
     document.getElementById('btn-export-best-products')?.addEventListener('click', () => {
         const rows = [['product', 'quantity', 'revenue']];
         getProductStats().products.forEach(item => rows.push([item.name, item.quantity, item.revenue]));
@@ -466,14 +473,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    document.getElementById('form-site-settings').addEventListener('submit', async (event) => {
+    document.getElementById('form-site-settings')?.addEventListener('submit', async (event) => {
         event.preventDefault();
         await supabaseClient.from('site_settings').update({ value: document.getElementById('set-rentree-enabled').value }).eq('key', 'rentree_enabled');
         await supabaseClient.from('site_settings').update({ value: document.getElementById('set-rentree-title').value }).eq('key', 'rentree_title');
         alert("Visibilité de l'onglet Rentrée mise à jour.");
     });
 
-    document.getElementById('form-home-contacts').addEventListener('submit', async (event) => {
+    document.getElementById('form-home-contacts')?.addEventListener('submit', async (event) => {
         event.preventDefault();
         const updates = {
             contact_address: document.getElementById('set-contact-address').value,
@@ -492,6 +499,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function renderAdminPreviewList() {
+        if (!previewBox) return;
         if (!currentFormItems.length) {
             previewBox.innerHTML = "Aucun article ajouté pour le moment.";
             return;
@@ -510,25 +518,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }).join('');
     }
 
-    btnAddItem.addEventListener('click', () => {
-        const name = inputItemName.value.trim();
-        const price = parseFloat(inputItemPrice.value);
-        const category = selectItemCategory.value;
-        const availability = inputItemAvailability.value || 'available';
-        if (!name || Number.isNaN(price) || price < 0) {
-            alert("Veuillez saisir un article et un prix valide.");
-            return;
-        }
-        const item = { id: editingItemId || `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, name, category, price, availability };
-        if (editingItemId) currentFormItems = currentFormItems.map(entry => entry.id === editingItemId ? item : entry);
-        else currentFormItems.push(item);
-        editingItemId = null;
-        btnAddItem.textContent = "+ Insérer l'article au sac temporaire";
-        inputItemName.value = '';
-        inputItemPrice.value = '';
-        inputItemAvailability.value = 'available';
-        renderAdminPreviewList();
-    });
+    if (btnAddItem) {
+        btnAddItem.addEventListener('click', () => {
+            const name = inputItemName.value.trim();
+            const price = parseFloat(inputItemPrice.value);
+            const category = selectItemCategory.value;
+            const availability = inputItemAvailability.value || 'available';
+            if (!name || Number.isNaN(price) || price < 0) {
+                alert("Veuillez saisir un article et un prix valide.");
+                return;
+            }
+            const item = { id: editingItemId || `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, name, category, price, availability };
+            if (editingItemId) currentFormItems = currentFormItems.map(entry => entry.id === editingItemId ? item : entry);
+            else currentFormItems.push(item);
+            editingItemId = null;
+            btnAddItem.textContent = "+ Insérer l'article au sac temporaire";
+            inputItemName.value = '';
+            inputItemPrice.value = '';
+            inputItemAvailability.value = 'available';
+            renderAdminPreviewList();
+        });
+    }
 
     window.removeSingleItemFromPack = function(id) {
         currentFormItems = currentFormItems.filter(item => item.id !== id);
@@ -564,14 +574,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function resetPackForm() {
         editingListId = null;
         editingItemId = null;
-        formAdd.reset();
+        if (formAdd) formAdd.reset();
         currentFormItems = [];
-        inputItemAvailability.value = 'available';
+        if (inputItemAvailability) inputItemAvailability.value = 'available';
         renderAdminPreviewList();
-        btnAddItem.textContent = "+ Insérer l'article au sac temporaire";
-        packFormTitle.textContent = "📦 Créer un pack d'objets officiel";
-        btnSavePack.textContent = "Mettre en ligne le Pack d'objets";
-        btnCancelEditPack.classList.add('hidden');
+        if (btnAddItem) btnAddItem.textContent = "+ Insérer l'article au sac temporaire";
+        if (packFormTitle) packFormTitle.textContent = "📦 Créer un pack d'objets officiel";
+        if (btnSavePack) btnSavePack.textContent = "Mettre en ligne le Pack d'objets";
+        if (btnCancelEditPack) btnCancelEditPack.classList.add('hidden');
     }
 
     window.startEditSchoolList = function(id) {
@@ -588,15 +598,15 @@ document.addEventListener('DOMContentLoaded', () => {
             availability: item.availability || 'available'
         }));
         renderAdminPreviewList();
-        packFormTitle.textContent = "✎ Modifier le pack d'objets";
-        btnSavePack.textContent = "Enregistrer les modifications";
-        btnCancelEditPack.classList.remove('hidden');
-        formAdd.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (packFormTitle) packFormTitle.textContent = "✎ Modifier le pack d'objets";
+        if (btnSavePack) btnSavePack.textContent = "Enregistrer les modifications";
+        if (btnCancelEditPack) btnCancelEditPack.classList.remove('hidden');
+        if (formAdd) formAdd.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
 
-    btnCancelEditPack.addEventListener('click', resetPackForm);
+    btnCancelEditPack?.addEventListener('click', resetPackForm);
 
-    formAdd.addEventListener('submit', async (event) => {
+    formAdd?.addEventListener('submit', async (event) => {
         event.preventDefault();
         const school = document.getElementById('cfg-school').value.trim();
         const level = document.getElementById('cfg-level').value.trim();
@@ -619,6 +629,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadSchoolLists() {
         const container = document.getElementById('config-lists-container');
+        if (!container) return;
         container.innerHTML = `<p class="text-gray-400 text-xs">Chargement...</p>`;
         const { data, error } = await supabaseClient.from('school_lists').select('*');
         if (error) {
