@@ -25,6 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     let currentOrders = [];
+    let currentOrdersPage = 1;
+    const ORDERS_PER_PAGE = 10;
     let currentFormItems = [];
     let editingListId = null;
     let editingItemId = null;
@@ -39,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnConfig = document.getElementById('nav-config');
     const btnTabsConfig = document.getElementById('nav-tabs-config');
     const paneOrders = document.getElementById('pane-orders');
+    const paneMetrics = document.getElementById('pane-metrics');
     const paneConfig = document.getElementById('pane-config');
     const paneTabsConfig = document.getElementById('pane-tabs-config');
 
@@ -52,6 +55,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const packFormTitle = document.getElementById('pack-form-title');
     const btnSavePack = document.getElementById('btn-save-pack');
     const btnCancelEditPack = document.getElementById('btn-cancel-edit-pack');
+
+    // ==========================================
+    // SIDEBAR COLLAPSIBLE
+    // ==========================================
+    const sidebar = document.getElementById('admin-sidebar');
+    const sidebarToggle = document.getElementById('btn-sidebar-toggle');
+    const sidebarToggleIcon = document.getElementById('sidebar-toggle-icon');
+
+    function setSidebarCollapsed(collapsed) {
+        if (!sidebar) return;
+        sidebar.classList.toggle('w-56', !collapsed);
+        sidebar.classList.toggle('w-24', collapsed);
+        sidebar.querySelectorAll('.sidebar-label').forEach(el => el.classList.toggle('hidden', collapsed));
+        sidebar.querySelectorAll('.sidebar-icon-only').forEach(el => el.classList.toggle('hidden', !collapsed));
+        const brandBlock = sidebar.querySelector('.admin-brand-block');
+        const logo = sidebar.querySelector('.admin-sidebar-logo');
+        if (brandBlock) {
+            brandBlock.classList.toggle('items-center', collapsed);
+            brandBlock.classList.toggle('items-start', !collapsed);
+        }
+        if (logo) logo.classList.toggle('mx-auto', collapsed);
+        sidebar.querySelectorAll('nav button').forEach(btn => {
+            btn.classList.toggle('justify-center', collapsed);
+            btn.classList.toggle('space-x-3', !collapsed);
+            btn.classList.toggle('space-x-0', collapsed);
+            btn.title = collapsed ? (btn.textContent || '').trim() : '';
+        });
+        if (sidebarToggleIcon) sidebarToggleIcon.textContent = collapsed ? '›' : '‹';
+        localStorage.setItem('elqods-admin-sidebar-collapsed', collapsed ? 'true' : 'false');
+    }
+
+    sidebarToggle?.addEventListener('click', () => {
+        const collapsed = !sidebar?.classList.contains('w-24');
+        setSidebarCollapsed(collapsed);
+    });
+
+    document.getElementById('btn-top-refresh')?.addEventListener('click', () => loadOrders());
+
+    setSidebarCollapsed(localStorage.getItem('elqods-admin-sidebar-collapsed') === 'true');
+
 
     function showLogin(message = '') {
         loginSection.classList.remove('hidden');
@@ -91,6 +134,10 @@ document.addEventListener('DOMContentLoaded', () => {
         await supabaseClient.auth.signOut();
         showLogin();
     });
+    document.getElementById('btn-admin-logout-top')?.addEventListener('click', async () => {
+        await supabaseClient.auth.signOut();
+        showLogin();
+    });
 
     async function initAuth() {
         const { data } = await supabaseClient.auth.getSession();
@@ -104,24 +151,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function switchAdminPane(target) {
-        paneOrders.classList.toggle('hidden', target !== 'orders');
-        paneConfig.classList.toggle('hidden', target !== 'config');
-        paneTabsConfig.classList.toggle('hidden', target !== 'settings');
+        paneOrders?.classList.toggle('hidden', target !== 'orders');
+        paneMetrics?.classList.toggle('hidden', target !== 'metrics');
+        paneConfig?.classList.toggle('hidden', target !== 'config');
+        paneTabsConfig?.classList.toggle('hidden', target !== 'settings');
 
-        const active = "w-full text-left px-4 py-3 rounded-xl bg-white/10 text-white flex items-center space-x-3 transition";
-        const inactive = "w-full text-left px-4 py-3 rounded-xl text-orange-100 hover:bg-white/5 hover:text-white flex items-center space-x-3 transition";
-        btnOrders.className = target === 'orders' ? active : inactive;
-        btnConfig.className = target === 'config' ? active : inactive;
-        btnTabsConfig.className = target === 'settings' ? active : inactive;
-
+        document.querySelectorAll('.admin-float-link').forEach(button => {
+            const activeFloat = button.dataset.pane === target;
+            button.classList.toggle('bg-white/15', activeFloat);
+            button.classList.toggle('shadow-inner', activeFloat);
+            button.classList.toggle('hover:bg-white/10', !activeFloat);
+        });
         if (target === 'orders') loadOrders();
+        if (target === 'metrics') loadOrders();
         if (target === 'config') loadSchoolLists();
         if (target === 'settings') loadSiteSettings();
     }
 
-    btnOrders.addEventListener('click', () => switchAdminPane('orders'));
-    btnConfig.addEventListener('click', () => switchAdminPane('config'));
-    btnTabsConfig.addEventListener('click', () => switchAdminPane('settings'));
+    btnOrders?.addEventListener('click', () => switchAdminPane('orders'));
+    btnConfig?.addEventListener('click', () => switchAdminPane('config'));
+    btnTabsConfig?.addEventListener('click', () => switchAdminPane('settings'));
+    document.querySelectorAll('.admin-float-link').forEach(button => {
+        button.addEventListener('click', () => switchAdminPane(button.dataset.pane));
+    });
 
     function escapeHtml(value) {
         return String(value ?? '').replace(/[&<>"']/g, char => ({
@@ -253,10 +305,28 @@ document.addEventListener('DOMContentLoaded', () => {
             ['Revenue month', money(revenueMonth)]
         ];
 
-        document.getElementById('dashboard-cards').innerHTML = cards.map(([label, value]) => `
-            <div class="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
-                <div class="text-[11px] text-gray-400 font-bold uppercase">${label}</div>
-                <div class="text-xl font-black text-gray-900 mt-1">${value}</div>
+        const gradients = [
+            'from-sky-400 to-blue-600',
+            'from-[#E75C25] to-orange-700',
+            'from-emerald-400 to-green-600',
+            'from-violet-400 to-indigo-600',
+            'from-rose-400 to-red-600',
+            'from-slate-500 to-slate-800',
+            'from-amber-400 to-orange-500',
+            'from-cyan-400 to-blue-500'
+        ];
+        const icons = ['📦', '⏳', '✅', '🛍️', '✕', '⌛', '💰', '📈'];
+        document.getElementById('dashboard-cards').innerHTML = cards.map(([label, value], index) => `
+            <div class="relative overflow-hidden rounded-[1.7rem] p-4 min-h-[94px] text-white shadow-lg bg-gradient-to-r ${gradients[index % gradients.length]}">
+                <div class="absolute -right-8 -bottom-10 w-32 h-32 bg-white/15 rounded-full"></div>
+                <div class="absolute right-8 top-3 w-12 h-12 bg-white/10 rounded-2xl rotate-12"></div>
+                <div class="relative flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-white/20 border border-white/25 flex items-center justify-center text-xl">${icons[index % icons.length]}</div>
+                    <div>
+                        <div class="text-[11px] text-white/80 font-bold uppercase">${label}</div>
+                        <div class="text-2xl font-black mt-0.5">${value}</div>
+                    </div>
+                </div>
             </div>
         `).join('');
     }
@@ -317,16 +387,38 @@ document.addEventListener('DOMContentLoaded', () => {
         ].map(([label, value]) => `<div class="bg-gray-50 rounded-xl p-3"><b>${label}</b><div>${value}</div></div>`).join('');
     }
 
+    function renderOrdersPagination(totalOrders, totalPages) {
+        const container = document.getElementById('orders-pagination');
+        if (!container) return;
+        if (!totalOrders) {
+            container.innerHTML = `<div class="text-xs text-gray-400 font-semibold">Aucune commande à paginer</div>`;
+            return;
+        }
+        const start = (currentOrdersPage - 1) * ORDERS_PER_PAGE + 1;
+        const end = Math.min(currentOrdersPage * ORDERS_PER_PAGE, totalOrders);
+        container.innerHTML = `
+            <div class="text-xs text-gray-500 font-semibold">Affichage ${start}-${end} sur ${totalOrders} commandes</div>
+            <div class="flex items-center gap-2">
+                <button id="btn-orders-prev" class="px-3 py-2 rounded-xl border border-gray-200 text-xs font-bold ${currentOrdersPage <= 1 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-50'}" ${currentOrdersPage <= 1 ? 'disabled' : ''}>Précédent</button>
+                <span class="px-3 py-2 rounded-xl bg-[#E75C25] text-white text-xs font-black">${currentOrdersPage} / ${totalPages}</span>
+                <button id="btn-orders-next" class="px-3 py-2 rounded-xl border border-gray-200 text-xs font-bold ${currentOrdersPage >= totalPages ? 'text-gray-300 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-50'}" ${currentOrdersPage >= totalPages ? 'disabled' : ''}>Suivant</button>
+            </div>`;
+        document.getElementById('btn-orders-prev')?.addEventListener('click', () => { if (currentOrdersPage > 1) { currentOrdersPage -= 1; renderOrdersTable(); } });
+        document.getElementById('btn-orders-next')?.addEventListener('click', () => { if (currentOrdersPage < totalPages) { currentOrdersPage += 1; renderOrdersTable(); } });
+    }
+
     function renderOrdersTable() {
         const tbody = document.getElementById('table-orders-body');
-        const orders = getFilteredOrders();
-
+        const filteredOrders = getFilteredOrders();
+        const totalPages = Math.max(1, Math.ceil(filteredOrders.length / ORDERS_PER_PAGE));
+        if (currentOrdersPage > totalPages) currentOrdersPage = totalPages;
+        const orders = filteredOrders.slice((currentOrdersPage - 1) * ORDERS_PER_PAGE, currentOrdersPage * ORDERS_PER_PAGE);
         if (!tbody) return;
+        renderOrdersPagination(filteredOrders.length, totalPages);
         if (!orders.length) {
             tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-400">Aucune commande.</td></tr>`;
             return;
         }
-
         tbody.innerHTML = orders.map(order => {
             const status = normalizeStatus(order.status);
             const deadline = getDeadline(order);
@@ -355,7 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <button onclick="window.toggleMenu(this)" class="text-gray-400 hover:text-gray-600 p-2">
                                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
                             </button>
-                            <div class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-2xl z-[100] p-2 text-left menu-dropdown">
+                            <div class="hidden absolute right-0 mt-2 w-52 bg-white border border-gray-200 rounded-xl shadow-2xl z-[9999] p-2 text-left menu-dropdown">
                                 <button class="btn-notify w-full text-left px-4 py-2 text-sm hover:bg-gray-50 text-blue-600" data-id="${order.id}">WhatsApp</button>
                                 <hr class="my-1 border-gray-100">
                                 <div class="px-4 py-2">
@@ -437,6 +529,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         currentOrders = data || [];
+        currentOrdersPage = 1;
         await expireOverdueOrders(currentOrders);
         renderDashboard();
         renderSalesAndFinance();
@@ -457,9 +550,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     document.getElementById('btn-refresh-orders')?.addEventListener('click', loadOrders);
-    document.getElementById('orders-search')?.addEventListener('input', renderOrdersTable);
-    document.getElementById('orders-status-filter')?.addEventListener('change', renderOrdersTable);
-    document.getElementById('orders-date-filter')?.addEventListener('change', renderOrdersTable);
+    document.getElementById('orders-search')?.addEventListener('input', () => { currentOrdersPage = 1; renderOrdersTable(); });
+    document.getElementById('orders-status-filter')?.addEventListener('change', () => { currentOrdersPage = 1; renderOrdersTable(); });
+    document.getElementById('orders-date-filter')?.addEventListener('change', () => { currentOrdersPage = 1; renderOrdersTable(); });
     
     document.getElementById('btn-export-orders')?.addEventListener('click', () => {
         const rows = [['id', 'numero_commande', 'client', 'phone', 'email', 'status', 'payment_status', 'qr_code', 'deadline', 'total']];
@@ -714,10 +807,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Gestion du menu (Ouvrir/Fermer)
     window.toggleMenu = function(button) {
-        const menu = button.nextElementSibling;
-        // Ferme les autres menus ouverts
-        document.querySelectorAll('.menu-dropdown').forEach(m => {
-            if (m !== menu) m.classList.add('hidden');
+        const menu = button.closest('.relative')?.querySelector('.menu-dropdown');
+        if (!menu) return;
+        document.querySelectorAll('.menu-dropdown').forEach(dropdown => {
+            if (dropdown !== menu) dropdown.classList.add('hidden');
         });
         menu.classList.toggle('hidden');
     };
