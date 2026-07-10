@@ -467,6 +467,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (error) throw error;
 
+                if (data && data.id) {
+                    await supabaseClient.from('order_history').insert([{ order_id: data.id, status: 'new' }]);
+                }
                 if (data && data.numero_commande) {
                     const orderReference = data.numero_commande;
                     const encodedName = encodeURIComponent(clientName);
@@ -497,59 +500,94 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 7. SUIVI DE COMMANDE CLIENT (CORRIGÉ)
+    // 7. SUIVI DE COMMANDE CLIENT AVANCÉ + TIMELINE
     // ==========================================
+    function parseTrackingItems(items) {
+        if (!items) return [];
+        if (Array.isArray(items)) return items;
+        try { return JSON.parse(items); } catch { return []; }
+    }
+
+    function normalizeTrackingStatus(status) {
+        return ({ en_attente: 'new', preparation: 'preparing', prete: 'ready', notifie: 'notified' })[status] || status || 'new';
+    }
+
+    function formatTrackingDate(value) {
+        if (!value) return '-';
+        return new Date(value).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    function buildOrderTimeline(order, history = []) {
+        const steps = [
+            { key: 'new', label: 'Commande' },
+            { key: 'preparing', label: 'Préparation' },
+            { key: 'ready', label: 'Prête au retrait' },
+            { key: 'notified', label: 'Notification' },
+            { key: 'collected', label: 'Récupérée' }
+        ];
+        const currentStatus = normalizeTrackingStatus(order.status);
+        const currentIndex = steps.findIndex(step => step.key === currentStatus);
+        const eventMap = { new: order.created_at || order.inserted_at || null };
+        history.forEach(event => {
+            const key = normalizeTrackingStatus(event.status);
+            if (!eventMap[key]) eventMap[key] = event.created_at;
+        });
+        const items = steps.map((step, index) => {
+            const doneByStatus = currentIndex >= 0 && index <= currentIndex;
+            const doneByHistory = !!eventMap[step.key];
+            const done = doneByStatus || doneByHistory;
+            return `<div class="relative flex flex-col items-center text-center min-w-[118px] flex-1 z-10">
+                <div class="w-11 h-11 rounded-full flex items-center justify-center font-black text-sm shadow-sm border-4 border-white ${done ? 'bg-emerald-400 text-white' : 'bg-stone-200 text-stone-400'}">✓</div>
+                <div class="font-black text-stone-800 text-xs sm:text-sm mt-3 leading-tight">${step.label}</div>
+                <div class="text-[11px] text-stone-500 mt-1 whitespace-nowrap">${done ? formatTrackingDate(eventMap[step.key]) : '-'}</div>
+            </div>`;
+        }).join('');
+        const progressIndex = Math.max(currentIndex, 0);
+        const progressWidth = steps.length > 1 ? Math.min(100, Math.max(0, (progressIndex / (steps.length - 1)) * 100)) : 0;
+        return `<div class="w-full overflow-x-auto pb-2 hide-scrollbar">
+            <div class="relative min-w-[620px] px-2 pt-2">
+                <div class="absolute top-[24px] left-[60px] right-[60px] h-1 bg-stone-200 rounded-full"></div>
+                <div class="absolute top-[24px] left-[60px] h-1 bg-emerald-400 rounded-full" style="width: calc((100% - 120px) * ${progressWidth / 100});"></div>
+                <div class="relative flex items-start justify-between gap-2">${items}</div>
+            </div>
+        </div>`;
+    }
+
     const trackingForm = document.getElementById('order-tracking-form');
     if (trackingForm) {
         trackingForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-
             const resultBox = document.getElementById('tracking-result');
             const orderId = document.getElementById('tracking-order-id').value.trim().toUpperCase().replace('#', '');
             const phone = document.getElementById('tracking-phone').value.trim();
-
             if (!resultBox) return;
-
-            resultBox.className = "text-sm rounded-xl border p-4 bg-stone-50 text-stone-600";
-            resultBox.textContent = "Recherche en cours...";
-
+            resultBox.classList.remove('hidden');
+            resultBox.className = "text-sm rounded-3xl border border-stone-200 p-5 bg-white shadow-sm";
+            resultBox.innerHTML = "🔎 Recherche de votre commande...";
             if (!orderId || !phone) {
-                resultBox.className = "text-sm rounded-xl border p-4 bg-red-50 text-red-700 border-red-100";
-                resultBox.textContent = "Veuillez saisir le numéro de commande et le téléphone.";
+                resultBox.className = "text-sm rounded-2xl border p-4 bg-red-50 text-red-700 border-red-100";
+                resultBox.innerHTML = "Veuillez saisir le numéro de commande et le téléphone.";
                 return;
             }
-
-            // SUIVI CORRIGÉ : Recherche ciblée sur la colonne unique textuelle numero_commande
-            const { data, error } = await supabaseClient
-                .from('orders')
-                .select('numero_commande, client_phone, status')
-                .eq('numero_commande', orderId)
-                .maybeSingle();
-
+            const { data, error } = await supabaseClient.from('orders').select('*').eq('numero_commande', orderId).maybeSingle();
             if (error || !data || normalizePhone(data.client_phone) !== normalizePhone(phone)) {
-                resultBox.className = "text-sm rounded-xl border p-4 bg-red-50 text-red-700 border-red-100";
-                resultBox.textContent = "Aucune commande trouvée. Format attendu : EQ-2607-XXXX";
+                resultBox.className = "text-sm rounded-2xl border p-4 bg-red-50 text-red-700 border-red-100";
+                resultBox.innerHTML = "Aucune commande trouvée. Vérifiez les informations saisies.";
                 return;
             }
-
-            let readableStatus = ({
-                en_attente: "Votre commande est bien reçue et sera traitée bientôt.",
-                new: "Votre commande est bien reçue et sera traitée bientôt.",
-                preparation: "Votre commande est en cours de préparation.",
-                preparing: "Votre commande est en cours de préparation.",
-                prete: "Votre commande est prête. Vous pouvez passer à la boutique.",
-                ready: "Votre commande est prête. Vous pouvez passer à la boutique.",
-                notifie: "Votre commande est prête et une notification a été envoyée.",
-                collected: "Votre commande a été récupérée. Merci pour votre visite.",
-                cancelled: "Cette commande a été annulée.",
-                expired: "Cette réservation a expiré. Veuillez contacter la boutique."
-            })[data.status] || "Votre commande est bien reçue.";
-
-            resultBox.className = "text-sm rounded-xl border p-4 bg-emerald-50 text-emerald-800 border-emerald-100";
-            resultBox.textContent = `Commande ${data.numero_commande} : ${readableStatus}`;
+            const { data: historyData } = await supabaseClient.from('order_history').select('*').eq('order_id', data.id).order('created_at', { ascending: true });
+            const history = historyData || [];
+            const items = parseTrackingItems(data.items);
+            const totalAmount = Number(data.total_amount ?? items.reduce((sum, item) => sum + (Number(item.price) || 0), 0));
+            const paymentStatus = data.payment_status || 'unpaid';
+            const statusMap = { en_attente: '🟠 Commande reçue', new: '🟠 Commande reçue', preparation: '🔵 En préparation', preparing: '🔵 En préparation', prete: '🟢 Prête au retrait', ready: '🟢 Prête au retrait', notifie: '✅ Notification envoyée', notified: '✅ Notification envoyée', collected: '✅ Commande récupérée', cancelled: '❌ Commande annulée', expired: '⚫ Réservation expirée' };
+            const readableStatus = statusMap[data.status] || data.status || 'Commande reçue';
+            const photoOrder = items.some(i => i.type === 'photo_upload' || i.url || i.photo_url);
+            const itemsHtml = !photoOrder && items.length > 0 ? items.map(item => `<div class="flex justify-between items-center gap-3 p-3 rounded-xl bg-stone-50 border border-stone-100"><span class="font-medium text-stone-700 truncate">${item.name || '-'}</span><span class="font-bold text-[#E75C25] flex-shrink-0">${(Number(item.price) || 0).toFixed(2)} DH</span></div>`).join('') : `<div class="bg-orange-50 border border-orange-100 rounded-xl p-4 text-orange-700">📸 Cette commande a été passée par photo. Notre équipe prépare actuellement votre liste.</div>`;
+            resultBox.className = "bg-white border border-stone-200 rounded-3xl p-6 shadow-sm";
+            resultBox.innerHTML = `<div class="space-y-8"><div class="border-b border-stone-100 pb-4"><h3 class="text-2xl font-black text-[#E75C25]">${data.numero_commande}</h3><p class="text-sm text-stone-500">Informations détaillées de votre commande</p></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="bg-stone-50 rounded-xl p-4"><div class="text-xs uppercase text-stone-400">Nom du client</div><div class="font-bold text-stone-800 mt-1">${data.client_name || '-'}</div></div><div class="bg-stone-50 rounded-xl p-4"><div class="text-xs uppercase text-stone-400">Téléphone</div><div class="font-bold text-stone-800 mt-1">${data.client_phone || '-'}</div></div><div class="bg-stone-50 rounded-xl p-4"><div class="text-xs uppercase text-stone-400">Adresse e-mail</div><div class="font-bold text-stone-800 mt-1 break-all">${data.client_email || '-'}</div></div><div class="bg-stone-50 rounded-xl p-4"><div class="text-xs uppercase text-stone-400">Nombre d'articles</div><div class="font-bold text-stone-800 mt-1">${items.length}</div></div></div><div><h4 class="font-black text-[#E75C25] mb-4">Liste commandée</h4><div class="space-y-2">${itemsHtml}</div></div><div class="grid grid-cols-1 md:grid-cols-3 gap-4"><div class="bg-orange-50 border border-orange-100 rounded-xl p-4"><div class="text-xs uppercase text-orange-500">Prix à payer</div><div class="text-xl font-black text-[#E75C25] mt-1">${totalAmount > 0 ? totalAmount.toFixed(2) + ' DH' : 'Sur devis'}</div></div><div class="bg-stone-50 rounded-xl p-4"><div class="text-xs uppercase text-stone-400">Paiement</div><div class="font-bold mt-1">${paymentStatus === 'paid' ? '✅ Payé' : '⏳ Non payé'}</div></div><div class="bg-stone-50 rounded-xl p-4"><div class="text-xs uppercase text-stone-400">Statut</div><div class="font-bold mt-1 text-[#E75C25]">${readableStatus}</div></div></div><div class="border-t border-stone-100 pt-6"><h4 class="font-black text-[#E75C25] mb-5">Suivi de progression</h4><div class="space-y-0">${buildOrderTimeline(data, history)}</div></div></div>`;
         });
     }
-
     function getReservationDeadline() {
         const deadline = new Date();
         deadline.setDate(deadline.getDate() + RESERVATION_DAYS);

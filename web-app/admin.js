@@ -340,6 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
             const deadlineText = status === 'expired' ? 'Expired' : `${deadline.toLocaleDateString('fr-FR')} (${days}j)`;
             const displayReference = order.numero_commande || order.id;
+            const paymentStatus = order.payment_status || 'unpaid';
 
             return `
                 <tr class="hover:bg-gray-50 transition">
@@ -347,7 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td class="p-4 font-semibold">${escapeHtml(order.client_name)}</td>
                     <td class="p-4 text-gray-500">${escapeHtml(order.client_phone)}</td>
                     <td class="p-4 text-xs max-w-xs truncate">${content}</td>
-                    <td class="p-4">${getStatusBadge(status)}</td>
+                    <td class="p-4"><div class="space-y-2">${getStatusBadge(status)}${paymentStatus === 'paid' ? `<span class="inline-block bg-emerald-50 text-emerald-700 px-2 py-1 rounded-full text-xs font-semibold">✅ Payé</span>` : `<span class="inline-block bg-amber-50 text-amber-700 px-2 py-1 rounded-full text-xs font-semibold">⏳ Non payé</span>`}</div></td>
                     <td class="p-4 text-xs text-gray-500">${deadlineText}</td>
                     <td class="p-4 text-right">
                         <div class="relative inline-block text-left">
@@ -363,6 +364,13 @@ document.addEventListener('DOMContentLoaded', () => {
                                         ${Object.keys(STATUS_META).map(key => `<option value="${key}" ${key === status ? 'selected' : ''}>${STATUS_META[key][0]}</option>`).join('')}
                                     </select>
                                 </div>
+                                <div class="px-4 py-2 border-t border-gray-100 mt-1">
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase">Paiement</span>
+                                    <select class="order-payment-select w-full mt-1 border border-gray-200 rounded text-sm p-1" data-id="${order.id}">
+                                        <option value="unpaid" ${paymentStatus === 'unpaid' ? 'selected' : ''}>Non payé</option>
+                                        <option value="paid" ${paymentStatus === 'paid' ? 'selected' : ''}>Payé</option>
+                                    </select>
+                                </div>
                                 <button class="btn-delete w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600" data-id="${order.id}">Supprimer</button>
                             </div>
                         </div>
@@ -374,6 +382,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Attachement des événements
         tbody.querySelectorAll('.order-status-select').forEach(select => {
             select.addEventListener('change', () => updateOrderStatus(select.dataset.id, select.value));
+        });
+        tbody.querySelectorAll('.order-payment-select').forEach(select => {
+            select.addEventListener('change', () => updatePaymentStatus(select.dataset.id, select.value));
         });
 
         tbody.querySelectorAll('.btn-notify').forEach(button => {
@@ -398,6 +409,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (error) {
             console.error(error);
             alert("Impossible de mettre à jour le statut.");
+            return;
+        }
+        await supabaseClient.from('order_history').insert([{ order_id: orderId, status }]);
+        await loadOrders();
+    }
+
+    async function updatePaymentStatus(orderId, paymentStatus) {
+        const { error } = await supabaseClient.from('orders').update({ payment_status: paymentStatus }).eq('id', orderId);
+        if (error) {
+            console.error(error);
+            alert("Impossible de mettre à jour le paiement.");
             return;
         }
         await loadOrders();
@@ -440,7 +462,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('orders-date-filter')?.addEventListener('change', renderOrdersTable);
     
     document.getElementById('btn-export-orders')?.addEventListener('click', () => {
-        const rows = [['id', 'numero_commande', 'client', 'phone', 'email', 'status', 'deadline', 'total']];
+        const rows = [['id', 'numero_commande', 'client', 'phone', 'email', 'status', 'payment_status', 'deadline', 'total']];
         getFilteredOrders().forEach(order => rows.push([
             order.id,
             order.numero_commande || '',
@@ -448,6 +470,7 @@ document.addEventListener('DOMContentLoaded', () => {
             order.client_phone,
             order.client_email,
             normalizeStatus(order.status),
+            order.payment_status || 'unpaid',
             getDeadline(order).toISOString().slice(0, 10),
             orderTotal(order)
         ]));
