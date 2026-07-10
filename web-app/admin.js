@@ -462,7 +462,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('orders-date-filter')?.addEventListener('change', renderOrdersTable);
     
     document.getElementById('btn-export-orders')?.addEventListener('click', () => {
-        const rows = [['id', 'numero_commande', 'client', 'phone', 'email', 'status', 'payment_status', 'deadline', 'total']];
+        const rows = [['id', 'numero_commande', 'client', 'phone', 'email', 'status', 'payment_status', 'qr_code', 'deadline', 'total']];
         getFilteredOrders().forEach(order => rows.push([
             order.id,
             order.numero_commande || '',
@@ -471,6 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
             order.client_email,
             normalizeStatus(order.status),
             order.payment_status || 'unpaid',
+            order.qr_code || '',
             getDeadline(order).toISOString().slice(0, 10),
             orderTotal(order)
         ]));
