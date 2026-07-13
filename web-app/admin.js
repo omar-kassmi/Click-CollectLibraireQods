@@ -425,10 +425,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const days = daysUntil(deadline);
             const items = parseItems(order.items);
             
-            const photoItem = items.find(i => i.type === 'photo_upload' || i.url);
-            const content = photoItem
-                ? `<a href="${escapeHtml(photoItem.url)}" target="_blank" class="text-blue-600 hover:underline font-bold flex items-center gap-1">📸 Voir l'image</a>`
-                : `<span class="font-bold text-stone-700">${items.length} articles (${money(orderTotal(order))})</span>`;
+            const photoItem = items.find(i => i.type === 'photo_upload' || i.url || i.photo_url);
+            const photoUrl = order.google_drive_url || photoItem?.url || photoItem?.photo_url || null;
+            const content = photoUrl
+                ? `<a href="${escapeHtml(photoUrl)}" target="_blank" class="text-blue-600 hover:underline font-bold flex items-center gap-1">📸 Voir la photo</a>`
+                : photoItem
+                    ? `<span class="inline-flex items-center gap-1 font-bold text-amber-700 bg-amber-50 px-2 py-1 rounded-lg">📸 Photo en attente</span>`
+                    : `<span class="font-bold text-stone-700">${items.length} articles (${money(orderTotal(order))})</span>`;
                 
             const deadlineText = status === 'expired' ? 'Expired' : `${deadline.toLocaleDateString('fr-FR')} (${days}j)`;
             const displayReference = order.numero_commande || order.id;
@@ -528,7 +531,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        currentOrders = data || [];
+        currentOrders = (data || []).filter(order => normalizeStatus(order.status) !== 'draft_google_form');
         currentOrdersPage = 1;
         await expireOverdueOrders(currentOrders);
         renderDashboard();

@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const SUPABASE_ANON_KEY = "sb_publishable_Rdn2yMULDq05BGBV-X-zCA_S934mdEh";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const RESERVATION_DAYS = 5;
+    // Déployez le fichier Apps Script Web App puis collez ici son URL /exec.
+    const APP_SCRIPT_UPLOAD_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzZXUQniWcbNXy9t6C9eRZH2BFST42vunh1t6VjDJF6LTUm-7w_F4eivLtB-OY7RMY/exec";
 
     let allSchoolData = []; 
     let selectedPackItems = []; 
@@ -156,32 +158,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 4. GESTION DE L'UPLOAD PHOTO
+    // 4. GESTION DU CHOIX LISTE PERSONNALISEE
     // ==========================================
-    const fileInput = document.getElementById('image-file-input');
     const statusText = document.getElementById('upload-status-text');
+    const btnCustomList = document.getElementById('btn-custom-list');
 
-    if (fileInput) {
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length === 0) return;
-            
-            const file = e.target.files[0];
-            isPhotoOrder = true; 
-            selectedPhotoFile = file;
-            if (statusText) statusText.innerText = "✓ Fichier joint : " + file.name;
+    if (btnCustomList) {
+        btnCustomList.addEventListener('click', () => {
+            isPhotoOrder = true;
+            selectedPhotoFile = null;
 
             const schoolLabel = document.getElementById('display-school-name');
             const levelLabel = document.getElementById('display-level-name');
-            if (schoolLabel) schoolLabel.innerText = "Liste personnalisée (Par Photo)";
-            if (levelLabel) levelLabel.innerText = "Analyse manuelle par l'équipe El Qods";
-            
+            if (schoolLabel) schoolLabel.innerText = "Liste personnalisée";
+            if (levelLabel) levelLabel.innerText = "Import photo via page sécurisée";
+
             const itemsContainer = document.getElementById('liste-officielle-items');
             if (itemsContainer) {
                 itemsContainer.innerHTML = `
-                    <div class="flex flex-col items-center justify-center p-8 bg-emerald-50/40 border border-dashed border-emerald-200 rounded-2xl text-center">
+                    <div class="flex flex-col items-center justify-center p-8 bg-orange-50/50 border border-dashed border-orange-200 rounded-2xl text-center">
                         <span class="text-4xl mb-2">📸</span>
-                        <h5 class="text-sm font-black text-emerald-800 font-header">Votre liste a été enregistrée !</h5>
-                        <p class="text-xs text-stone-500 max-w-xs mt-1">Nos préparateurs vont décoder l'image pour préparer votre panier au prix le plus juste.</p>
+                        <h5 class="text-sm font-black text-orange-800 font-header">Votre propre liste</h5>
+                        <p class="text-xs text-stone-500 max-w-xs mt-1">Renseignez vos coordonnées. Après validation, vous serez redirigé vers la page d'import photo.</p>
                     </div>
                 `;
             }
@@ -189,10 +187,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const totalPriceEl = document.getElementById('pack-total-price');
             if (totalPriceEl) totalPriceEl.innerText = "Sur devis";
 
-            updateStepper(2);
-            document.getElementById('options-container').classList.add('hidden');
-            document.getElementById('pack-details-view').classList.remove('hidden');
-            window.scrollTo({top: 0, behavior: 'smooth'});
+            updateStepper(3);
+            document.getElementById('options-container')?.classList.add('hidden');
+            document.getElementById('pack-details-view')?.classList.remove('hidden');
+            document.getElementById('checkout-form-container')?.classList.remove('hidden');
+            document.getElementById('btn-next-to-form')?.classList.add('hidden');
+            document.getElementById('checkout-form-container')?.scrollIntoView({ behavior: 'smooth' });
         });
     }
 
@@ -340,30 +340,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (totalDisplay) totalDisplay.innerText = total.toFixed(2);
     }
 
-    async function uploadSelectedPhoto() {
-        if (!selectedPhotoFile) {
-            throw new Error("Aucune photo n'a été sélectionnée.");
-        }
-
-        const safeName = selectedPhotoFile.name
-            .toLowerCase()
-            .replace(/[^a-z0-9.]+/g, '-')
-            .replace(/^-+|-+$/g, '');
-        const filePath = `school-lists/${Date.now()}-${safeName}`;
-
-        const { error } = await supabaseClient.storage
-            .from('lists')
-            .upload(filePath, selectedPhotoFile, {
-                cacheControl: '3600',
-                upsert: false
-            });
-
-        if (error) throw error;
-
-        const { data } = supabaseClient.storage.from('lists').getPublicUrl(filePath);
-        return data.publicUrl;
-    }
-
     // NAVIGATION DU PANIER DE COMMANDE
     const btnChangeChoice = document.getElementById('btn-change-choice-top');
     if (btnChangeChoice) {
@@ -371,7 +347,8 @@ document.addEventListener('DOMContentLoaded', () => {
             updateStepper(1);
             selectedPhotoFile = null;
             isPhotoOrder = false;
-            if (statusText) statusText.innerText = "Prendre en photo / Charger l'image";
+            if (statusText) statusText.innerText = "Fournir ma propre liste";
+            document.getElementById('btn-next-to-form')?.classList.remove('hidden');
             document.getElementById('pack-details-view').classList.add('hidden');
             document.getElementById('checkout-form-container').classList.add('hidden');
             document.getElementById('options-container').classList.remove('hidden');
@@ -399,6 +376,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const url = new URL('index.html', window.location.href);
         url.searchParams.set('tab', 'section-suivi');
         url.searchParams.set('qr', qrCode);
+        return url.toString();
+    }
+
+    function buildUploadWebAppUrl(orderData, clientName, clientPhone, clientEmail) {
+        if (!APP_SCRIPT_UPLOAD_WEBAPP_URL || APP_SCRIPT_UPLOAD_WEBAPP_URL.includes('PASTE_APPS_SCRIPT')) {
+            throw new Error("URL Apps Script Web App non configurée dans app.js.");
+        }
+        const successUrl = new URL('success.html', window.location.href);
+        successUrl.searchParams.set('order', orderData.numero_commande || '');
+        successUrl.searchParams.set('name', clientName || '');
+        successUrl.searchParams.set('qr', orderData.qr_code || '');
+
+        const url = new URL(APP_SCRIPT_UPLOAD_WEBAPP_URL);
+        url.searchParams.set('order_id', orderData.id || '');
+        url.searchParams.set('reference', orderData.numero_commande || '');
+        url.searchParams.set('name', clientName || '');
+        url.searchParams.set('phone', clientPhone || '');
+        url.searchParams.set('email', clientEmail || '');
+        url.searchParams.set('success_url', successUrl.toString());
         return url.toString();
     }
 
@@ -431,13 +427,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 if (isPhotoOrder) {
-                    try {
-                        const photoUrl = await uploadSelectedPhoto();
-                        payloadItems = [{ name: "Commande par photo", type: "photo_upload", url: photoUrl }];
-                    } catch (err) {
-                        console.error("Erreur critique d'upload photo Storage:", err);
-                        payloadItems = [{ name: "Commande par photo (Fichier non stocké)", type: "photo_upload", file_name: selectedPhotoFile.name }];
-                    }
+                    payloadItems = [{
+                        name: "Commande par photo",
+                        type: "photo_upload",
+                        storage_provider: "google_drive_webapp",
+                        upload_status: "pending_webapp_upload"
+                    }];
                 } else {
                     const checkedBoxes = document.querySelectorAll('.pack-item-checkbox:checked');
                     payloadItems = Array.from(checkedBoxes).map(cb => ({
@@ -465,7 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     client_phone: clientPhone,
                     client_email: clientEmail || null,
                     items: payloadItems,
-                    status: 'new',
+                    status: isPhotoOrder ? 'draft_google_form' : 'new',
                     reservation_deadline: getReservationDeadline(),
                     total_amount: totalAmount,
                     payment_method: 'cash_pickup',
@@ -483,6 +478,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (error) throw error;
 
+                if (isPhotoOrder && data && data.numero_commande) {
+                    window.location.href = buildUploadWebAppUrl(data, clientName, clientPhone, clientEmail);
+                    return;
+                }
                 if (data && data.id) {
                     await supabaseClient.from('order_history').insert([{ order_id: data.id, status: 'new' }]);
                 }
