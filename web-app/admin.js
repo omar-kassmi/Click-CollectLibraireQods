@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         preparing: ['Preparing', 'bg-blue-50 text-blue-700'],
         ready: ['Ready', 'bg-emerald-50 text-emerald-700'],
         collected: ['Collected', 'bg-stone-900 text-white'],
-        cancelled: ['Cancelled', 'bg-red-50 text-red-700'],
+        cancelled: ['Annulé', 'bg-red-50 text-red-700'],
         expired: ['Expired', 'bg-gray-100 text-gray-600']
     };
 
@@ -542,7 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        currentOrders = (data || []).filter(order => !['draft_google_form', 'cancelled'].includes(normalizeStatus(order.status)));
+        currentOrders = (data || []).filter(order => normalizeStatus(order.status) !== 'draft_google_form');
         currentOrdersPage = 1;
         await expireOverdueOrders(currentOrders);
         renderDashboard();
