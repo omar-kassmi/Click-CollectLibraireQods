@@ -497,10 +497,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function updateOrderStatus(orderId, status) {
         const payload = { status };
+        if (status === 'cancelled') {
+            payload.cancellation_source = 'store';
+            payload.cancelled_at = new Date().toISOString();
+        } else {
+            payload.cancellation_source = null;
+            payload.cancelled_at = null;
+        }
         if (status === 'collected' && currentOrders.find(order => String(order.id) === String(orderId))?.total_amount == null) {
             payload.total_amount = orderTotal(currentOrders.find(order => String(order.id) === String(orderId)));
         }
-        const { error } = await supabaseClient.from('orders').update(payload).eq('id', orderId);
+        let { error } = await supabaseClient.from('orders').update(payload).eq('id', orderId);
+        if (error && /cancellation_source|cancelled_at|column|schema/i.test(error.message || '')) {
+            const fallback = await supabaseClient.from('orders').update({ status }).eq('id', orderId);
+            error = fallback.error;
+        }
         if (error) {
             console.error(error);
             alert("Impossible de mettre à jour le statut.");
@@ -531,7 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        currentOrders = (data || []).filter(order => normalizeStatus(order.status) !== 'draft_google_form');
+        currentOrders = (data || []).filter(order => !['draft_google_form', 'cancelled'].includes(normalizeStatus(order.status)));
         currentOrdersPage = 1;
         await expireOverdueOrders(currentOrders);
         renderDashboard();

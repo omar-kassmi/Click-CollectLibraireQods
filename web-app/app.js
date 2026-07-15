@@ -14,6 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedPackItems = []; 
     let isPhotoOrder = false; 
     let selectedPhotoFile = null;
+    let selectedSchoolName = null;
+    let selectedSchoolLevel = null;
 
     // Masquage progressif de la Splash Page après 5 secondes
     setTimeout(() => {
@@ -65,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.className = "nav-tab-btn font-medium hover:opacity-80 text-[#E75C25] px-2";
             }
         });
-        if(targetId === 'section-rentree') updateStepper(1);
+        if(targetId === 'section-rentree') setOrderFlowStep ? setOrderFlowStep(1) : updateStepper(1);
         window.scrollTo({top: 0, behavior: 'smooth'});
     };
 
@@ -95,14 +97,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (settings) {
                 applySiteSettings(settings);
                 settings.forEach(s => {
-                    const addr = document.getElementById('info-address');
-                    const phone = document.getElementById('info-phone');
-                    const email = document.getElementById('info-email');
-                    const wa = document.getElementById('link-whatsapp');
-                    if (s.key === 'contact_address' && addr) addr.innerText = s.value;
-                    if (s.key === 'contact_phone' && phone) phone.innerText = s.value;
-                    if (s.key === 'contact_email' && email) email.innerText = s.value;
-                    if (s.key === 'contact_whatsapp' && wa) wa.href = `https://wa.me/${s.value}`;
+                    if (s.key === 'contact_address') document.querySelectorAll('#info-address, [data-contact-address]').forEach(el => el.innerText = s.value);
+                    if (s.key === 'contact_phone') document.querySelectorAll('#info-phone, [data-contact-phone]').forEach(el => el.innerText = s.value);
+                    if (s.key === 'contact_email') document.querySelectorAll('#info-email, [data-contact-email]').forEach(el => el.innerText = s.value);
+                    if (s.key === 'contact_whatsapp') document.querySelectorAll('#link-whatsapp, [data-contact-whatsapp]').forEach(el => el.href = `https://wa.me/${s.value}`);
                 });
             }
         } catch (err) {}
@@ -187,12 +185,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const totalPriceEl = document.getElementById('pack-total-price');
             if (totalPriceEl) totalPriceEl.innerText = "Sur devis";
 
-            updateStepper(3);
+            setOrderFlowStep(3);
             document.getElementById('options-container')?.classList.add('hidden');
             document.getElementById('pack-details-view')?.classList.remove('hidden');
             document.getElementById('checkout-form-container')?.classList.remove('hidden');
             document.getElementById('btn-next-to-form')?.classList.add('hidden');
-            document.getElementById('checkout-form-container')?.scrollIntoView({ behavior: 'smooth' });
+            setOrderFlowStep(3, 'checkout-form-container');
         });
     }
 
@@ -264,10 +262,10 @@ document.addEventListener('DOMContentLoaded', () => {
             renderPackChecklist(selectedPackItems);
             calculateTotalOrderPrice(); 
             
-            updateStepper(2);
+            setOrderFlowStep(2);
             document.getElementById('options-container').classList.add('hidden');
             document.getElementById('pack-details-view').classList.remove('hidden');
-            window.scrollTo({top: 0, behavior: 'smooth'});
+            setOrderFlowStep(2, 'pack-details-view');
         });
     }
 
@@ -344,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnChangeChoice = document.getElementById('btn-change-choice-top');
     if (btnChangeChoice) {
         btnChangeChoice.addEventListener('click', () => {
-            updateStepper(1);
+            setOrderFlowStep(1, 'options-container');
             selectedPhotoFile = null;
             isPhotoOrder = false;
             if (statusText) statusText.innerText = "Fournir ma propre liste";
@@ -358,7 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnNextToForm = document.getElementById('btn-next-to-form');
     if (btnNextToForm) {
         btnNextToForm.addEventListener('click', () => {
-            updateStepper(3);
+            setOrderFlowStep(3);
             const formContainer = document.getElementById('checkout-form-container');
             if (formContainer) {
                 formContainer.classList.remove('hidden');
@@ -396,6 +394,25 @@ document.addEventListener('DOMContentLoaded', () => {
         url.searchParams.set('email', clientEmail || '');
         url.searchParams.set('success_url', successUrl.toString());
         return url.toString();
+    }
+
+
+    function setOrderFlowStep(step, scrollTargetId = null) {
+        const rentree = document.getElementById('section-rentree');
+        if (rentree) rentree.dataset.flowStep = String(step);
+        updateStepper(step);
+        const title = document.getElementById('flow-guide-title');
+        const text = document.getElementById('flow-guide-text');
+        const copy = {
+            1: ['Étape 1 — choisissez votre parcours', 'Choisissez une liste officielle ou votre propre liste. Ensuite, la page glisse automatiquement vers l’étape suivante.'],
+            2: ['Étape 2 — ajustez votre sac', 'Décochez les articles inutiles, vérifiez le montant estimé, puis continuez vers vos coordonnées.'],
+            3: ['Étape 3 — validez vos informations', 'Renseignez vos coordonnées. La page vous guidera vers la confirmation ou l’import photo.']
+        };
+        if (title && copy[step]) title.innerText = copy[step][0];
+        if (text && copy[step]) text.innerText = copy[step][1];
+        if (scrollTargetId) {
+            setTimeout(() => document.getElementById(scrollTargetId)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 160);
+        }
     }
 
     // ==========================================
@@ -438,7 +455,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     payloadItems = Array.from(checkedBoxes).map(cb => ({
                         id: cb.getAttribute('data-id'),
                         name: cb.getAttribute('data-name'),
-                        price: parseFloat(cb.getAttribute('data-price')) || 0
+                        price: parseFloat(cb.getAttribute('data-price')) || 0,
+                        school_name: selectedSchoolName,
+                        school_level: selectedSchoolLevel
                     }));
 
                     if (payloadItems.length === 0) {
@@ -562,7 +581,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const pageW = doc.internal.pageSize.getWidth();
         const margin = 16;
         const total = Number(order.total_amount ?? items.reduce((sum, item) => sum + (Number(item.price) || 0), 0));
-        const statusLabel = ({ new: 'Commande reçue', preparing: 'En préparation', ready: 'Prête au retrait', notified: 'Notification envoyée', notifie: 'Notification envoyée', collected: 'Commande récupérée', cancelled: 'Commande annulée', expired: 'Réservation expirée', preparation: 'En préparation', prete: 'Prête au retrait', en_attente: 'Commande reçue' })[order.status] || order.status || 'Commande reçue';
+        const statusLabel = ({ new: 'Commande reçue', preparing: 'En préparation', ready: 'Prête au retrait', notified: 'Prête au retrait', notifie: 'Prête au retrait', collected: 'Commande récupérée', cancelled: 'Commande annulée', expired: 'Réservation expirée', preparation: 'En préparation', prete: 'Prête au retrait', en_attente: 'Commande reçue' })[order.status] || order.status || 'Commande reçue';
         let y = 18;
 
         try {
@@ -635,7 +654,7 @@ document.addEventListener('DOMContentLoaded', () => {
         doc.text('Suivi de progression', margin, y); y += 7;
         doc.setFont('helvetica', 'normal');
         doc.setTextColor(70, 70, 70);
-        const labels = { new: 'Commande reçue', preparing: 'Préparation', ready: 'Prête au retrait', notified: 'Notification', notifie: 'Notification', collected: 'Récupérée' };
+        const labels = { new: 'Commande reçue', preparing: 'Préparation', ready: 'Prête au retrait', notified: 'Prête au retrait', notifie: 'Prête au retrait', collected: 'Récupérée' };
         (history || []).slice(0, 8).forEach(event => {
             if (y > 270) { doc.addPage(); y = 20; }
             doc.text(`• ${labels[normalizeTrackingStatus(event.status)] || event.status} - ${formatTrackingDate(event.created_at)}`, margin, y);
@@ -667,21 +686,160 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 100);
     }
 
-    function buildOrderTimeline(order, history = []) {
-        const steps = [{ key: 'new', label: 'Commande' }, { key: 'preparing', label: 'Préparation' }, { key: 'ready', label: 'Prête au retrait' }, { key: 'notified', label: 'Notification' }, { key: 'collected', label: 'Récupérée' }];
-        const currentStatus = normalizeTrackingStatus(order.status);
-        const currentIndex = steps.findIndex(step => step.key === currentStatus);
-        const eventMap = { new: order.created_at || order.inserted_at || null };
-        history.forEach(event => { const key = normalizeTrackingStatus(event.status); if (!eventMap[key]) eventMap[key] = event.created_at; });
-        const items = steps.map(step => {
-            const index = steps.findIndex(s => s.key === step.key);
-            const done = (currentIndex >= 0 && index <= currentIndex) || !!eventMap[step.key];
-            return `<div class="relative flex flex-col items-center text-center min-w-[118px] flex-1 z-10"><div class="w-11 h-11 rounded-full flex items-center justify-center font-black text-sm shadow-sm border-4 border-white ${done ? 'bg-emerald-400 text-white' : 'bg-stone-200 text-stone-400'}">✓</div><div class="font-black text-stone-800 text-xs sm:text-sm mt-3 leading-tight">${step.label}</div><div class="text-[11px] text-stone-500 mt-1 whitespace-nowrap">${done ? formatTrackingDate(eventMap[step.key]) : '-'}</div></div>`;
-        }).join('');
-        const progressIndex = Math.max(currentIndex, 0);
-        const progressWidth = steps.length > 1 ? Math.min(100, Math.max(0, (progressIndex / (steps.length - 1)) * 100)) : 0;
-        return `<div class="w-full overflow-x-auto pb-2 hide-scrollbar"><div class="relative min-w-[620px] px-2 pt-2"><div class="absolute top-[24px] left-[60px] right-[60px] h-1 bg-stone-200 rounded-full"></div><div class="absolute top-[24px] left-[60px] h-1 bg-emerald-400 rounded-full" style="width: calc((100% - 120px) * ${progressWidth / 100});"></div><div class="relative flex items-start justify-between gap-2">${items}</div></div></div>`;
+
+    async function inferSchoolFromItems(items) {
+        if (!items || !items.length) return { school: '', level: '' };
+        const first = items.find(i => i.school_name || i.school_level) || {};
+        if (first.school_name || first.school_level) {
+            return { school: first.school_name || '', level: first.school_level || '' };
+        }
+        try {
+            const names = new Set(items.map(i => String(i.name || '').trim().toLowerCase()).filter(Boolean));
+            if (!names.size) return { school: '', level: '' };
+            const { data: lists } = await supabaseClient.from('school_lists').select('*');
+            let best = { score: 0, school: '', level: '' };
+            (lists || []).forEach(list => {
+                const parsed = parseTrackingItems(list.items && Array.isArray(list.items) && list.items.length === 1 ? list.items[0] : list.items);
+                const score = parsed.reduce((sum, item) => names.has(String(item.name || item).trim().toLowerCase()) ? sum + 1 : sum, 0);
+                if (score > best.score) best = { score, school: list.school_name || '', level: list.level || '' };
+            });
+            return best.score > 0 ? { school: best.school, level: best.level } : { school: '', level: '' };
+        } catch (err) {
+            console.warn('Impossible de déduire école/niveau', err);
+            return { school: '', level: '' };
+        }
     }
+
+    function buildOrderTimeline(order, history = []) {
+        const regularSteps = [
+            { key: 'new', label: 'Commande' },
+            { key: 'preparing', label: 'Préparation' },
+            { key: 'ready', label: 'Prête au retrait' },
+            { key: 'collected', label: 'Récupérée' }
+        ];
+        const normalizedStatus = normalizeTrackingStatus(order.status);
+        const isCancelled = normalizedStatus === 'cancelled';
+        const eventMap = { new: order.created_at || order.inserted_at || null };
+        let furthestRegularIndex = 0;
+        history.forEach(event => {
+            let key = normalizeTrackingStatus(event.status);
+            if (key === 'notified') key = 'ready';
+            if (!eventMap[key]) eventMap[key] = event.created_at;
+            const regularIndex = regularSteps.findIndex(step => step.key === key);
+            if (regularIndex > furthestRegularIndex) furthestRegularIndex = regularIndex;
+        });
+        if (!isCancelled) {
+            let currentIndex = regularSteps.findIndex(step => step.key === normalizedStatus);
+            if (normalizedStatus === 'notified') currentIndex = 2;
+            if (currentIndex < 0) currentIndex = 0;
+            currentIndex = Math.max(currentIndex, furthestRegularIndex);
+            const fillWidth = (currentIndex / (regularSteps.length - 1)) * 100;
+            return `<div class="timeline-line"><div class="tracking-line-base"><div class="tracking-line-fill" style="width:${fillWidth}%"></div></div>${regularSteps.map((step, index) => `<div class="timeline-step ${index < currentIndex ? 'done' : index === currentIndex ? 'active' : ''}"><div class="timeline-dot">✓</div><h5>${step.label}</h5><p>${eventMap[step.key] ? formatTrackingDate(eventMap[step.key]) : '-'}</p></div>`).join('')}</div>`;
+        }
+        const cancelledAt = order.cancelled_at || eventMap.cancelled || order.updated_at || new Date().toISOString();
+        const reachedSteps = regularSteps.slice(0, furthestRegularIndex + 1);
+        const cancellationSource = order.cancellation_source || 'store';
+        const cancellationMessage = cancellationSource === 'customer'
+            ? `Vous avez annulé cette commande le <strong>${formatTrackingDate(cancelledAt)}</strong>. Vous pouvez passer une nouvelle commande à tout moment.`
+            : `Cette commande a été annulée par le magasin le <strong>${formatTrackingDate(cancelledAt)}</strong>. Contactez le magasin pour plus d’informations ou passez une nouvelle commande.`;
+        const cancelCount = reachedSteps.length + 1;
+        return `<div class="timeline-line is-cancelled" style="--cancel-count:${cancelCount}"><div class="tracking-line-base"><div class="tracking-line-fill" style="width:${reachedSteps.length > 1 ? ((reachedSteps.length - 1) / reachedSteps.length) * 100 : 0}%"></div></div><div class="timeline-cancelled-segment"></div>${reachedSteps.map(step => `<div class="timeline-step done"><div class="timeline-dot">✓</div><h5>${step.label}</h5><p>${eventMap[step.key] ? formatTrackingDate(eventMap[step.key]) : '-'}</p></div>`).join('')}<div class="timeline-step cancelled"><div class="timeline-dot">×</div><h5>Annulé</h5><p>${formatTrackingDate(cancelledAt)}</p></div></div><div class="cancellation-message">${cancellationMessage}</div>`;
+    }
+
+    function getPhotoUrl(order, items) {
+        const photoItem = items.find(i => i.type === 'photo_upload' || i.url || i.photo_url);
+        return order.google_drive_url || photoItem?.url || photoItem?.photo_url || null;
+    }
+
+    function getDrivePreviewUrl(url) {
+        const match = String(url || '').match(/\/d\/([^/]+)/) || String(url || '').match(/[?&]id=([^&]+)/);
+        return match ? `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1200` : url;
+    }
+
+    function showTrackingSearchForm() {
+        document.getElementById('tracking-search-heading')?.classList.remove('tracking-search-hidden');
+        document.getElementById('order-tracking-form')?.classList.remove('tracking-search-hidden');
+        const resultBox = document.getElementById('tracking-result');
+        if (resultBox) {
+            resultBox.className = 'hidden';
+            resultBox.innerHTML = '';
+        }
+        document.getElementById('tracking-search-heading')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    window.showTrackingSearchForm = showTrackingSearchForm;
+
+    function closeTrackingModal() { document.getElementById('tracking-modal')?.classList.remove('is-open'); }
+    window.closeTrackingModal = closeTrackingModal;
+
+    function openTrackingModal(html) {
+        let modal = document.getElementById('tracking-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'tracking-modal';
+            modal.className = 'tracking-modal';
+            modal.innerHTML = `<div class="tracking-modal-card"><div id="tracking-modal-content"></div></div>`;
+            modal.addEventListener('click', event => { if (event.target === modal) closeTrackingModal(); });
+            document.body.appendChild(modal);
+        }
+        document.getElementById('tracking-modal-content').innerHTML = html;
+        modal.classList.add('is-open');
+    }
+    window.openTrackingModal = openTrackingModal;
+
+    function closeTrackingDrawer() { document.getElementById('tracking-details-drawer')?.classList.remove('is-open'); }
+    window.closeTrackingDrawer = closeTrackingDrawer;
+
+    function openTrackingDrawer(html) {
+        let drawer = document.getElementById('tracking-details-drawer');
+        if (!drawer) {
+            drawer = document.createElement('div');
+            drawer.id = 'tracking-details-drawer';
+            drawer.className = 'tracking-details-drawer';
+            drawer.innerHTML = `<aside class="tracking-details-panel"><div id="tracking-details-content"></div></aside>`;
+            drawer.addEventListener('click', event => { if (event.target === drawer) closeTrackingDrawer(); });
+            document.body.appendChild(drawer);
+        }
+        document.getElementById('tracking-details-content').innerHTML = html;
+        drawer.classList.add('is-open');
+    }
+    window.openTrackingDrawer = openTrackingDrawer;
+
+    function openImagePreview(url) {
+        if (!url) return;
+        const preview = getDrivePreviewUrl(url);
+        openTrackingModal(`<div class="flex items-start justify-between gap-4 mb-4"><h3 class="text-xl font-black text-[#E75C25]">Image de la liste</h3><button onclick="closeTrackingModal()" class="text-stone-400 hover:text-stone-900 text-2xl leading-none">×</button></div><div class="bg-stone-50 rounded-2xl p-3 border border-stone-100"><img src="${preview}" class="tracking-image-preview mx-auto" onerror="this.outerHTML='<div class=\'p-6 text-center text-stone-500\'>Aperçu non disponible. Ouvrez le lien Drive ci-dessous.</div>'"></div><a href="${url}" target="_blank" class="inline-flex mt-4 text-xs font-black text-[#E75C25] hover:underline">Ouvrir l’image dans un nouvel onglet</a>`);
+    }
+    window.openImagePreview = openImagePreview;
+
+    async function cancelTrackedOrder(orderId, orderRef) {
+        openTrackingModal(`<div class="text-center space-y-4"><h3 class="text-xl font-black">Annuler la commande ${orderRef || ''} ?</h3><p class="text-sm text-stone-500">Cette action n’est pas réversible.</p><div class="flex gap-3 justify-center"><button onclick="closeTrackingModal()" class="px-5 py-3 rounded-xl border">Non, garder</button><button id="confirm-cancel-order" class="px-5 py-3 rounded-xl bg-red-600 text-white">Oui, annuler</button></div></div>`);
+        setTimeout(() => document.getElementById('confirm-cancel-order')?.addEventListener('click', async () => {
+            const cancelledAt = new Date().toISOString();
+            let { error } = await supabaseClient.from('orders').update({ status: 'cancelled', cancellation_source: 'customer', cancelled_at: cancelledAt }).eq('id', orderId);
+            if (error && /cancellation_source|cancelled_at|column|schema/i.test(error.message || '')) {
+                const fallback = await supabaseClient.from('orders').update({ status: 'cancelled' }).eq('id', orderId); error = fallback.error;
+            }
+            if (error) { alert('Impossible d’annuler la commande : ' + error.message); return; }
+            await supabaseClient.from('order_history').insert([{ order_id: orderId, status: 'cancelled', created_at: cancelledAt }]);
+            const { data: refreshedOrder } = await supabaseClient.from('orders').select('*').eq('id', orderId).maybeSingle();
+            const { data: refreshedHistory } = await supabaseClient.from('order_history').select('*').eq('order_id', orderId).order('created_at', { ascending: true });
+            closeTrackingModal();
+            document.getElementById('tracking-cancel-button')?.remove();
+            const timelineArea = document.getElementById('tracking-timeline-area');
+            if (timelineArea) timelineArea.innerHTML = buildOrderTimeline(refreshedOrder || { status:'cancelled', cancellation_source:'customer', cancelled_at:cancelledAt }, refreshedHistory || []);
+        }), 80);
+    }
+    window.cancelTrackedOrder = cancelTrackedOrder;
+
+    function openOrderDetails(order, items, history, qrPayload, schoolInfo = { school: '', level: '' }) {
+        const photoUrl = getPhotoUrl(order, items);
+        const photoOrder = items.some(i => i.type === 'photo_upload' || i.url || i.photo_url) || !!photoUrl;
+        const rows = !photoOrder && items.length
+            ? items.map(item => `<div class="tracking-details-row"><span>${item.name || '-'}</span><b>${(Number(item.price) || 0).toFixed(2)} DH</b></div>`).join('')
+            : `<div class="p-4 rounded-2xl bg-orange-50 border border-orange-100 text-orange-700 text-sm">Cette commande est passée à partir d’une liste personnalisée importée.${photoUrl ? ` <a href="${photoUrl}" target="_blank" class="font-black underline">Voir l’image</a>` : ''}</div>`;
+        openTrackingDrawer(`<div class="flex items-start justify-between gap-4 mb-6"><div><h3 class="text-2xl font-black text-[#E75C25]">Détails de ma commande</h3><p class="text-sm text-stone-500 mt-1">${order.numero_commande || '-'}</p></div><button onclick="closeTrackingDrawer()" class="text-stone-400 hover:text-stone-900 text-2xl leading-none">×</button></div><div class="grid gap-3 text-sm"><div class="tracking-details-row"><span>Type de commande</span><b>${photoOrder ? 'Liste personnalisée importée' : 'Liste officielle'}</b></div>${!photoOrder ? `<div class="tracking-details-row"><span>École / niveau</span><b>${[schoolInfo.school, schoolInfo.level].filter(Boolean).join(' · ') || '-'}</b></div>` : ''}${photoUrl ? `<div class="tracking-details-row"><span>Image importée</span><b><a href="${photoUrl}" target="_blank" class="text-[#E75C25] hover:underline">Ouvrir l’image</a></b></div>` : ''}<div class="grid gap-2 mt-2">${rows}</div></div>`);
+    }
+    window.openOrderDetails = openOrderDetails;
 
     const trackingForm = document.getElementById('order-tracking-form');
     if (trackingForm) {
@@ -692,30 +850,39 @@ document.addEventListener('DOMContentLoaded', () => {
             const phone = document.getElementById('tracking-phone').value.trim();
             if (!resultBox) return;
             resultBox.classList.remove('hidden');
-            resultBox.className = "text-sm rounded-3xl border border-stone-200 p-5 bg-white shadow-sm";
-            resultBox.innerHTML = "🔎 Recherche de votre commande...";
-            if (!orderId) { resultBox.className = "text-sm rounded-2xl border p-4 bg-red-50 text-red-700 border-red-100"; resultBox.innerHTML = "Veuillez saisir votre numéro de commande ou votre code QR."; return; }
+            resultBox.className = 'tracking-order-layout';
+            resultBox.innerHTML = `<div class="tracking-card p-8 text-center text-stone-500">🔎 Recherche de votre commande...</div>`;
+            if (!orderId) { resultBox.innerHTML = `<div class="tracking-card p-8 text-center text-red-700">Veuillez saisir votre numéro de commande ou votre code QR.</div>`; return; }
             const isQrSearch = orderId.startsWith('EQ-QR-');
-            if (!isQrSearch && !phone) { resultBox.className = "text-sm rounded-2xl border p-4 bg-red-50 text-red-700 border-red-100"; resultBox.innerHTML = "Veuillez saisir le numéro de commande et le téléphone."; return; }
+            if (!isQrSearch && !phone) { resultBox.innerHTML = `<div class="tracking-card p-8 text-center text-red-700">Veuillez saisir le numéro de commande et le téléphone.</div>`; return; }
             const { data, error } = await supabaseClient.from('orders').select('*').eq(isQrSearch ? 'qr_code' : 'numero_commande', orderId).maybeSingle();
-            if (error || !data || (!isQrSearch && normalizePhone(data.client_phone) !== normalizePhone(phone))) { resultBox.className = "text-sm rounded-2xl border p-4 bg-red-50 text-red-700 border-red-100"; resultBox.innerHTML = "Aucune commande trouvée. Vérifiez les informations saisies."; return; }
+            if (error || !data || (!isQrSearch && normalizePhone(data.client_phone) !== normalizePhone(phone))) { resultBox.innerHTML = `<div class="tracking-card p-8 text-center text-red-700">Aucune commande active trouvée. Vérifiez les informations saisies.</div>`; return; }
             const { data: historyData } = await supabaseClient.from('order_history').select('*').eq('order_id', data.id).order('created_at', { ascending: true });
             const history = historyData || [];
             const items = parseTrackingItems(data.items);
+            const photoUrl = getPhotoUrl(data, items);
+            const photoOrder = items.some(i => i.type === 'photo_upload' || i.url || i.photo_url) || !!photoUrl;
+            const school = await inferSchoolFromItems(items);
             const totalAmount = Number(data.total_amount ?? items.reduce((sum, item) => sum + (Number(item.price) || 0), 0));
-            const paymentStatus = data.payment_status || 'unpaid';
+            const amountText = photoOrder ? 'Sur devis' : (totalAmount > 0 ? totalAmount.toFixed(2) + ' DH' : '0.00 DH');
             const qrCode = data.qr_code || '';
             const qrPayload = data.qr_payload || (qrCode ? buildQrPayload(qrCode) : buildQrPayload(data.numero_commande));
             const qrCanvasId = `tracking-qr-${data.id}`;
-            const statusMap = { en_attente: '🟠 Commande reçue', new: '🟠 Commande reçue', preparation: '🔵 En préparation', preparing: '🔵 En préparation', prete: '🟢 Prête au retrait', ready: '🟢 Prête au retrait', notifie: '✅ Notification envoyée', notified: '✅ Notification envoyée', collected: '✅ Commande récupérée', cancelled: '❌ Commande annulée', expired: '⚫ Réservation expirée' };
-            const readableStatus = statusMap[data.status] || data.status || 'Commande reçue';
-            const photoOrder = items.some(i => i.type === 'photo_upload' || i.url || i.photo_url);
-            const itemsHtml = !photoOrder && items.length > 0 ? items.map(item => `<div class="flex justify-between items-center gap-3 p-3 rounded-xl bg-stone-50 border border-stone-100"><span class="font-medium text-stone-700 truncate">${item.name || '-'}</span><span class="font-bold text-[#E75C25] flex-shrink-0">${(Number(item.price) || 0).toFixed(2)} DH</span></div>`).join('') : `<div class="bg-orange-50 border border-orange-100 rounded-xl p-4 text-orange-700">📸 Cette commande a été passée par photo. Notre équipe prépare actuellement votre liste.</div>`;
-            resultBox.className = "bg-white border border-stone-200 rounded-3xl p-6 shadow-sm";
-            resultBox.innerHTML = `<div class="space-y-8"><div class="border-b border-stone-100 pb-4"><h3 class="text-2xl font-black text-[#E75C25]">${data.numero_commande}</h3><p class="text-sm text-stone-500">Informations détaillées de votre commande</p></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="bg-stone-50 rounded-xl p-4"><div class="text-xs uppercase text-stone-400">Nom du client</div><div class="font-bold text-stone-800 mt-1">${data.client_name || '-'}</div></div><div class="bg-stone-50 rounded-xl p-4"><div class="text-xs uppercase text-stone-400">Téléphone</div><div class="font-bold text-stone-800 mt-1">${data.client_phone || '-'}</div></div><div class="bg-stone-50 rounded-xl p-4"><div class="text-xs uppercase text-stone-400">Adresse e-mail</div><div class="font-bold text-stone-800 mt-1 break-all">${data.client_email || '-'}</div></div><div class="bg-stone-50 rounded-xl p-4"><div class="text-xs uppercase text-stone-400">Nombre d'articles</div><div class="font-bold text-stone-800 mt-1">${items.length}</div></div></div><div><h4 class="font-black text-[#E75C25] mb-4">Liste commandée</h4><div class="space-y-2">${itemsHtml}</div></div><div class="grid grid-cols-1 md:grid-cols-3 gap-4"><div class="bg-orange-50 border border-orange-100 rounded-xl p-4"><div class="text-xs uppercase text-orange-500">Prix à payer</div><div class="text-xl font-black text-[#E75C25] mt-1">${totalAmount > 0 ? totalAmount.toFixed(2) + ' DH' : 'Sur devis'}</div></div><div class="bg-stone-50 rounded-xl p-4"><div class="text-xs uppercase text-stone-400">Paiement</div><div class="font-bold mt-1">${paymentStatus === 'paid' ? '✅ Payé' : '⏳ Non payé'}</div></div><div class="bg-stone-50 rounded-xl p-4"><div class="text-xs uppercase text-stone-400">Statut</div><div class="font-bold mt-1 text-[#E75C25]">${readableStatus}</div></div></div><div class="border-t border-stone-100 pt-6"><h4 class="font-black text-[#E75C25] mb-4">QR Code de la commande</h4><div class="flex flex-col sm:flex-row items-center gap-5 bg-stone-50 border border-stone-100 rounded-2xl p-5"><canvas id="${qrCanvasId}" class="bg-white p-2 rounded-xl shadow-sm"></canvas><div class="flex-1 text-center sm:text-left"><p class="text-sm font-bold text-stone-800">Code QR : ${qrCode || '-'}</p><p class="text-xs text-stone-500 mt-1">Scannez ce QR code pour retrouver rapidement le suivi de cette commande.</p><button type="button" id="download-${qrCanvasId}" class="mt-3 bg-[#E75C25] hover:bg-[#CE4E1D] text-white text-xs font-black px-4 py-2.5 rounded-xl transition">Télécharger ma commande</button></div></div></div><div class="border-t border-stone-100 pt-6"><h4 class="font-black text-[#E75C25] mb-5">Suivi de progression</h4><div class="space-y-0">${buildOrderTimeline(data, history)}</div></div></div>`;
+            const firstName = (data.client_name || '').trim().split(/\s+/)[0] || 'cher client';
+            const schoolChip = school.school || 'École';
+            const levelChip = school.level || 'Niveau';
+            const chips = photoOrder
+                ? `<span class="tracking-chip-outline">Commande personnalisée</span>${photoUrl ? `<button type="button" onclick="openImagePreview('${photoUrl}')" class="tracking-chip-outline clickable">Image de la liste</button>` : `<span class="tracking-chip-outline">Image en attente</span>`}`
+                : `<span class="tracking-chip-outline">${schoolChip}</span><span class="tracking-chip-outline">${levelChip}</span><span class="tracking-chip-outline">${items.length} articles</span>`;
+            document.getElementById('tracking-search-heading')?.classList.add('tracking-search-hidden');
+            document.getElementById('order-tracking-form')?.classList.add('tracking-search-hidden');
+            resultBox.className = 'tracking-order-layout';
+            resultBox.innerHTML = `<div class="tracking-left"><div class="tracking-hello"><button type="button" class="tracking-back-btn" onclick="showTrackingSearchForm()">‹</button><h3>Bonjour ${firstName}</h3><p>Merci pour votre confiance ! Retrouvez les détails de votre commande</p></div><div class="tracking-field"><small>Téléphone</small><strong>${data.client_phone || '-'}</strong></div><div class="tracking-field"><small>Adresse e-mail</small><strong>${data.client_email || '-'}</strong></div><div class="tracking-recap-title">Ma commande</div><div class="tracking-chips">${chips}</div><div class="tracking-status-zone"><small>Status de ma commande</small><div id="tracking-timeline-area">${buildOrderTimeline(data, history)}</div></div></div><aside class="tracking-side"><div class="tracking-qr-card"><div class="tracking-ref-side">${data.numero_commande || '-'}</div><div class="tracking-qr-box"><canvas id="${qrCanvasId}" class="bg-white"></canvas></div><p class="tracking-qr-note">Présentez ce QR code lors de la récupération de votre commande. Télécharger la facture pour le retrait !</p><div class="grid gap-2"><button type="button" class="tracking-btn tracking-btn-orange" onclick='openOrderDetails(${JSON.stringify(data)}, ${JSON.stringify(items)}, ${JSON.stringify(history)}, ${JSON.stringify(qrPayload)}, ${JSON.stringify(school)})'>Détails de ma commande</button><button type="button" id="download-${qrCanvasId}" class="tracking-btn tracking-btn-green">Télécharger ma commande</button>${normalizeTrackingStatus(data.status) === 'cancelled' ? '' : `<button type="button" id="tracking-cancel-button" class="tracking-btn tracking-btn-cancel" onclick="cancelTrackedOrder('${data.id}', '${data.numero_commande || ''}')">Annuler ma commande</button>`}</div></div><div class="tracking-pay-box"><small>Prix à payer</small><strong>${amountText}</strong></div></aside>`;
             renderQrToCanvas(qrCanvasId, qrPayload, `commande-${data.numero_commande || qrCode}.pdf`, { order: data, items, history });
+            setTimeout(() => resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
         });
     }
+
     function getReservationDeadline() {
         const deadline = new Date();
         deadline.setDate(deadline.getDate() + RESERVATION_DAYS);
@@ -797,6 +964,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const trackingInput = document.getElementById('tracking-order-id');
         if (trackingInput) trackingInput.value = qrParam;
     }
+
+    // ==========================================
+    // PLAN & RAYONS - INTERACTIONS
+    // ==========================================
+    function setStoreZone(zone) {
+        document.querySelectorAll('.store-zone-btn').forEach(btn => btn.classList.toggle('is-active', btn.dataset.zone === zone));
+        document.querySelectorAll('.store-zone-panel').forEach(panel => panel.classList.toggle('is-active', panel.dataset.zonePanel === zone));
+        document.querySelectorAll('.store-map-zone').forEach(block => {
+            const active = block.dataset.zoneMap === zone;
+            block.classList.toggle('border-[#E75C25]', active);
+            block.classList.toggle('bg-orange-50', active);
+            block.classList.toggle('text-[#E75C25]', active);
+            block.classList.toggle('scale-[1.02]', active);
+            block.classList.toggle('shadow-md', active);
+        });
+    }
+    document.querySelectorAll('.store-zone-btn').forEach(btn => btn.addEventListener('click', () => setStoreZone(btn.dataset.zone)));
+    setStoreZone('accueil');
+
     initClientData();
     updateStepper(1);
 });
