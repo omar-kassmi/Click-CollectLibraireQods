@@ -786,7 +786,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     window.openTrackingModal = openTrackingModal;
 
-    function closeTrackingDrawer() { document.getElementById('tracking-details-drawer')?.classList.remove('is-open'); }
+    function closeTrackingDrawer() {
+        const drawer = document.getElementById('tracking-details-drawer');
+        if (drawer) drawer.classList.remove('is-open');
+        document.documentElement.classList.remove('tracking-drawer-open');
+        document.body.classList.remove('tracking-drawer-open');
+    }
     window.closeTrackingDrawer = closeTrackingDrawer;
 
     function openTrackingDrawer(html) {
@@ -795,14 +800,27 @@ document.addEventListener('DOMContentLoaded', () => {
             drawer = document.createElement('div');
             drawer.id = 'tracking-details-drawer';
             drawer.className = 'tracking-details-drawer';
+            drawer.setAttribute('role', 'dialog');
+            drawer.setAttribute('aria-modal', 'true');
             drawer.innerHTML = `<aside class="tracking-details-panel"><div id="tracking-details-content"></div></aside>`;
-            drawer.addEventListener('click', event => { if (event.target === drawer) closeTrackingDrawer(); });
+            document.body.appendChild(drawer);
+            drawer.addEventListener('click', event => {
+                if (event.target === drawer) closeTrackingDrawer();
+            });
+        } else if (drawer.parentElement !== document.body) {
             document.body.appendChild(drawer);
         }
-        document.getElementById('tracking-details-content').innerHTML = html;
+        const content = drawer.querySelector('#tracking-details-content');
+        if (content) content.innerHTML = html;
+        document.documentElement.classList.add('tracking-drawer-open');
+        document.body.classList.add('tracking-drawer-open');
         drawer.classList.add('is-open');
     }
     window.openTrackingDrawer = openTrackingDrawer;
+
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') closeTrackingDrawer();
+    });
 
     function openImagePreview(url) {
         if (!url) return;
