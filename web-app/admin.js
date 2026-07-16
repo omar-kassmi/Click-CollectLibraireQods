@@ -20,9 +20,25 @@ document.addEventListener('DOMContentLoaded', () => {
         preparing: ['Preparing', 'bg-blue-50 text-blue-700'],
         ready: ['Ready', 'bg-emerald-50 text-emerald-700'],
         collected: ['Collected', 'bg-stone-900 text-white'],
-        cancelled: ['Annulé', 'bg-red-50 text-red-700'],
+        cancelled: ['Cancelled', 'bg-red-50 text-red-700'],
         expired: ['Expired', 'bg-gray-100 text-gray-600']
     };
+
+
+    const adminV2Style=document.createElement('style');adminV2Style.textContent=`
+    #pane-orders{padding-bottom:150px!important}#orders-pagination{position:relative!important;z-index:80!important;margin:15px 0 110px!important;padding:14px 16px!important;background:#fff!important;border:1px solid #eee7df!important;border-radius:15px!important;box-shadow:0 12px 30px #1c191714!important}#orders-pagination button{position:relative;z-index:82;pointer-events:auto}
+    .admin-orders-v2{width:100%;border-collapse:separate!important;border-spacing:0 9px!important}.admin-orders-v2 thead th{padding:10px 14px!important;color:#8a817a;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.09em;white-space:nowrap}.order-v2{cursor:pointer;transition:.18s}.order-v2 td{padding:14px!important;background:#fff;border-top:1px solid #eee7df;border-bottom:1px solid #eee7df;vertical-align:middle}.order-v2 td:first-child{border-left:1px solid #eee7df;border-radius:14px 0 0 14px}.order-v2 td:last-child{border-right:1px solid #eee7df;border-radius:0 14px 14px 0}.order-v2:hover td{background:#fffaf7}.sub{display:block;margin-top:3px;color:#a8a29e;font-size:10px}.chip-btn{position:relative;display:inline-flex}.chip-face{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:88px;padding:8px 11px;border-radius:999px;border:1px solid;font-size:11px;font-weight:900;white-space:nowrap;transition:.17s}.chip-arrow{width:0;opacity:0;overflow:hidden;transition:.17s}.chip-btn:hover .chip-arrow{width:10px;opacity:1}.chip-btn:hover .chip-face{transform:translateY(-1px);box-shadow:0 8px 18px #1c191719}.s-new{background:#fffbeb;color:#b45309;border-color:#fde68a}.s-preparing{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}.s-ready{background:#ecfdf5;color:#047857;border-color:#a7f3d0}.s-collected{background:#1c1917;color:#fff;border-color:#1c1917}.s-cancelled{background:#fef2f2;color:#b91c1c;border-color:#fecaca}.s-expired{background:#f3f4f6;color:#4b5563;border-color:#e5e7eb}.p-paid{background:#ecfdf5;color:#047857;border-color:#a7f3d0}.p-unpaid{background:#fffbeb;color:#b45309;border-color:#fde68a}
+    .chip-pop{position:fixed;z-index:2147483600;min-width:176px;padding:7px;border:1px solid #ebe5df;border-radius:14px;background:#fffffff8;box-shadow:0 22px 60px #1c191733;backdrop-filter:blur(14px)}.chip-opt{width:100%;display:flex;justify-content:space-between;padding:9px 10px;border-radius:10px;font-size:12px;font-weight:800;color:#44403c}.chip-opt:hover,.chip-opt.on{background:#fff1e8;color:#E75C25}.chip-opt i{opacity:0}.chip-opt.on i{opacity:1}
+    .acts{display:inline-flex;gap:6px}.act{width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;border-radius:10px;border:1px solid transparent;transition:.16s}.act:hover{transform:translateY(-2px)}.act svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}.wa{color:#168b27}.wa:hover{background:#ecfdf3;border-color:#bbf7d0}.pr{color:#1c1917}.pr:hover{background:#f5f5f4;border-color:#d6d3d1}.del{color:#dc2626}.del:hover{background:#fef2f2;border-color:#fecaca}
+    .ord-modal{position:fixed;inset:0;z-index:2147483500;display:none;align-items:center;justify-content:center;padding:18px;background:#0c0a0985;backdrop-filter:blur(8px)}.ord-modal.open{display:flex}.ord-card{width:min(920px,100%);max-height:90vh;overflow:hidden;background:#fff;border-radius:24px;box-shadow:0 35px 100px #0005}.ord-head{display:flex;justify-content:space-between;padding:24px;background:linear-gradient(135deg,#fff,#fff6ef);border-bottom:1px solid #eee7df}.ord-body{max-height:calc(90vh - 120px);overflow:auto}.ord-summary{display:grid;grid-template-columns:1.3fr .7fr;gap:14px;padding:20px 24px 0}.customer,.total{padding:18px;border-radius:18px}.customer{background:#fcfbfa;border:1px solid #eee7df}.total{color:#fff;background:linear-gradient(135deg,#E75C25,#f58a56);box-shadow:0 18px 40px #e75c2538}.total strong{display:block;font-size:26px;margin-top:5px}.details{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px 24px}.detail{padding:14px;border:1px solid #eee7df;border-radius:15px;background:#fcfbfa}.lab{display:block;font-size:10px;font-weight:900;text-transform:uppercase;color:#a8a29e}.val{display:block;margin-top:5px;font-size:13px;font-weight:800;overflow-wrap:anywhere}.items{padding:0 24px 24px}.item{display:grid;grid-template-columns:1fr auto;gap:15px;padding:12px;border-bottom:1px solid #eee7df;font-size:12px}.close{width:38px;height:38px;border-radius:12px;background:#f5f5f4;font-size:22px}@media(max-width:900px){.admin-orders-v2{min-width:1120px}}@media(max-width:700px){.ord-summary{grid-template-columns:1fr}.details{grid-template-columns:1fr 1fr}}`;
+    document.head.appendChild(adminV2Style);
+    function closePop(){document.getElementById('chip-pop')?.remove()}
+    function chip(id,type,val){const status=type==='status', label=status?(STATUS_META[val]?.[0]||val):(val==='paid'?'Payé':'Non payé'),cls=status?'s-'+val:'p-'+val;return `<button class="chip-btn" data-chip="${type}" data-id="${id}" data-val="${val}"><span class="chip-face ${cls}">${label}<span class="chip-arrow">⌄</span></span></button>`}
+    function bindChips(root){root.querySelectorAll('[data-chip]').forEach(x=>x.addEventListener('click',e=>{e.stopPropagation();closePop();const type=x.dataset.chip,val=x.dataset.val,id=x.dataset.id,opts=type==='status'?Object.entries(STATUS_META).map(([v,m])=>[v,m[0]]):[['unpaid','Non payé'],['paid','Payé']],p=document.createElement('div');p.id='chip-pop';p.className='chip-pop';p.innerHTML=opts.map(([v,l])=>`<button class="chip-opt ${v===val?'on':''}" data-v="${v}"><span>${l}</span><i>✓</i></button>`).join('');document.body.appendChild(p);const r=x.getBoundingClientRect();p.style.left=Math.max(10,Math.min(innerWidth-186,r.left))+'px';p.style.top=(r.bottom+8+p.offsetHeight>innerHeight?Math.max(10,r.top-p.offsetHeight-8):r.bottom+8)+'px';p.querySelectorAll('.chip-opt').forEach(o=>o.onclick=async ev=>{ev.stopPropagation();closePop();if(o.dataset.v===val)return;if(type==='status')await updateOrderStatus(id,o.dataset.v);else await updatePaymentStatus(id,o.dataset.v)})}))}
+    function printOrder(id){const o=currentOrders.find(x=>String(x.id)===String(id));if(!o)return;const it=parseItems(o.items),w=window.open('','_blank','width=900,height=760');if(!w)return alert('Autorisez les popups pour imprimer.');w.document.write(`<!doctype html><meta charset="utf-8"><title>Commande</title><style>body{font-family:Arial;margin:35px;color:#292524}h1{color:#E75C25}header{display:flex;justify-content:space-between;border-bottom:3px solid #E75C25}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left}th{background:#fff4ec}</style><header><div><h1>Librairie El Qods</h1><p>#${escapeHtml(o.numero_commande||o.id)}</p></div><h2>${money(orderTotal(o))}</h2></header><p><b>${escapeHtml(o.client_name||'-')}</b><br>${escapeHtml(o.client_phone||'-')} · ${escapeHtml(o.client_email||'-')}</p><table><tr><th>#</th><th>Article</th><th>Catégorie</th><th>Prix</th></tr>${it.map((a,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(a.name||'-')}</td><td>${escapeHtml(a.category||'-')}</td><td>${money(a.price)}</td></tr>`).join('')}</table><script>onload=()=>print()</script>`);w.document.close()}
+    function closeOrder(){document.getElementById('ord-modal')?.classList.remove('open');document.body.style.overflow=''}
+    function openOrder(id){const o=currentOrders.find(x=>String(x.id)===String(id));if(!o)return;const it=parseItems(o.items),st=normalizeStatus(o.status),d=getDeadline(o);let m=document.getElementById('ord-modal');if(!m){m=document.createElement('div');m.id='ord-modal';m.className='ord-modal';m.onclick=e=>{if(e.target===m)closeOrder()};document.body.appendChild(m)}const rows=it.length?it.map((a,i)=>`<div class="item"><span><b>${i+1}.</b> ${escapeHtml(a.name||'-')}<small class="sub">${escapeHtml(a.category||'Fournitures')}</small></span><b>${money(a.price)}</b></div>`).join(''):'<div class="detail">Liste importée ou aucun article détaillé.</div>';m.innerHTML=`<div class="ord-card"><div class="ord-head"><div><span class="lab">Commande client</span><h2 class="text-3xl font-black mt-1">#${escapeHtml(o.numero_commande||o.id)}</h2><div class="flex gap-2 mt-3">${chip(o.id,'status',st)}${chip(o.id,'payment',o.payment_status||'unpaid')}</div></div><button class="close">×</button></div><div class="ord-body"><div class="ord-summary"><div class="customer"><span class="lab">Client</span><b class="block text-lg mt-1">${escapeHtml(o.client_name||'-')}</b><span class="block text-sm text-stone-500 mt-2">${escapeHtml(o.client_phone||'-')}</span><span class="block text-sm text-stone-500">${escapeHtml(o.client_email||'-')}</span></div><div class="total"><span class="lab text-white/70">Total</span><strong>${money(orderTotal(o))}</strong><span class="text-xs text-white/75">Paiement au retrait</span></div></div><div class="details"><div class="detail"><span class="lab">Échéance</span><span class="val">${d.toLocaleDateString('fr-FR')}</span></div><div class="detail"><span class="lab">Créée le</span><span class="val">${getCreatedDate(o).toLocaleString('fr-FR')}</span></div><div class="detail"><span class="lab">Code QR</span><span class="val">${escapeHtml(o.qr_code||'-')}</span></div></div><div class="items"><div class="flex justify-between mb-2"><h3 class="font-black">Articles commandés</h3><span class="sub">${it.length} article(s)</span></div><div class="border rounded-2xl overflow-hidden">${rows}</div></div></div></div>`;m.querySelector('.close').onclick=closeOrder;bindChips(m);m.classList.add('open');document.body.style.overflow='hidden'}
+    window.printAdminOrder=printOrder;window.openAdminOrderModal=openOrder;window.closeAdminOrderModal=closeOrder;
 
     let currentOrders = [];
     let currentOrdersPage = 1;
@@ -403,115 +419,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span class="px-3 py-2 rounded-xl bg-[#E75C25] text-white text-xs font-black">${currentOrdersPage} / ${totalPages}</span>
                 <button id="btn-orders-next" class="px-3 py-2 rounded-xl border border-gray-200 text-xs font-bold ${currentOrdersPage >= totalPages ? 'text-gray-300 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-50'}" ${currentOrdersPage >= totalPages ? 'disabled' : ''}>Suivant</button>
             </div>`;
-        document.getElementById('btn-orders-prev')?.addEventListener('click', () => { if (currentOrdersPage > 1) { currentOrdersPage -= 1; renderOrdersTable(); } });
-        document.getElementById('btn-orders-next')?.addEventListener('click', () => { if (currentOrdersPage < totalPages) { currentOrdersPage += 1; renderOrdersTable(); } });
+        document.getElementById('btn-orders-prev')?.addEventListener('click', () => { if (currentOrdersPage > 1) { currentOrdersPage -= 1; renderOrdersTable(); document.getElementById('table-orders-body')?.closest('table')?.scrollIntoView({behavior:'smooth'}); } });
+        document.getElementById('btn-orders-next')?.addEventListener('click', () => { if (currentOrdersPage < totalPages) { currentOrdersPage += 1; renderOrdersTable(); document.getElementById('table-orders-body')?.closest('table')?.scrollIntoView({behavior:'smooth'}); } });
     }
 
-    function renderOrdersTable() {
-        const tbody = document.getElementById('table-orders-body');
-        const filteredOrders = getFilteredOrders();
-        const totalPages = Math.max(1, Math.ceil(filteredOrders.length / ORDERS_PER_PAGE));
-        if (currentOrdersPage > totalPages) currentOrdersPage = totalPages;
-        const orders = filteredOrders.slice((currentOrdersPage - 1) * ORDERS_PER_PAGE, currentOrdersPage * ORDERS_PER_PAGE);
-        if (!tbody) return;
-        renderOrdersPagination(filteredOrders.length, totalPages);
-        if (!orders.length) {
-            tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-400">Aucune commande.</td></tr>`;
-            return;
-        }
-        tbody.innerHTML = orders.map(order => {
-            const status = normalizeStatus(order.status);
-            const deadline = getDeadline(order);
-            const days = daysUntil(deadline);
-            const items = parseItems(order.items);
-            
-            const photoItem = items.find(i => i.type === 'photo_upload' || i.url || i.photo_url);
-            const photoUrl = order.google_drive_url || photoItem?.url || photoItem?.photo_url || null;
-            const content = photoUrl
-                ? `<a href="${escapeHtml(photoUrl)}" target="_blank" class="text-blue-600 hover:underline font-bold flex items-center gap-1">📸 Voir la photo</a>`
-                : photoItem
-                    ? `<span class="inline-flex items-center gap-1 font-bold text-amber-700 bg-amber-50 px-2 py-1 rounded-lg">📸 Photo en attente</span>`
-                    : `<span class="font-bold text-stone-700">${items.length} articles (${money(orderTotal(order))})</span>`;
-                
-            const deadlineText = status === 'expired' ? 'Expired' : `${deadline.toLocaleDateString('fr-FR')} (${days}j)`;
-            const displayReference = order.numero_commande || order.id;
-            const paymentStatus = order.payment_status || 'unpaid';
-
-            return `
-                <tr class="hover:bg-gray-50 transition">
-                    <td class="p-4 font-bold text-gray-600">#${displayReference}</td>
-                    <td class="p-4 font-semibold">${escapeHtml(order.client_name)}</td>
-                    <td class="p-4 text-gray-500">${escapeHtml(order.client_phone)}</td>
-                    <td class="p-4 text-xs max-w-xs truncate">${content}</td>
-                    <td class="p-4"><div class="space-y-2">${getStatusBadge(status)}${paymentStatus === 'paid' ? `<span class="inline-block bg-emerald-50 text-emerald-700 px-2 py-1 rounded-full text-xs font-semibold">✅ Payé</span>` : `<span class="inline-block bg-amber-50 text-amber-700 px-2 py-1 rounded-full text-xs font-semibold">⏳ Non payé</span>`}</div></td>
-                    <td class="p-4 text-xs text-gray-500">${deadlineText}</td>
-                    <td class="p-4 text-right">
-                        <div class="relative inline-block text-left">
-                            <button onclick="window.toggleMenu(this)" class="text-gray-400 hover:text-gray-600 p-2">
-                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
-                            </button>
-                            <div class="hidden absolute right-0 mt-2 w-52 bg-white border border-gray-200 rounded-xl shadow-2xl z-[9999] p-2 text-left menu-dropdown">
-                                <button class="btn-notify w-full text-left px-4 py-2 text-sm hover:bg-gray-50 text-blue-600" data-id="${order.id}">WhatsApp</button>
-                                <hr class="my-1 border-gray-100">
-                                <div class="px-4 py-2">
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase">Statut</span>
-                                    <select class="order-status-select w-full mt-1 border border-gray-200 rounded text-sm p-1" data-id="${order.id}">
-                                        ${Object.keys(STATUS_META).map(key => `<option value="${key}" ${key === status ? 'selected' : ''}>${STATUS_META[key][0]}</option>`).join('')}
-                                    </select>
-                                </div>
-                                <div class="px-4 py-2 border-t border-gray-100 mt-1">
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase">Paiement</span>
-                                    <select class="order-payment-select w-full mt-1 border border-gray-200 rounded text-sm p-1" data-id="${order.id}">
-                                        <option value="unpaid" ${paymentStatus === 'unpaid' ? 'selected' : ''}>Non payé</option>
-                                        <option value="paid" ${paymentStatus === 'paid' ? 'selected' : ''}>Payé</option>
-                                    </select>
-                                </div>
-                                <button class="btn-delete w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600" data-id="${order.id}">Supprimer</button>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            `;
-        }).join('');
-
-        // Attachement des événements
-        tbody.querySelectorAll('.order-status-select').forEach(select => {
-            select.addEventListener('change', () => updateOrderStatus(select.dataset.id, select.value));
-        });
-        tbody.querySelectorAll('.order-payment-select').forEach(select => {
-            select.addEventListener('change', () => updatePaymentStatus(select.dataset.id, select.value));
-        });
-
-        tbody.querySelectorAll('.btn-notify').forEach(button => {
-            button.addEventListener('click', () => {
-                const order = currentOrders.find(entry => String(entry.id) === String(button.dataset.id));
-                const message = `Bonjour ${order.client_name}, votre commande n° ${order.numero_commande || order.id} est prête.`;
-                window.open(`https://wa.me/${formatPhoneForWhatsapp(order.client_phone)}?text=${encodeURIComponent(message)}`, '_blank');
-            });
-        });
-
-        tbody.querySelectorAll('.btn-delete').forEach(button => {
-            button.addEventListener('click', () => deleteOrder(button.dataset.id));
-        });
-    }
+    function renderOrdersTable(){const tb=document.getElementById('table-orders-body'),f=getFilteredOrders(),pages=Math.max(1,Math.ceil(f.length/ORDERS_PER_PAGE));if(currentOrdersPage>pages)currentOrdersPage=pages;const os=f.slice((currentOrdersPage-1)*ORDERS_PER_PAGE,currentOrdersPage*ORDERS_PER_PAGE);if(!tb)return;const table=tb.closest('table');table?.classList.add('admin-orders-v2');const hr=table?.querySelector('thead tr');if(hr)hr.innerHTML='<th>Commande</th><th>Client</th><th>Téléphone</th><th>Contenu</th><th>Statut</th><th>Paiement</th><th>Échéance</th><th class="text-right">Actions</th>';renderOrdersPagination(f.length,pages);if(!os.length){tb.innerHTML='<tr><td colspan="8" class="p-6 text-center text-gray-400">Aucune commande.</td></tr>';return}tb.innerHTML=os.map(o=>{const st=normalizeStatus(o.status),it=parseItems(o.items),d=getDeadline(o),photo=it.find(a=>a.type==='photo_upload'||a.url||a.photo_url),content=photo?'📸 Liste importée':`${it.length} articles`;return `<tr class="order-v2" data-id="${o.id}" tabindex="0"><td><b class="text-[#E75C25]">#${escapeHtml(o.numero_commande||o.id)}</b></td><td><b>${escapeHtml(o.client_name||'-')}</b><span class="sub">${escapeHtml(o.client_email||'-')}</span></td><td>${escapeHtml(o.client_phone||'-')}</td><td><b>${content}</b><span class="sub">${money(orderTotal(o))}</span></td><td>${chip(o.id,'status',st)}</td><td>${chip(o.id,'payment',o.payment_status||'unpaid')}</td><td class="text-xs text-stone-500">${d.toLocaleDateString('fr-FR')} (${daysUntil(d)}j)</td><td><div class="acts"><button class="act wa notify" data-id="${o.id}" title="WhatsApp"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.45L3 20l1.05-5.25A8.5 8.5 0 1 1 21 11.5Z"/><path d="M8.2 7.9c.3 2.9 2.7 5.3 5.6 5.7l1.4-1.4"/></svg></button><button class="act pr print" data-id="${o.id}" title="Imprimer"><svg viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg></button><button class="act del delete" data-id="${o.id}" title="Supprimer"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V3h8v3M19 6l-1 15H6L5 6M10 11v6M14 11v6"/></svg></button></div></td></tr>`}).join('');tb.querySelectorAll('.order-v2').forEach(r=>r.onclick=e=>{if(!e.target.closest('button'))openOrder(r.dataset.id)});bindChips(tb);tb.querySelectorAll('.notify').forEach(x=>x.onclick=e=>{e.stopPropagation();const o=currentOrders.find(a=>String(a.id)===String(x.dataset.id));window.open(`https://wa.me/${formatPhoneForWhatsapp(o.client_phone)}?text=${encodeURIComponent(`Bonjour ${o.client_name}, votre commande n° ${o.numero_commande||o.id} est prête.`)}`,'_blank')});tb.querySelectorAll('.print').forEach(x=>x.onclick=e=>{e.stopPropagation();printOrder(x.dataset.id)});tb.querySelectorAll('.delete').forEach(x=>x.onclick=e=>{e.stopPropagation();deleteOrder(x.dataset.id)})}
 
     async function updateOrderStatus(orderId, status) {
         const payload = { status };
-        if (status === 'cancelled') {
-            payload.cancellation_source = 'store';
-            payload.cancelled_at = new Date().toISOString();
-        } else {
-            payload.cancellation_source = null;
-            payload.cancelled_at = null;
-        }
         if (status === 'collected' && currentOrders.find(order => String(order.id) === String(orderId))?.total_amount == null) {
             payload.total_amount = orderTotal(currentOrders.find(order => String(order.id) === String(orderId)));
         }
-        let { error } = await supabaseClient.from('orders').update(payload).eq('id', orderId);
-        if (error && /cancellation_source|cancelled_at|column|schema/i.test(error.message || '')) {
-            const fallback = await supabaseClient.from('orders').update({ status }).eq('id', orderId);
-            error = fallback.error;
-        }
+        const { error } = await supabaseClient.from('orders').update(payload).eq('id', orderId);
         if (error) {
             console.error(error);
             alert("Impossible de mettre à jour le statut.");
@@ -533,12 +452,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadOrders() {
         const tbody = document.getElementById('table-orders-body');
-        if (tbody) tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-400">Chargement...</td></tr>`;
+        if (tbody) tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-gray-400">Chargement...</td></tr>`;
 
         const { data, error } = await supabaseClient.from('orders').select('*').order('id', { ascending: false });
         if (error) {
             console.error(error);
-            if (tbody) tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-red-500">Erreur de chargement : ${escapeHtml(error.message)}</td></tr>`;
+            if (tbody) tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-red-500">Erreur de chargement : ${escapeHtml(error.message)}</td></tr>`;
             return;
         }
 
