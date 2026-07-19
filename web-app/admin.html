@@ -200,6 +200,29 @@
                     <h3 class="text-sm font-bold text-gray-900">Listes actuellement actives</h3>
                     <div id="config-lists-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                 </div>
+
+                <div class="lg:col-span-3 border-t border-gray-200 pt-8 mt-2">
+                    <div class="mb-5">
+                        <h3 class="text-base font-black text-gray-900">Fournitures indépendantes</h3>
+                        <p class="text-xs text-gray-400 mt-1">Gérez la liste de fournitures affichée dans la partie droite de l’étape 3.</p>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <form id="form-supply-item" class="bg-white border border-gray-200 rounded-2xl p-5 space-y-4 shadow-sm">
+                            <input type="hidden" id="supply-item-id">
+                            <div><label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Nom</label><input id="supply-item-name" required class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E75C25]" placeholder="Ex : Ensemble stylo"></div>
+                            <div><label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Catégorie</label><input id="supply-item-category" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E75C25]" value="Fournitures"></div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div><label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Prix standard</label><input id="supply-item-standard" required type="number" min="0" step="0.01" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E75C25]" placeholder="0.00"></div>
+                                <div><label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Prix qualité</label><input id="supply-item-quality" required type="number" min="0" step="0.01" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E75C25]" placeholder="0.00"></div>
+                            </div>
+                            <label class="flex items-center gap-2 text-xs font-bold text-gray-700"><input id="supply-item-active" type="checkbox" checked class="accent-[#E75C25]"> Afficher sur le site</label>
+                            <div class="flex gap-2"><button type="submit" class="flex-1 bg-[#E75C25] text-white rounded-xl py-3 text-xs font-black hover:bg-[#CE4E1D]">Enregistrer</button><button id="cancel-supply-edit" type="button" class="hidden px-4 border border-gray-200 rounded-xl text-xs font-black">Annuler</button></div>
+                        </form>
+                        <div class="lg:col-span-2 bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
+                            <div id="supply-items-admin-list" class="grid gap-2"><p class="text-xs text-gray-400">Chargement des fournitures…</p></div>
+                        </div>
+                    </div>
+                </div>
             </section>
 
             <section id="pane-tabs-config" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">

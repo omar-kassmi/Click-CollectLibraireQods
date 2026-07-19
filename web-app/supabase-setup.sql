@@ -85,3 +85,11 @@ with check (true);
 -- Optional storage setup for photo uploads:
 -- 1. In Supabase Dashboard > Storage, create a public bucket named: lists
 -- 2. If you enable storage RLS manually, allow public upload/read only if that matches your shop workflow.
+
+
+-- Consignes libres saisies par le client pour une commande
+alter table public.orders
+add column if not exists order_instructions text;
+
+comment on column public.orders.order_instructions is
+'Consignes facultatives laissées par le client lors de la commande';

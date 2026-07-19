@@ -10,3 +10,464 @@ html {
 }
 :root{--to:#E75C25;--tg:#34D6A0;--ti:#302C29;--ts:#F8F7F6}
 body.tracking-drawer-open{overflow:hidden}.tracking-section{width:100%;padding-top:7rem;background:#fff}.tracking-shell{width:min(1180px,calc(100% - 40px));min-height:560px;margin:auto;padding:2rem 0 4rem}.tracking-search-heading{max-width:720px;margin:0 auto 1.2rem;text-align:center}.tracking-search-heading span{color:var(--to);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.16em}.tracking-search-heading h2{margin:.4rem 0;color:var(--to);font-size:2.35rem;font-weight:900;letter-spacing:-.04em}.tracking-search-heading p{color:#6f6965;font-size:.84rem}.tracking-search-form{max-width:760px;margin:auto;padding:1rem;display:grid;grid-template-columns:1fr 1fr auto;gap:.75rem;border:1px solid #ece8e5;border-radius:1.2rem;box-shadow:0 18px 55px rgba(62,35,18,.08)}.tracking-search-form input{min-width:0;padding:.92rem 1rem;border:1px solid #ebe7e4;border-radius:.85rem;background:#faf9f8;font-size:.82rem;outline:0}.tracking-search-form>button{padding:.92rem 1.3rem;border-radius:.85rem;background:var(--to);color:#fff;font-size:.78rem;font-weight:900}.tracking-search-form.is-result-hidden,.tracking-search-heading.is-result-hidden{display:none!important}#tracking-result.tracking-result-shell{grid-column:1/-1;width:100%;margin:0;padding:0;border:0;background:#fff;box-shadow:none}.tracking-view{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:clamp(2rem,5vw,4.5rem);align-items:start}.tracking-main{min-width:0}.tracking-greeting{display:flex;align-items:center;gap:.85rem;color:var(--to)}.tracking-greeting h3{font-size:clamp(1.65rem,3vw,2.1rem);font-weight:900;letter-spacing:-.045em}.tracking-back{width:46px;height:46px;flex:none;display:grid;place-items:center;border-radius:16px;background:linear-gradient(145deg,#fff5ef,#ffe5d7);box-shadow:inset 0 0 0 1px rgba(231,92,37,.18),0 8px 22px rgba(231,92,37,.14);transition:.25s}.tracking-back:hover{transform:translateX(-3px);background:var(--to);color:#fff}.tracking-back svg{width:23px}.tracking-copy{margin:.65rem 0 1.5rem 3.7rem;color:#625d59;font-size:.8rem}.tracking-contacts{width:min(100%,420px);margin-left:3.7rem;display:grid;gap:1.05rem}.tracking-card{padding:1rem;border-radius:.85rem;background:var(--ts)}.tracking-card span,.tracking-price span{display:block;color:#aaa5a1;font-size:.65rem;text-transform:uppercase}.tracking-card strong{font-size:.84rem;overflow-wrap:anywhere}.tracking-zone{margin:1.35rem 0 0 3.7rem}.tracking-zone-title{display:block;margin-bottom:.8rem;color:#8c8580;font-size:.69rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}.tracking-pills{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.55rem}.tracking-pill{padding:.5rem .8rem;border:2px solid #F5AA00;border-radius:999px;color:#F1A000;text-align:center;font-size:.76rem;font-weight:800;overflow-wrap:anywhere}.tracking-status{margin-top:2.1rem}.tracking-timeline{width:100%;position:relative;display:grid;grid-template-columns:repeat(5,1fr)}.tracking-timeline:before{content:"";position:absolute;top:18px;left:6%;right:6%;height:4px;background:#e8e6e4;border-radius:9px}.tracking-progress{position:absolute;top:18px;left:6%;height:4px;background:var(--tg);border-radius:9px}.tracking-step{position:relative;z-index:1;text-align:center}.tracking-dot{width:40px;height:40px;margin:0 auto .6rem;display:grid;place-items:center;border:3px solid #fff;border-radius:50%;background:#e9e7e5;color:#aaa;box-shadow:0 0 0 1px #eee;font-weight:900}.tracking-step.done .tracking-dot{background:var(--tg);color:#fff}.tracking-step strong{display:block;font-size:clamp(.6rem,.9vw,.71rem)}.tracking-step small{display:block;margin-top:.3rem;color:#938d89;font-size:.59rem}.tracking-ref{margin-bottom:.85rem;color:var(--to);text-align:center;font-size:1.45rem;font-weight:900}.tracking-qr-card{padding:1rem;border-radius:2rem;background:var(--ts)}.tracking-qr-box{padding:.65rem;display:grid;place-items:center;border-radius:1.4rem;background:#fff}.tracking-qr-box canvas,.tracking-qr-box img{width:175px!important;height:175px!important;max-width:100%}.tracking-help{margin:.75rem .4rem;color:#77716d;font-size:.61rem;line-height:1.45;font-style:italic;text-align:justify}.tracking-action{width:100%;margin-top:.45rem;padding:.62rem;border-radius:.7rem;font-size:.66rem;font-weight:900}.tracking-action.orange{background:var(--to);color:#fff}.tracking-action.green{background:var(--tg);color:#fff}.tracking-action.red{border:2px solid #d90000;color:#c50000;text-decoration:underline}.tracking-price{margin-top:.75rem;padding:1rem;border:1px solid #edf1ed;border-radius:.8rem;background:#f8faf8}.tracking-price strong{display:block;margin-top:.2rem;color:#6da078;font-size:1.05rem}.tracking-overlay{position:fixed;inset:0;z-index:90;background:rgba(22,18,15,.42);opacity:0;visibility:hidden;transition:.3s;backdrop-filter:blur(2px)}.tracking-overlay.open{opacity:1;visibility:visible}.tracking-drawer{position:fixed;top:0;right:0;z-index:91;width:min(430px,92vw);height:100dvh;display:flex;flex-direction:column;background:#fff;box-shadow:-24px 0 70px rgba(25,16,10,.18);transform:translateX(105%);transition:transform .38s cubic-bezier(.22,1,.36,1)}.tracking-drawer.open{transform:none}.tracking-drawer-head{display:flex;justify-content:space-between;gap:1rem;padding:1.5rem;border-bottom:1px solid #eee9e5}.tracking-drawer-head span{color:var(--to);font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.14em}.tracking-drawer-head h4{margin-top:.3rem;font-size:1.35rem;font-weight:900}.tracking-close{width:40px;height:40px;flex:none;display:grid;place-items:center;border-radius:50%;background:#f7f4f2;font-size:1.4rem;transition:.2s}.tracking-close:hover{background:var(--to);color:#fff;transform:rotate(90deg)}.tracking-drawer-body{flex:1;overflow-y:auto;padding:1.15rem 1.5rem 2rem}.tracking-drawer-intro{margin-bottom:1rem;padding:1rem;border-radius:1rem;background:#fff7f2;color:#655d58;font-size:.78rem;line-height:1.55}.tracking-list{display:grid;gap:.65rem}.tracking-list>div{display:flex;justify-content:space-between;gap:1rem;padding:.9rem 1rem;border:1px solid #eee9e5;border-radius:.9rem;font-size:.76rem}.tracking-list>div span:last-child{flex:none;color:var(--to);font-weight:800}@media(max-width:850px){.tracking-section{padding-top:5.5rem}.tracking-shell{width:calc(100% - 28px)}.tracking-search-form{grid-template-columns:1fr}.tracking-view{grid-template-columns:1fr}.tracking-aside{width:min(100%,340px);margin:auto}.tracking-copy,.tracking-contacts,.tracking-zone{margin-left:0}.tracking-pills{grid-template-columns:1fr}.tracking-timeline-wrap{overflow-x:auto}.tracking-timeline{min-width:590px}} 
+
+/* Rebuilt Rentrée scolaire flow — based on the supplied functional PDF */
+.school-order-flow{padding:112px 0 90px;background:#fffaf7;min-height:100vh}.school-flow-progress{position:fixed;top:72px;left:0;right:0;z-index:39;height:4px;background:#f0e7e1}.school-flow-progress>div{width:33.333%;height:100%;background:#E75C25;transition:width .5s cubic-bezier(.22,1,.36,1)}.school-flow-shell{width:min(1120px,calc(100% - 32px));margin:auto}.school-flow-heading{max-width:680px;margin:0 auto 34px;text-align:center}.school-flow-heading>span{color:#E75C25;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.2em}.school-flow-heading h2{margin-top:8px;color:#292524;font-size:clamp(28px,4vw,44px);font-weight:900;letter-spacing:-.045em}.school-flow-heading p{margin-top:10px;color:#78716c;font-size:14px}.flow-view{animation:flowViewDown .55s cubic-bezier(.22,1,.36,1) both}.flow-view.hidden{display:none!important}@keyframes flowViewDown{from{opacity:0;transform:translateY(-28px)}to{opacity:1;transform:translateY(0)}}.flow-view-head{display:flex;align-items:center;gap:14px;margin-bottom:18px}.flow-view-head>span{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:#E75C25;color:#fff;font-size:12px;font-weight:900}.flow-view-head h3{font-size:20px;font-weight:900;color:#292524}.flow-view-head p{margin-top:3px;color:#a8a29e;font-size:12px}.flow-card{padding:24px;border:1px solid #e9e4df;border-radius:22px;background:#fff;box-shadow:0 16px 45px rgba(60,35,20,.06)}.flow-card+.flow-card{margin-top:16px}.flow-card h4{font-size:16px;font-weight:900;color:#292524}.flow-card-copy{margin-top:5px;color:#a8a29e;font-size:12px}.flow-choice-grid{display:grid;gap:12px;margin-top:18px}.flow-choice-grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}.flow-radio-card{cursor:pointer}.flow-radio-card input{position:absolute;opacity:0}.flow-radio-card span,.flow-type-card{display:flex;min-height:92px;flex-direction:column;justify-content:center;padding:18px;border:1px solid #e7e5e4;border-radius:16px;background:#fafaf9;text-align:left;transition:.2s}.flow-radio-card b,.flow-type-card b{font-size:13px;font-weight:900;color:#292524}.flow-radio-card small,.flow-type-card small{margin-top:5px;color:#a8a29e;font-size:11px;line-height:1.45}.flow-radio-card input:checked+span,.flow-type-card.is-selected{border-color:#E75C25;background:#fff6f0;box-shadow:0 0 0 3px rgba(231,92,37,.08)}.official-school-fields{margin-top:20px;padding-top:20px;border-top:1px solid #eee9e5}.school-logo-box{height:72px;margin-bottom:14px;display:flex;align-items:center;justify-content:center;border:1px solid #eee9e5;border-radius:14px;background:#fff}.school-logo-box.hidden{display:none}.school-logo-box img{max-width:180px;max-height:52px;object-fit:contain}.flow-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.flow-field-grid label span,.flow-form label>span{display:block;margin-bottom:6px;color:#78716c;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}.flow-field-grid select,.flow-form input,.flow-form textarea{width:100%;padding:12px 14px;border:1px solid #e7e5e4;border-radius:12px;background:#fafaf9;font-size:12px;outline:none}.flow-field-grid select:focus,.flow-form input:focus,.flow-form textarea:focus{border-color:#E75C25;background:#fff;box-shadow:0 0 0 4px rgba(231,92,37,.08)}.flow-primary,.flow-secondary{display:inline-flex;min-height:44px;align-items:center;justify-content:center;margin-top:16px;padding:11px 18px;border-radius:12px;font-size:12px;font-weight:900}.flow-primary{background:#E75C25;color:#fff}.flow-secondary{border:1px solid #d6d3d1;background:#fff;color:#57534e}.flow-two-columns{display:grid;grid-template-columns:1.2fr .8fr;gap:18px;align-items:start}.checkout-columns{grid-template-columns:1fr .9fr}.flow-card-title-row{display:flex;justify-content:space-between;gap:15px}.flow-link{color:#E75C25;font-size:11px;font-weight:900}.flow-items-list{display:grid;gap:9px;margin-top:17px}.flow-items-list label{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:12px;border:1px solid #eee9e5;border-radius:13px;background:#fcfbfa}.flow-items-list input{accent-color:#E75C25}.flow-total{display:flex;justify-content:space-between;gap:15px;margin-top:18px;padding-top:15px;border-top:1px solid #eee9e5;color:#78716c;font-size:12px}.flow-total strong{color:#E75C25}.range-switch{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:16px;padding:5px;border-radius:13px;background:#f5f5f4}.range-switch input{position:absolute;opacity:0}.range-switch span{display:flex;justify-content:center;padding:10px;border-radius:9px;color:#78716c;font-size:11px;font-weight:900;cursor:pointer}.range-switch input:checked+span{background:#fff;color:#E75C25;box-shadow:0 5px 14px rgba(28,25,23,.08)}.flow-muted{color:#a8a29e;font-size:12px}.flow-view-actions{display:flex;justify-content:flex-end;margin-top:18px}.flow-view-actions.left{justify-content:flex-start}.flow-form{display:grid;gap:14px}.delivery-fields{display:grid;gap:12px;padding:15px;border:1px solid #fed7c1;border-radius:15px;background:#fff8f3}.delivery-fields.hidden{display:none}.flow-form textarea{min-height:86px;resize:vertical}.order-summary-card{position:sticky;top:102px}.summary-lines{display:grid;gap:10px;margin-top:18px}.summary-lines>div{display:flex;justify-content:space-between;gap:15px;color:#78716c;font-size:12px}.summary-lines b{color:#292524;text-align:right}.summary-divider{height:1px;margin:18px 0;background:#eee9e5}.summary-grand-total{display:flex;justify-content:space-between;align-items:center}.summary-grand-total span{color:#78716c;font-size:12px;font-weight:800}.summary-grand-total strong{color:#E75C25;font-size:20px}.flow-view[data-view="2"] .flow-card+.flow-card{margin-top:0}@media(max-width:800px){.school-flow-progress{top:54px}.flow-choice-grid.two,.flow-field-grid,.flow-two-columns,.checkout-columns{grid-template-columns:1fr}.order-summary-card{position:static}.flow-choice-grid.two{gap:9px}.school-order-flow{padding-top:90px}.flow-view-head{align-items:flex-start}}
+
+/* PDF-aligned school and level selection */
+.school-flow-progress{display:none}.school-order-active .school-flow-progress{display:block;top:72px}.official-selection-card{margin-top:16px}.selection-block+.selection-block{margin-top:24px;padding-top:22px;border-top:1px solid #eee9e5}.selection-heading{display:flex;align-items:flex-start;gap:12px}.selection-heading>span{width:30px;height:30px;display:grid;place-items:center;flex:none;border-radius:10px;background:#fff1e8;color:#E75C25;font-size:11px;font-weight:900}.selection-heading p{margin-top:3px;color:#a8a29e;font-size:11px}.school-logo-buttons{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:18px}.school-logo-button{min-height:132px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:14px;border:1px solid #e7e5e4;border-radius:17px;background:#fafaf9;transition:.2s}.school-logo-button:hover{border-color:#fdba8c;background:#fffaf7;transform:translateY(-2px)}.school-logo-button.is-selected{border-color:#E75C25;background:#fff4ec;box-shadow:0 0 0 3px rgba(231,92,37,.09)}.school-logo-visual{width:76px;height:58px;display:flex;align-items:center;justify-content:center}.school-logo-visual img{max-width:76px;max-height:58px;object-fit:contain}.school-logo-fallback{width:52px;height:52px;display:grid;place-items:center;border-radius:14px;background:#E75C25;color:#fff;font-size:20px;font-weight:900}.school-logo-button strong{color:#292524;font-size:11px;font-weight:900;text-align:center;line-height:1.35}.school-level-buttons{display:flex;flex-wrap:wrap;gap:9px;margin-top:17px}.school-level-button{min-width:84px;padding:11px 15px;border:1px solid #e7e5e4;border-radius:999px;background:#fafaf9;color:#57534e;font-size:11px;font-weight:900;transition:.18s}.school-level-button:hover{border-color:#fdba8c;color:#E75C25}.school-level-button.is-selected{border-color:#E75C25;background:#E75C25;color:#fff;box-shadow:0 8px 20px rgba(231,92,37,.18)}
+@media(max-width:900px){.school-logo-buttons{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:640px){.school-order-active .school-flow-progress{top:54px}.school-logo-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}.school-logo-button{min-height:116px}}
+
+/* Flux officiel ou liste personnelle */
+#section-rentree .school-flow-heading{display:none!important}
+#section-rentree #options-container{min-height:calc(100vh - 110px);padding:42px 0 70px}
+#section-rentree .flow-progressive-step.hidden{display:none!important}
+#section-rentree .flow-progressive-step{min-height:calc(100vh - 80px);padding:72px 0;scroll-margin-top:90px}
+#section-rentree .flow-unlock{animation:unlockStep .5s cubic-bezier(.22,1,.36,1) both}
+@keyframes unlockStep{from{opacity:0;transform:translateY(-32px)}to{opacity:1;transform:translateY(0)}}
+#section-rentree #btn-load-pack{display:none!important}
+
+
+/* Boutons Retour en haut de chaque étape */
+#section-rentree .flow-view-head-with-back {
+    display: grid;
+    grid-template-columns: auto 42px minmax(0, 1fr);
+    align-items: center;
+    gap: 14px;
+}
+#section-rentree .flow-step-back {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 15px;
+    border: 1px solid #E75C25;
+    border-radius: 12px;
+    background: #fff;
+    color: #E75C25;
+    font-size: 12px;
+    font-weight: 900;
+    box-shadow: none;
+    transition: background .2s ease, color .2s ease;
+}
+#section-rentree .flow-step-back:hover {
+    background: #E75C25;
+    color: #fff;
+}
+#section-rentree .official-school-fields-flat .selection-block:first-child {
+    padding-top: 4px;
+}
+#section-rentree .official-school-fields-flat .selection-block + .selection-block {
+    margin-top: 34px;
+    padding-top: 28px;
+    border-top: 1px solid #eee9e5;
+}
+@media (max-width: 640px) {
+    #section-rentree .flow-view-head-with-back {
+        grid-template-columns: auto 36px minmax(0, 1fr);
+        gap: 9px;
+    }
+    #section-rentree .flow-step-back {
+        min-height: 36px;
+        padding: 8px 10px;
+        font-size: 11px;
+    }
+}
+
+
+/* Étape 3 : widget unique divisé en deux */
+#section-rentree .step-three-widget {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    overflow: hidden;
+    border: 1px solid #e9e4df;
+    border-radius: 22px;
+    background: #fff;
+    box-shadow: 0 16px 45px rgba(60,35,20,.06);
+}
+#section-rentree .step-three-pane {
+    min-width: 0;
+    padding: 26px;
+}
+#section-rentree .step-three-supplies {
+    border-left: 1px solid #eee9e5;
+}
+#section-rentree .step-three-widget .flow-total {
+    margin-top: 18px;
+}
+
+/* Chips de prix compactes, adaptées au texte et alignées à droite */
+#section-rentree .item-price-chip {
+    display: inline-flex !important;
+    width: auto !important;
+    min-width: max-content !important;
+    max-width: max-content !important;
+    justify-self: end !important;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto !important;
+    white-space: nowrap;
+    padding: 4px 9px !important;
+    border: 1px solid #d8eee4;
+    border-radius: 999px !important;
+    background: #ecfdf5;
+    color: #047857;
+    font-size: 10px !important;
+    font-weight: 900;
+    line-height: 1.1;
+}
+#section-rentree .flow-items-list label,
+#section-rentree .supply-item-row {
+    grid-template-columns: auto minmax(0, 1fr) max-content !important;
+}
+#section-rentree .supply-item-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #292524;
+    font-size: 12px;
+    font-weight: 800;
+}
+@media (max-width: 800px) {
+    #section-rentree .step-three-widget { grid-template-columns: 1fr; }
+    #section-rentree .step-three-supplies {
+        border-left: 0;
+        border-top: 1px solid #eee9e5;
+    }
+}
+
+/* Étape 3 - typographie affinée et sous-totaux parfaitement alignés */
+#section-rentree .step-three-widget {
+    align-items: stretch;
+}
+#section-rentree .step-three-pane {
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
+}
+#section-rentree .step-three-pane > h4 {
+    min-height: 30px;
+    margin: 0;
+    color: #292524;
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.35;
+    letter-spacing: -0.025em;
+}
+#section-rentree .step-three-supplies > h4 {
+    min-height: 30px;
+    margin: 0;
+    color: #292524;
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.35;
+    letter-spacing: -0.025em;
+}
+#section-rentree .step-three-pane .flow-card-copy {
+    min-height: 18px;
+    margin: 5px 0 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11px;
+    line-height: 1.5;
+}
+#section-rentree .step-three-list > h4 + .flow-items-list {
+    margin-top: 40px;
+}
+#section-rentree .step-three-supplies .range-switch {
+    margin-top: 17px;
+}
+#section-rentree .step-three-pane > .flow-items-list {
+    flex: 1 1 auto;
+}
+#section-rentree .step-three-widget .flow-total {
+    min-height: 42px;
+    margin-top: auto !important;
+    padding-top: 15px;
+    align-items: center;
+}
+#section-rentree .step-three-widget .flow-total span,
+#section-rentree .step-three-widget .flow-total strong {
+    line-height: 1.25;
+}
+@media (max-width: 800px) {
+    #section-rentree .step-three-list > h4 + .flow-items-list {
+        margin-top: 18px;
+    }
+    #section-rentree .step-three-pane .flow-card-copy {
+        min-height: 0;
+    }
+}
+
+/* Étape 3 - dimensions uniformes des lignes et respiration avant sous-total */
+#section-rentree .step-three-widget {
+    --step-three-item-height: 68px;
+}
+
+/* Même largeur utile et même hauteur pour tous les items des deux colonnes */
+#section-rentree .step-three-pane > .flow-items-list {
+    width: 100%;
+}
+#section-rentree .step-three-list .flow-items-list label,
+#section-rentree .step-three-supplies .flow-items-list label,
+#section-rentree .step-three-supplies .supply-item-row {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: var(--step-three-item-height) !important;
+    height: var(--step-three-item-height) !important;
+    box-sizing: border-box !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 13px 16px !important;
+    align-items: center !important;
+}
+
+/* Les blocs de catégories ne réduisent jamais la largeur des lignes */
+#section-rentree .step-three-list .flow-items-list > div,
+#section-rentree .step-three-list .flow-items-list > div > div,
+#section-rentree .step-three-supplies .flow-items-list {
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+/* Même gabarit interne : case, texte flexible, chip compacte */
+#section-rentree .step-three-list .flow-items-list label,
+#section-rentree .step-three-supplies .flow-items-list label {
+    grid-template-columns: 28px minmax(0, 1fr) max-content !important;
+    column-gap: 12px !important;
+}
+#section-rentree .step-three-list .flow-items-list label > div:first-child {
+    display: contents !important;
+}
+#section-rentree .step-three-list .pack-item-checkbox,
+#section-rentree .step-three-supplies .supply-item-checkbox {
+    justify-self: center;
+    margin: 0 !important;
+}
+#section-rentree .step-three-list .flow-items-list label > span:not(.item-price-chip),
+#section-rentree .step-three-supplies .supply-item-name {
+    min-width: 0;
+}
+
+/* Espace visible entre le dernier item et le sous-total côté fournitures */
+#section-rentree .step-three-supplies > .flow-items-list {
+    padding-bottom: 24px;
+}
+#section-rentree .step-three-supplies > .flow-total {
+    margin-top: 0 !important;
+}
+
+@media (max-width: 800px) {
+    #section-rentree .step-three-widget {
+        --step-three-item-height: 64px;
+    }
+}
+
+/* Ajustement final : items plus compacts et progression collée au header */
+#section-rentree .step-three-widget {
+    --step-three-item-height: 56px;
+}
+#section-rentree .step-three-list .flow-items-list label,
+#section-rentree .step-three-supplies .flow-items-list label,
+#section-rentree .step-three-supplies .supply-item-row {
+    width: calc(100% - 16px) !important;
+    min-height: var(--step-three-item-height) !important;
+    height: var(--step-three-item-height) !important;
+    margin-left: 8px !important;
+    margin-right: 8px !important;
+    padding: 10px 14px !important;
+}
+
+/* La barre commence exactement au bord inférieur du header fixe. */
+.school-order-active .school-flow-progress {
+    top: var(--main-header-bottom, 94px) !important;
+    margin: 0 !important;
+}
+@media (max-width: 800px) {
+    #section-rentree .step-three-widget {
+        --step-three-item-height: 54px;
+    }
+}
+
+
+/* Étape 4 - alignement propre et récapitulatif hiérarchisé */
+#section-rentree .checkout-columns {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+    align-items: stretch !important;
+    gap: 24px;
+}
+#section-rentree .checkout-form-card,
+#section-rentree .checkout-summary-card {
+    height: 100%;
+    min-height: 500px;
+    margin: 0 !important;
+    box-sizing: border-box;
+    border-radius: 24px;
+    box-shadow: 0 18px 44px rgba(67, 42, 27, .07);
+}
+#section-rentree .checkout-form-card {
+    display: flex;
+    flex-direction: column;
+    padding: 28px 30px;
+}
+#section-rentree .checkout-form-card .flow-form {
+    display: flex;
+    min-height: 100%;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 16px;
+}
+#section-rentree .checkout-form-card .flow-form > button[type="submit"] {
+    width: 100%;
+    margin-top: auto;
+}
+#section-rentree .checkout-summary-card {
+    position: static !important;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 32px;
+}
+#section-rentree .checkout-summary-card > h4 {
+    margin: 0 0 22px;
+    font-family: 'Inter', sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1.25;
+    letter-spacing: -.025em;
+}
+#section-rentree .summary-lines {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 0;
+}
+#section-rentree .summary-group {
+    display: grid;
+    gap: 12px;
+    padding: 16px 0;
+    border-top: 1px solid #eee9e5;
+}
+#section-rentree .summary-group:first-child {
+    padding-top: 0;
+    border-top: 0;
+}
+#section-rentree .summary-row {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 18px;
+    min-height: 24px;
+    color: #78716c;
+    font-size: 12px;
+}
+#section-rentree .summary-row > b {
+    max-width: 220px;
+    color: #292524;
+    font-size: 12px;
+    font-weight: 800;
+    text-align: right;
+}
+#section-rentree .summary-count-row > b {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: #fff2ea;
+    color: #E75C25;
+    font-size: 10px;
+    white-space: nowrap;
+}
+#section-rentree .summary-subtotals {
+    margin-top: auto;
+}
+#section-rentree .summary-subtotal-row > span {
+    font-weight: 700;
+}
+#section-rentree .summary-subtotal-row > b {
+    color: #E75C25;
+    font-size: 13px;
+    font-weight: 900;
+}
+#section-rentree .checkout-summary-card .summary-divider {
+    height: 1px;
+    margin: 2px 0 18px;
+    background: #e7dfda;
+}
+#section-rentree .checkout-summary-card .summary-grand-total {
+    min-height: 48px;
+    align-items: center;
+}
+#section-rentree .checkout-summary-card .summary-grand-total span {
+    color: #57534e;
+    font-size: 14px;
+    font-weight: 900;
+}
+#section-rentree .checkout-summary-card .summary-grand-total strong {
+    color: #E75C25;
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: -.03em;
+}
+@media (max-width: 800px) {
+    #section-rentree .checkout-columns {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+    #section-rentree .checkout-form-card,
+    #section-rentree .checkout-summary-card {
+        min-height: auto;
+    }
+    #section-rentree .checkout-summary-card {
+        order: 0;
+    }
+}
+
+
+/* Récapitulatif : valeurs poussées complètement à droite */
+#section-rentree .checkout-summary-card .summary-row {
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr) minmax(180px, auto) !important;
+}
+#section-rentree .checkout-summary-card .summary-row > b {
+    width: 100%;
+    max-width: none !important;
+    justify-self: stretch;
+    text-align: right !important;
+}
+#section-rentree .checkout-summary-card .summary-count-row > b {
+    width: auto;
+    justify-self: end;
+}
+#section-rentree .checkout-summary-card .summary-grand-total {
+    width: 100%;
+}
+#section-rentree .checkout-summary-card .summary-grand-total strong {
+    margin-left: auto;
+    text-align: right;
+}
+
+/* Champ libre de consignes */
+#section-rentree .order-instructions-field {
+    display: block;
+}
+#section-rentree .order-instructions-field textarea {
+    min-height: 92px;
+    line-height: 1.5;
+    resize: vertical;
+}
+#section-rentree .order-instructions-field small {
+    display: block;
+    margin-top: 6px;
+    color: #a8a29e;
+    font-size: 10px;
+    line-height: 1.4;
+}
+@media (max-width: 600px) {
+    #section-rentree .checkout-summary-card .summary-row {
+        grid-template-columns: minmax(0, 1fr) auto !important;
+    }
+}

@@ -768,4 +768,71 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     initAuth();
+
+
+    // FOURNITURES INDÉPENDANTES - PACKS SCOLAIRES
+    const supplyAdminForm = document.getElementById('form-supply-item');
+    const supplyAdminList = document.getElementById('supply-items-admin-list');
+    const supplyEscape = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+
+    function resetSupplyAdminForm() {
+        if (!supplyAdminForm) return;
+        supplyAdminForm.reset();
+        document.getElementById('supply-item-id').value = '';
+        document.getElementById('supply-item-category').value = 'Fournitures';
+        document.getElementById('supply-item-active').checked = true;
+        document.getElementById('cancel-supply-edit')?.classList.add('hidden');
+    }
+
+    async function loadSupplyAdmin() {
+        if (!supplyAdminList) return;
+        supplyAdminList.innerHTML = '<p class="text-xs text-gray-400">Chargement des fournitures…</p>';
+        const { data, error } = await supabaseClient.from('supply_items').select('*').order('name', { ascending: true });
+        if (error) {
+            supplyAdminList.innerHTML = `<p class="text-xs text-red-600">${supplyEscape(error.message)}</p>`;
+            return;
+        }
+        const supplies = data || [];
+        supplyAdminList.innerHTML = supplies.length ? supplies.map(item => `
+            <div class="grid grid-cols-[minmax(0,1fr)_auto] gap-4 items-center border border-gray-200 rounded-xl p-3 ${item.is_active === false ? 'opacity-50' : ''}">
+                <div class="min-w-0"><b class="block text-sm text-gray-900 truncate">${supplyEscape(item.name)}</b><span class="block text-[11px] text-gray-400 mt-1">${supplyEscape(item.category || 'Fournitures')} · Standard ${Number(item.standard_price || 0).toFixed(2)} DH · Qualité ${Number(item.quality_price || 0).toFixed(2)} DH · ${item.is_active === false ? 'Masquée' : 'Active'}</span></div>
+                <div class="flex gap-2"><button type="button" class="edit-supply px-3 py-2 border border-gray-200 rounded-lg text-xs font-black" data-id="${item.id}">Modifier</button><button type="button" class="delete-supply px-3 py-2 border border-red-200 text-red-600 rounded-lg text-xs font-black" data-id="${item.id}">Supprimer</button></div>
+            </div>`).join('') : '<p class="text-xs text-gray-400">Aucune fourniture configurée.</p>';
+        supplyAdminList.querySelectorAll('.edit-supply').forEach(button => button.addEventListener('click', () => {
+            const item = supplies.find(entry => String(entry.id) === String(button.dataset.id));
+            if (!item) return;
+            document.getElementById('supply-item-id').value = item.id;
+            document.getElementById('supply-item-name').value = item.name || '';
+            document.getElementById('supply-item-category').value = item.category || 'Fournitures';
+            document.getElementById('supply-item-standard').value = item.standard_price || 0;
+            document.getElementById('supply-item-quality').value = item.quality_price || 0;
+            document.getElementById('supply-item-active').checked = item.is_active !== false;
+            document.getElementById('cancel-supply-edit')?.classList.remove('hidden');
+        }));
+        supplyAdminList.querySelectorAll('.delete-supply').forEach(button => button.addEventListener('click', async () => {
+            if (!confirm('Supprimer cette fourniture ?')) return;
+            const { error: deleteError } = await supabaseClient.from('supply_items').delete().eq('id', button.dataset.id);
+            if (deleteError) return alert(deleteError.message);
+            await loadSupplyAdmin();
+        }));
+    }
+
+    supplyAdminForm?.addEventListener('submit', async event => {
+        event.preventDefault();
+        const id = document.getElementById('supply-item-id').value;
+        const payload = {
+            name: document.getElementById('supply-item-name').value.trim(),
+            category: document.getElementById('supply-item-category').value.trim() || 'Fournitures',
+            standard_price: Number(document.getElementById('supply-item-standard').value) || 0,
+            quality_price: Number(document.getElementById('supply-item-quality').value) || 0,
+            is_active: document.getElementById('supply-item-active').checked
+        };
+        const request = id ? supabaseClient.from('supply_items').update(payload).eq('id', id) : supabaseClient.from('supply_items').insert([payload]);
+        const { error } = await request;
+        if (error) return alert(error.message);
+        resetSupplyAdminForm();
+        await loadSupplyAdmin();
+    });
+    document.getElementById('cancel-supply-edit')?.addEventListener('click', resetSupplyAdminForm);
+    loadSupplyAdmin();
 });

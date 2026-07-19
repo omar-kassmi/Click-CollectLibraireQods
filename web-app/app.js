@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedPhotoFile = null;
     let selectedSchoolName = null;
     let selectedSchoolLevel = null;
+    let selectedListType = null;
+    let allSupplyItems = [];
+    let selectedSupplyRange = 'standard';
 
     // Masquage progressif de la Splash Page après 5 secondes
     setTimeout(() => {
@@ -67,11 +70,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.className = "nav-tab-btn font-medium hover:opacity-80 text-[#E75C25] px-2";
             }
         });
-        if(targetId === 'section-rentree') setOrderFlowStep ? setOrderFlowStep(1) : updateStepper(1);
+        document.body.classList.toggle('school-order-active', targetId === 'section-rentree');
+        requestAnimationFrame(syncSchoolProgressWithHeader);
+        if(targetId==='section-rentree'){
+            selectedListType=null;isPhotoOrder=false;selectedSchoolName=null;selectedSchoolLevel=null;
+            document.querySelectorAll('input[name="fulfillment-method"]').forEach(input=>input.checked=false);
+            document.getElementById('choose-official-list')?.classList.remove('is-selected');document.getElementById('choose-official-list')?.setAttribute('aria-pressed','false');
+            document.getElementById('btn-custom-list')?.classList.remove('is-selected');document.getElementById('btn-custom-list')?.setAttribute('aria-pressed','false');
+            lockFollowingSteps();setOrderFlowStep?setOrderFlowStep(1):updateStepper(1);
+        }
         window.scrollTo({top: 0, behavior: 'smooth'});
     };
 
     navButtons.forEach(btn => btn.addEventListener('click', () => switchTab(btn.getAttribute('data-target'))));
+
+    function syncSchoolProgressWithHeader() {
+        const header = document.getElementById('main-header');
+        if (!header) return;
+        const bottom = Math.max(0, Math.round(header.getBoundingClientRect().bottom));
+        document.documentElement.style.setProperty('--main-header-bottom', `${bottom}px`);
+    }
+    syncSchoolProgressWithHeader();
+    window.addEventListener('resize', syncSchoolProgressWithHeader);
+    window.addEventListener('scroll', syncSchoolProgressWithHeader, { passive: true });
+
 
     // ==========================================
     // 3. RÉCUPÉRATION DES PARAMÈTRES ET DU FOOTER
@@ -112,22 +134,136 @@ document.addEventListener('DOMContentLoaded', () => {
                 populateSchoolsDropdown();
             }
         } catch (err) {}
+        await loadIndependentSupplyItems();
     }
+
+    async function loadIndependentSupplyItems() {
+        const container = document.getElementById('independent-supply-items');
+        if (!container) return;
+        container.innerHTML = '<p class="flow-muted">Chargement des fournitures…</p>';
+        try {
+            let response = await supabaseClient.from('supply_items').select('*').order('name', { ascending: true });
+            if (response.error) throw response.error;
+            allSupplyItems = (response.data || []).filter(item => item.is_active !== false);
+            renderIndependentSupplyItems();
+        } catch (error) {
+            console.error('Chargement de la liste fourniture impossible :', error);
+            container.innerHTML = '<p class="flow-muted">La liste fourniture est momentanément indisponible.</p>';
+        }
+    }
+
+    function getSupplyUnitPrice(item) {
+        const raw = selectedSupplyRange === 'quality' ? item.quality_price : item.standard_price;
+        return Number.parseFloat(raw) || 0;
+    }
+
+    function renderIndependentSupplyItems() {
+        const container = document.getElementById('independent-supply-items');
+        if (!container) return;
+        if (!allSupplyItems.length) {
+            container.innerHTML = '<p class="flow-muted">Aucune fourniture active configurée dans l’administration.</p>';
+            updateSupplyTotal();
+            return;
+        }
+        container.innerHTML = allSupplyItems.map(item => {
+            const price = getSupplyUnitPrice(item);
+            return `<label class="supply-item-row">
+                <input type="checkbox" class="supply-item-checkbox" data-id="${item.id}" data-name="${String(item.name || '').replace(/"/g, '&quot;')}">
+                <span class="supply-item-name">${item.name || 'Fourniture'}</span>
+                <span class="item-price-chip">${price.toFixed(2)} DH</span>
+            </label>`;
+        }).join('');
+        container.querySelectorAll('.supply-item-checkbox').forEach(input => input.addEventListener('change', () => {
+            updateSupplyTotal();
+            updateFinalSummary();
+        }));
+        updateSupplyTotal();
+    }
+
+    function updateSupplyTotal() {
+        const totalBox = document.getElementById('supply-total-price');
+        if (!totalBox) return;
+        let total = 0;
+        document.querySelectorAll('.supply-item-checkbox:checked').forEach(input => {
+            const item = allSupplyItems.find(entry => String(entry.id) === String(input.dataset.id));
+            if (item) total += getSupplyUnitPrice(item);
+        });
+        totalBox.innerText = `${total.toFixed(2)} DH`;
+    }
+
+    document.querySelectorAll('input[name="supply-range"]').forEach(input => {
+        input.addEventListener('change', () => {
+            selectedSupplyRange = input.value;
+            const checkedIds = new Set(Array.from(document.querySelectorAll('.supply-item-checkbox:checked')).map(box => String(box.dataset.id)));
+            renderIndependentSupplyItems();
+            document.querySelectorAll('.supply-item-checkbox').forEach(box => box.checked = checkedIds.has(String(box.dataset.id)));
+            updateSupplyTotal();
+            updateFinalSummary();
+        });
+    });
 
     function populateSchoolsDropdown() {
         const selectEcole = document.getElementById('select-ecole');
+        const buttonsBox = document.getElementById('school-logo-buttons');
         if (!selectEcole) return;
         selectEcole.innerHTML = '<option value="">-- Choisir une école --</option>';
-        const uniqueSchools = [...new Set(allSchoolData.map(item => item.school_name).filter(Boolean))];
-        uniqueSchools.forEach(school => {
+        const schoolMap = new Map();
+        allSchoolData.forEach(item => {
+            if (!item.school_name) return;
+            if (!schoolMap.has(item.school_name)) schoolMap.set(item.school_name, item.school_logo_url || '');
+            if (!schoolMap.get(item.school_name) && item.school_logo_url) schoolMap.set(item.school_name, item.school_logo_url);
+        });
+        [...schoolMap.keys()].forEach(school => {
             const opt = document.createElement('option');
             opt.value = school; opt.innerText = school;
             selectEcole.appendChild(opt);
         });
+        if (!buttonsBox) return;
+        buttonsBox.innerHTML = [...schoolMap.entries()].map(([school, logo]) => `
+            <button type="button" class="school-logo-button" data-school="${school.replace(/"/g, '&quot;')}">
+                <span class="school-logo-visual">${logo ? `<img src="${logo}" alt="Logo ${school}" onerror="this.parentElement.innerHTML='<span class=school-logo-fallback>${school.charAt(0).toUpperCase()}</span>'">` : `<span class="school-logo-fallback">${school.charAt(0).toUpperCase()}</span>`}</span>
+                <strong>${school}</strong>
+            </button>`).join('') || '<p class="flow-muted">Aucun établissement configuré.</p>';
+        buttonsBox.querySelectorAll('.school-logo-button').forEach(button => {
+            button.addEventListener('click', () => selectSchoolFromButton(button.dataset.school));
+        });
+    }
+
+    function selectSchoolFromButton(schoolName) {
+        const selectEcole = document.getElementById('select-ecole');
+        const selectNiveau = document.getElementById('select-niveau');
+        const levelBox = document.getElementById('school-level-buttons');
+        const levelBlock = document.getElementById('school-level-block');
+        const btnLoadPack = document.getElementById('btn-load-pack');
+        if (!selectEcole || !selectNiveau || !levelBox) return;
+        selectEcole.value = schoolName;
+        selectedSchoolName = schoolName;
+        selectedSchoolLevel = null;
+        document.querySelectorAll('.school-logo-button').forEach(btn => btn.classList.toggle('is-selected', btn.dataset.school === schoolName));
+        selectNiveau.innerHTML = '<option value="">-- Choisir le niveau --</option>';
+        const lists = allSchoolData.filter(item => item.school_name === schoolName && item.level);
+        lists.forEach(list => {
+            const opt = document.createElement('option');
+            opt.value = list.id; opt.innerText = list.level;
+            selectNiveau.appendChild(opt);
+        });
+        selectNiveau.disabled = false;
+        levelBox.innerHTML = lists.map(list => `<button type="button" class="school-level-button" data-list-id="${list.id}" data-level="${list.level.replace(/"/g, '&quot;')}">${list.level}</button>`).join('');
+        levelBox.querySelectorAll('.school-level-button').forEach(button => button.addEventListener('click', () => {
+            const listId = button.dataset.listId;
+            selectNiveau.value = listId;
+            selectedSchoolLevel = button.dataset.level;
+            levelBox.querySelectorAll('.school-level-button').forEach(btn => btn.classList.toggle('is-selected', btn === button));
+            btnLoadPack?.classList.remove('hidden');
+            setTimeout(() => btnLoadPack?.click(), 180);
+        }));
+        levelBlock?.classList.remove('hidden');
+        btnLoadPack?.classList.add('hidden');
     }
 
     document.getElementById('select-ecole').addEventListener('change', (e) => {
         const schoolName = e.target.value;
+        if (schoolName && !document.querySelector('.school-logo-button.is-selected')) { selectSchoolFromButton(schoolName); return; }
         const selectNiveau = document.getElementById('select-niveau');
         const btnLoadPack = document.getElementById('btn-load-pack');
         if (!selectNiveau) return;
@@ -148,6 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('select-niveau').addEventListener('change', (e) => {
         const packId = e.target.value;
+        document.querySelectorAll('.school-level-button').forEach(btn => btn.classList.toggle('is-selected', String(btn.dataset.listId) === String(packId)));
         const btnLoadPack = document.getElementById('btn-load-pack');
         if (btnLoadPack) {
             if (packId) btnLoadPack.classList.remove('hidden');
@@ -155,44 +292,114 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ==========================================
-    // 4. GESTION DU CHOIX LISTE PERSONNALISEE
-    // ==========================================
-    const statusText = document.getElementById('upload-status-text');
-    const btnCustomList = document.getElementById('btn-custom-list');
+    function selectedFulfillment() {
+        return document.querySelector('input[name="fulfillment-method"]:checked')?.value || null;
+    }
+    function updateDeliveryFields() {
+        const delivery = selectedFulfillment() === 'delivery';
+        const fields = document.getElementById('delivery-address-fields');
+        if (!fields) return;
+        fields.classList.toggle('hidden', !delivery);
+        fields.querySelectorAll('input, textarea').forEach(field => field.required = delivery && ['delivery-address','delivery-city'].includes(field.id));
+    }
+    function updateFinalSummary() {
+        const lines = document.getElementById('summary-lines');
+        const total = document.getElementById('summary-total');
+        if (!lines || !total) return;
 
-    if (btnCustomList) {
-        btnCustomList.addEventListener('click', () => {
-            isPhotoOrder = true;
-            selectedPhotoFile = null;
+        const fulfillment = selectedFulfillment() === 'delivery' ? 'Livraison' : 'Retrait au magasin';
+        const schoolItems = Array.from(document.querySelectorAll('.pack-item-checkbox:checked'));
+        const supplyItems = Array.from(document.querySelectorAll('.supply-item-checkbox:checked'));
+        const schoolCount = schoolItems.length;
+        const supplyCount = supplyItems.length;
+        const schoolSubtotal = Number.parseFloat(document.getElementById('pack-total-price')?.innerText || '0') || 0;
+        const supplySubtotal = Number.parseFloat(document.getElementById('supply-total-price')?.innerText || '0') || 0;
+        const grandTotal = schoolSubtotal + supplySubtotal;
 
-            const schoolLabel = document.getElementById('display-school-name');
-            const levelLabel = document.getElementById('display-level-name');
-            if (schoolLabel) schoolLabel.innerText = "Liste personnalisée";
-            if (levelLabel) levelLabel.innerText = "Import photo via page sécurisée";
+        const countLabel = (count) => `${count} article${count > 1 ? 's' : ''}`;
+        const details = isPhotoOrder
+            ? ''
+            : `<div class="summary-row"><span>École</span><b>${selectedSchoolName || '-'}</b></div>
+               <div class="summary-row"><span>Niveau</span><b>${selectedSchoolLevel || '-'}</b></div>`;
+        const quantities = isPhotoOrder
+            ? `<div class="summary-row summary-count-row"><span>Liste personnelle</span><b>Image à importer</b></div>`
+            : `<div class="summary-row summary-count-row"><span>Articles de la liste</span><b>${countLabel(schoolCount)}</b></div>
+               <div class="summary-row summary-count-row"><span>Fournitures choisies</span><b>${countLabel(supplyCount)}</b></div>`;
+        const subtotals = isPhotoOrder
+            ? `<div class="summary-row summary-subtotal-row"><span>Montant</span><b>Sur devis</b></div>`
+            : `<div class="summary-row summary-subtotal-row"><span>Sous-total liste</span><b>${schoolSubtotal.toFixed(2)} DH</b></div>
+               <div class="summary-row summary-subtotal-row"><span>Sous-total fournitures</span><b>${supplySubtotal.toFixed(2)} DH</b></div>`;
 
-            const itemsContainer = document.getElementById('liste-officielle-items');
-            if (itemsContainer) {
-                itemsContainer.innerHTML = `
-                    <div class="flex flex-col items-center justify-center p-8 bg-orange-50/50 border border-dashed border-orange-200 rounded-2xl text-center">
-                        <span class="text-4xl mb-2">📸</span>
-                        <h5 class="text-sm font-black text-orange-800 font-header">Votre propre liste</h5>
-                        <p class="text-xs text-stone-500 max-w-xs mt-1">Renseignez vos coordonnées. Après validation, vous serez redirigé vers la page d'import photo.</p>
-                    </div>
-                `;
-            }
-
-            const totalPriceEl = document.getElementById('pack-total-price');
-            if (totalPriceEl) totalPriceEl.innerText = "Sur devis";
-
-            setOrderFlowStep(3);
-            document.getElementById('options-container')?.classList.add('hidden');
-            document.getElementById('pack-details-view')?.classList.remove('hidden');
-            document.getElementById('checkout-form-container')?.classList.remove('hidden');
-            document.getElementById('btn-next-to-form')?.classList.add('hidden');
-            setOrderFlowStep(3, 'checkout-form-container');
+        lines.innerHTML = `
+            <div class="summary-group summary-order-info">
+                <div class="summary-row"><span>Mode de retrait</span><b>${fulfillment}</b></div>
+                <div class="summary-row"><span>Type de liste</span><b>${isPhotoOrder ? 'Ma propre liste' : 'Liste officielle du site'}</b></div>
+                ${details}
+            </div>
+            <div class="summary-group summary-quantities">${quantities}</div>
+            <div class="summary-group summary-subtotals">${subtotals}</div>
+        `;
+        total.innerText = isPhotoOrder ? 'Sur devis' : `${grandTotal.toFixed(2)} DH`;
+    }
+    function unlockAndScroll(id,step){
+        const el=document.getElementById(id);if(!el)return;el.classList.remove('hidden');el.setAttribute('aria-hidden','false');setOrderFlowStep(step);el.classList.remove('flow-unlock');void el.offsetWidth;el.classList.add('flow-unlock');setTimeout(()=>{const o=(document.getElementById('main-header')?.offsetHeight||72)+18;window.scrollTo({top:Math.max(0,el.getBoundingClientRect().top+window.scrollY-o),behavior:'smooth'});},70);
+    }
+    function lockFollowingSteps(){['school-selection-view','pack-details-view','checkout-form-container'].forEach(id=>{const el=document.getElementById(id);el?.classList.add('hidden');el?.setAttribute('aria-hidden','true');});}
+    function scrollBackTo(element) {
+        if (!element) return;
+        const offset = (document.getElementById('main-header')?.offsetHeight || 72) + 18;
+        window.scrollTo({
+            top: Math.max(0, element.getBoundingClientRect().top + window.scrollY - offset),
+            behavior: 'smooth'
         });
     }
+
+    document.getElementById('flow-back-step-2')?.addEventListener('click', () => {
+        document.getElementById('school-selection-view')?.classList.add('hidden');
+        document.getElementById('pack-details-view')?.classList.add('hidden');
+        document.getElementById('checkout-form-container')?.classList.add('hidden');
+        setOrderFlowStep(1);
+        scrollBackTo(document.getElementById('options-container'));
+    });
+
+    document.getElementById('flow-back-step-3')?.addEventListener('click', () => {
+        document.getElementById('pack-details-view')?.classList.add('hidden');
+        document.getElementById('checkout-form-container')?.classList.add('hidden');
+        setOrderFlowStep(2);
+        scrollBackTo(document.getElementById('school-selection-view'));
+    });
+
+    document.getElementById('flow-back-step-4')?.addEventListener('click', () => {
+        document.getElementById('checkout-form-container')?.classList.add('hidden');
+        if (isPhotoOrder) {
+            setOrderFlowStep(1);
+            scrollBackTo(document.getElementById('options-container'));
+        } else {
+            setOrderFlowStep(3);
+            scrollBackTo(document.getElementById('pack-details-view'));
+        }
+    });
+
+    function advanceFirstViewIfComplete(){
+        if(!selectedFulfillment()||!selectedListType)return;
+        if(selectedListType==='official'){isPhotoOrder=false;unlockAndScroll('school-selection-view',2);}
+        else{isPhotoOrder=true;updateDeliveryFields();updateFinalSummary();unlockAndScroll('checkout-form-container',4);}
+    }
+    document.querySelectorAll('input[name="fulfillment-method"]').forEach(input=>input.addEventListener('change',()=>{updateDeliveryFields();advanceFirstViewIfComplete();}));
+    document.getElementById('choose-official-list')?.addEventListener('click',()=>{
+        selectedListType='official';isPhotoOrder=false;lockFollowingSteps();
+        const official=document.getElementById('choose-official-list'),custom=document.getElementById('btn-custom-list');official?.classList.add('is-selected');official?.setAttribute('aria-pressed','true');custom?.classList.remove('is-selected');custom?.setAttribute('aria-pressed','false');advanceFirstViewIfComplete();
+    });
+    const statusText=document.getElementById('upload-status-text');
+    const btnCustomList=document.getElementById('btn-custom-list');
+    btnCustomList?.addEventListener('click',()=>{
+        selectedListType='custom';isPhotoOrder=true;selectedPhotoFile=null;lockFollowingSteps();
+        const official=document.getElementById('choose-official-list');official?.classList.remove('is-selected');official?.setAttribute('aria-pressed','false');btnCustomList.classList.add('is-selected');btnCustomList.setAttribute('aria-pressed','true');advanceFirstViewIfComplete();
+    });
+    document.getElementById('btn-back-to-list')?.addEventListener('click',()=>{
+        document.getElementById('checkout-form-container')?.classList.add('hidden');
+        const target=isPhotoOrder?document.getElementById('options-container'):document.getElementById('pack-details-view');if(target){const o=(document.getElementById('main-header')?.offsetHeight||72)+18;window.scrollTo({top:Math.max(0,target.getBoundingClientRect().top+window.scrollY-o),behavior:'smooth'});}
+    });
 
     // ==========================================
     // 5. CLIC SUR "SUIVANT"
@@ -262,10 +469,8 @@ document.addEventListener('DOMContentLoaded', () => {
             renderPackChecklist(selectedPackItems);
             calculateTotalOrderPrice(); 
             
-            setOrderFlowStep(2);
-            document.getElementById('options-container').classList.add('hidden');
-            document.getElementById('pack-details-view').classList.remove('hidden');
-            setOrderFlowStep(2, 'pack-details-view');
+            updateFinalSummary();
+            unlockAndScroll('pack-details-view',3);
         });
     }
 
@@ -304,7 +509,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <input type="checkbox" data-id="${item.id}" data-name="${item.name}" data-price="${item.price}" ${isOutOfStock ? 'disabled' : 'checked'} class="pack-item-checkbox w-4 h-4 rounded text-[#E75C25] accent-[#E75C25] focus:ring-0 cursor-pointer flex-shrink-0">
                         <span class="text-xs font-bold text-stone-800 tracking-tight truncate">${item.name}</span>
                     </div>
-                    <span class="text-[11px] font-black ${isOutOfStock ? 'text-red-700 bg-red-50 border-red-100' : 'text-emerald-700 bg-emerald-50 border-emerald-200/50'} border px-2.5 py-0.5 rounded-lg flex-shrink-0">${availabilityText || item.price.toFixed(2) + ' DH'}</span>
+                    <span class="item-price-chip ${isOutOfStock ? 'text-red-700 bg-red-50 border-red-100' : 'text-emerald-700 bg-emerald-50 border-emerald-200/50'}">${availabilityText || item.price.toFixed(2) + ' DH'}</span>
                 `;
 
                 const box = row.querySelector('input');
@@ -336,35 +541,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         const totalDisplay = document.getElementById('pack-total-price');
         if (totalDisplay) totalDisplay.innerText = total.toFixed(2);
+        updateFinalSummary();
     }
 
     // NAVIGATION DU PANIER DE COMMANDE
-    const btnChangeChoice = document.getElementById('btn-change-choice-top');
-    if (btnChangeChoice) {
-        btnChangeChoice.addEventListener('click', () => {
-            setOrderFlowStep(1, 'options-container');
-            selectedPhotoFile = null;
-            isPhotoOrder = false;
-            if (statusText) statusText.innerText = "Fournir ma propre liste";
-            document.getElementById('btn-next-to-form')?.classList.remove('hidden');
-            document.getElementById('pack-details-view').classList.add('hidden');
-            document.getElementById('checkout-form-container').classList.add('hidden');
-            document.getElementById('options-container').classList.remove('hidden');
-        });
-    }
-
-    const btnNextToForm = document.getElementById('btn-next-to-form');
-    if (btnNextToForm) {
-        btnNextToForm.addEventListener('click', () => {
-            setOrderFlowStep(3);
-            const formContainer = document.getElementById('checkout-form-container');
-            if (formContainer) {
-                formContainer.classList.remove('hidden');
-                formContainer.scrollIntoView({ behavior: 'smooth' });
-            }
-        });
-    }
-
+    const btnChangeChoice=document.getElementById('btn-change-choice-top');
+    btnChangeChoice?.addEventListener('click',()=>{document.getElementById('pack-details-view')?.classList.add('hidden');const t=document.getElementById('school-selection-view');if(t){const o=(document.getElementById('main-header')?.offsetHeight||72)+18;window.scrollTo({top:Math.max(0,t.getBoundingClientRect().top+window.scrollY-o),behavior:'smooth'});}});
+    const btnNextToForm=document.getElementById('btn-next-to-form');
+    btnNextToForm?.addEventListener('click',()=>{updateDeliveryFields();updateFinalSummary();unlockAndScroll('checkout-form-container',4);});
 
     function generateQrCodeValue() {
         return `EQ-QR-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
@@ -400,6 +584,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function setOrderFlowStep(step, scrollTargetId = null) {
         const rentree = document.getElementById('section-rentree');
         if (rentree) rentree.dataset.flowStep = String(step);
+        const progress = document.getElementById('school-flow-progress-fill');
+        if (progress) progress.style.width = `${Math.max(1, Math.min(3, step)) / 3 * 100}%`;
         updateStepper(step);
         const title = document.getElementById('flow-guide-title');
         const text = document.getElementById('flow-guide-text');
@@ -457,8 +643,21 @@ document.addEventListener('DOMContentLoaded', () => {
                         name: cb.getAttribute('data-name'),
                         price: parseFloat(cb.getAttribute('data-price')) || 0,
                         school_name: selectedSchoolName,
-                        school_level: selectedSchoolLevel
+                        school_level: selectedSchoolLevel,
+                        item_source: 'school_list'
                     }));
+                    const selectedSupplies = Array.from(document.querySelectorAll('.supply-item-checkbox:checked')).map(cb => {
+                        const item = allSupplyItems.find(entry => String(entry.id) === String(cb.dataset.id));
+                        return item ? {
+                            id: item.id,
+                            name: item.name,
+                            category: item.category || 'Fournitures',
+                            price: getSupplyUnitPrice(item),
+                            supply_range: selectedSupplyRange,
+                            item_source: 'independent_supply'
+                        } : null;
+                    }).filter(Boolean);
+                    payloadItems.push(...selectedSupplies);
 
                     if (payloadItems.length === 0) {
                         alert("Veuillez sélectionner au moins un article de la liste officielle.");
@@ -484,6 +683,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     total_amount: totalAmount,
                     payment_method: 'cash_pickup',
                     payment_status: 'unpaid',
+                    order_instructions: document.getElementById('order-instructions')?.value.trim() || null,
                     qr_code: qrCodeValue,
                     qr_payload: qrPayload
                 };
