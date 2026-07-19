@@ -30,14 +30,14 @@ document.addEventListener('DOMContentLoaded', () => {
     .admin-orders-v2{width:100%;border-collapse:separate!important;border-spacing:0 9px!important}.admin-orders-v2 thead th{padding:10px 14px!important;color:#8a817a;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.09em;white-space:nowrap}.order-v2{cursor:pointer;transition:.18s}.order-v2 td{padding:14px!important;background:#fff;border-top:1px solid #eee7df;border-bottom:1px solid #eee7df;vertical-align:middle}.order-v2 td:first-child{border-left:1px solid #eee7df;border-radius:14px 0 0 14px}.order-v2 td:last-child{border-right:1px solid #eee7df;border-radius:0 14px 14px 0}.order-v2:hover td{background:#fffaf7}.sub{display:block;margin-top:3px;color:#a8a29e;font-size:10px}.chip-btn{position:relative;display:inline-flex}.chip-face{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:88px;padding:8px 11px;border-radius:999px;border:1px solid;font-size:11px;font-weight:900;white-space:nowrap;transition:.17s}.chip-arrow{width:0;opacity:0;overflow:hidden;transition:.17s}.chip-btn:hover .chip-arrow{width:10px;opacity:1}.chip-btn:hover .chip-face{transform:translateY(-1px);box-shadow:0 8px 18px #1c191719}.s-new{background:#fffbeb;color:#b45309;border-color:#fde68a}.s-preparing{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}.s-ready{background:#ecfdf5;color:#047857;border-color:#a7f3d0}.s-collected{background:#1c1917;color:#fff;border-color:#1c1917}.s-cancelled{background:#fef2f2;color:#b91c1c;border-color:#fecaca}.s-expired{background:#f3f4f6;color:#4b5563;border-color:#e5e7eb}.p-paid{background:#ecfdf5;color:#047857;border-color:#a7f3d0}.p-unpaid{background:#fffbeb;color:#b45309;border-color:#fde68a}
     .chip-pop{position:fixed;z-index:2147483600;min-width:176px;padding:7px;border:1px solid #ebe5df;border-radius:14px;background:#fffffff8;box-shadow:0 22px 60px #1c191733;backdrop-filter:blur(14px)}.chip-opt{width:100%;display:flex;justify-content:space-between;padding:9px 10px;border-radius:10px;font-size:12px;font-weight:800;color:#44403c}.chip-opt:hover,.chip-opt.on{background:#fff1e8;color:#E75C25}.chip-opt i{opacity:0}.chip-opt.on i{opacity:1}
     .acts{display:inline-flex;gap:6px}.act{width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;border-radius:10px;border:1px solid transparent;transition:.16s}.act:hover{transform:translateY(-2px)}.act svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}.wa{color:#168b27}.wa:hover{background:#ecfdf3;border-color:#bbf7d0}.pr{color:#1c1917}.pr:hover{background:#f5f5f4;border-color:#d6d3d1}.del{color:#dc2626}.del:hover{background:#fef2f2;border-color:#fecaca}
-    .ord-modal{position:fixed;inset:0;z-index:2147483500;display:none;align-items:center;justify-content:center;padding:18px;background:#0c0a0985;backdrop-filter:blur(8px)}.ord-modal.open{display:flex}.ord-card{width:min(920px,100%);max-height:90vh;overflow:hidden;background:#fff;border-radius:24px;box-shadow:0 35px 100px #0005}.ord-head{display:flex;justify-content:space-between;padding:24px;background:linear-gradient(135deg,#fff,#fff6ef);border-bottom:1px solid #eee7df}.ord-body{max-height:calc(90vh - 120px);overflow:auto}.ord-summary{display:grid;grid-template-columns:1.3fr .7fr;gap:14px;padding:20px 24px 0}.customer,.total{padding:18px;border-radius:18px}.customer{background:#fcfbfa;border:1px solid #eee7df}.total{color:#fff;background:linear-gradient(135deg,#E75C25,#f58a56);box-shadow:0 18px 40px #e75c2538}.total strong{display:block;font-size:26px;margin-top:5px}.details{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px 24px}.detail{padding:14px;border:1px solid #eee7df;border-radius:15px;background:#fcfbfa}.lab{display:block;font-size:10px;font-weight:900;text-transform:uppercase;color:#a8a29e}.val{display:block;margin-top:5px;font-size:13px;font-weight:800;overflow-wrap:anywhere}.items{padding:0 24px 24px}.item{display:grid;grid-template-columns:1fr auto;gap:15px;padding:12px;border-bottom:1px solid #eee7df;font-size:12px}.close{width:38px;height:38px;border-radius:12px;background:#f5f5f4;font-size:22px}@media(max-width:900px){.admin-orders-v2{min-width:1120px}}@media(max-width:700px){.ord-summary{grid-template-columns:1fr}.details{grid-template-columns:1fr 1fr}}`;
+    .ord-modal{position:fixed;inset:0;z-index:2147483500;display:none;align-items:center;justify-content:center;padding:18px;background:#0c0a0985;backdrop-filter:blur(8px)}.ord-modal.open{display:flex}.ord-card{width:min(920px,100%);max-height:90vh;overflow:hidden;background:#fff;border-radius:24px;box-shadow:0 35px 100px #0005}.ord-head{display:flex;justify-content:space-between;padding:24px;background:linear-gradient(135deg,#fff,#fff6ef);border-bottom:1px solid #eee7df}.ord-body{max-height:calc(90vh - 120px);overflow:auto}.ord-summary{display:grid;grid-template-columns:1.3fr .7fr;gap:14px;padding:20px 24px 0}.customer,.total{padding:18px;border-radius:18px}.customer{background:#fcfbfa;border:1px solid #eee7df}.total{color:#fff;background:linear-gradient(135deg,#E75C25,#f58a56);box-shadow:0 18px 40px #e75c2538}.total strong{display:block;font-size:26px;margin-top:5px}.details{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px 24px}.detail{padding:14px;border:1px solid #eee7df;border-radius:15px;background:#fcfbfa}.lab{display:block;font-size:10px;font-weight:900;text-transform:uppercase;color:#a8a29e}.val{display:block;margin-top:5px;font-size:13px;font-weight:800;overflow-wrap:anywhere}.items{padding:0 24px 24px}.item{display:grid;grid-template-columns:1fr auto;gap:15px;padding:12px;border-bottom:1px solid #eee7df;font-size:12px}.order-instructions-admin{margin:0 24px 20px;padding:16px 18px;border:1px solid #fed7c1;border-radius:16px;background:#fff8f3}.order-instructions-admin p{margin:7px 0 0;color:#44403c;font-size:13px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}.close{width:38px;height:38px;border-radius:12px;background:#f5f5f4;font-size:22px}@media(max-width:900px){.admin-orders-v2{min-width:1120px}}@media(max-width:700px){.ord-summary{grid-template-columns:1fr}.details{grid-template-columns:1fr 1fr}}`;
     document.head.appendChild(adminV2Style);
     function closePop(){document.getElementById('chip-pop')?.remove()}
     function chip(id,type,val){const status=type==='status', label=status?(STATUS_META[val]?.[0]||val):(val==='paid'?'Payé':'Non payé'),cls=status?'s-'+val:'p-'+val;return `<button class="chip-btn" data-chip="${type}" data-id="${id}" data-val="${val}"><span class="chip-face ${cls}">${label}<span class="chip-arrow">⌄</span></span></button>`}
     function bindChips(root){root.querySelectorAll('[data-chip]').forEach(x=>x.addEventListener('click',e=>{e.stopPropagation();closePop();const type=x.dataset.chip,val=x.dataset.val,id=x.dataset.id,opts=type==='status'?Object.entries(STATUS_META).map(([v,m])=>[v,m[0]]):[['unpaid','Non payé'],['paid','Payé']],p=document.createElement('div');p.id='chip-pop';p.className='chip-pop';p.innerHTML=opts.map(([v,l])=>`<button class="chip-opt ${v===val?'on':''}" data-v="${v}"><span>${l}</span><i>✓</i></button>`).join('');document.body.appendChild(p);const r=x.getBoundingClientRect();p.style.left=Math.max(10,Math.min(innerWidth-186,r.left))+'px';p.style.top=(r.bottom+8+p.offsetHeight>innerHeight?Math.max(10,r.top-p.offsetHeight-8):r.bottom+8)+'px';p.querySelectorAll('.chip-opt').forEach(o=>o.onclick=async ev=>{ev.stopPropagation();closePop();if(o.dataset.v===val)return;if(type==='status')await updateOrderStatus(id,o.dataset.v);else await updatePaymentStatus(id,o.dataset.v)})}))}
     function printOrder(id){const o=currentOrders.find(x=>String(x.id)===String(id));if(!o)return;const it=parseItems(o.items),w=window.open('','_blank','width=900,height=760');if(!w)return alert('Autorisez les popups pour imprimer.');w.document.write(`<!doctype html><meta charset="utf-8"><title>Commande</title><style>body{font-family:Arial;margin:35px;color:#292524}h1{color:#E75C25}header{display:flex;justify-content:space-between;border-bottom:3px solid #E75C25}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left}th{background:#fff4ec}</style><header><div><h1>Librairie El Qods</h1><p>#${escapeHtml(o.numero_commande||o.id)}</p></div><h2>${money(orderTotal(o))}</h2></header><p><b>${escapeHtml(o.client_name||'-')}</b><br>${escapeHtml(o.client_phone||'-')} · ${escapeHtml(o.client_email||'-')}</p><table><tr><th>#</th><th>Article</th><th>Catégorie</th><th>Prix</th></tr>${it.map((a,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(a.name||'-')}</td><td>${escapeHtml(a.category||'-')}</td><td>${money(a.price)}</td></tr>`).join('')}</table><script>onload=()=>print()</script>`);w.document.close()}
     function closeOrder(){document.getElementById('ord-modal')?.classList.remove('open');document.body.style.overflow=''}
-    function openOrder(id){const o=currentOrders.find(x=>String(x.id)===String(id));if(!o)return;const it=parseItems(o.items),st=normalizeStatus(o.status),d=getDeadline(o);let m=document.getElementById('ord-modal');if(!m){m=document.createElement('div');m.id='ord-modal';m.className='ord-modal';m.onclick=e=>{if(e.target===m)closeOrder()};document.body.appendChild(m)}const rows=it.length?it.map((a,i)=>`<div class="item"><span><b>${i+1}.</b> ${escapeHtml(a.name||'-')}<small class="sub">${escapeHtml(a.category||'Fournitures')}</small></span><b>${money(a.price)}</b></div>`).join(''):'<div class="detail">Liste importée ou aucun article détaillé.</div>';m.innerHTML=`<div class="ord-card"><div class="ord-head"><div><span class="lab">Commande client</span><h2 class="text-3xl font-black mt-1">#${escapeHtml(o.numero_commande||o.id)}</h2><div class="flex gap-2 mt-3">${chip(o.id,'status',st)}${chip(o.id,'payment',o.payment_status||'unpaid')}</div></div><button class="close">×</button></div><div class="ord-body"><div class="ord-summary"><div class="customer"><span class="lab">Client</span><b class="block text-lg mt-1">${escapeHtml(o.client_name||'-')}</b><span class="block text-sm text-stone-500 mt-2">${escapeHtml(o.client_phone||'-')}</span><span class="block text-sm text-stone-500">${escapeHtml(o.client_email||'-')}</span></div><div class="total"><span class="lab text-white/70">Total</span><strong>${money(orderTotal(o))}</strong><span class="text-xs text-white/75">Paiement au retrait</span></div></div><div class="details"><div class="detail"><span class="lab">Échéance</span><span class="val">${d.toLocaleDateString('fr-FR')}</span></div><div class="detail"><span class="lab">Créée le</span><span class="val">${getCreatedDate(o).toLocaleString('fr-FR')}</span></div><div class="detail"><span class="lab">Code QR</span><span class="val">${escapeHtml(o.qr_code||'-')}</span></div></div><div class="items"><div class="flex justify-between mb-2"><h3 class="font-black">Articles commandés</h3><span class="sub">${it.length} article(s)</span></div><div class="border rounded-2xl overflow-hidden">${rows}</div></div></div></div>`;m.querySelector('.close').onclick=closeOrder;bindChips(m);m.classList.add('open');document.body.style.overflow='hidden'}
+    function openOrder(id){const o=currentOrders.find(x=>String(x.id)===String(id));if(!o)return;const it=parseItems(o.items),st=normalizeStatus(o.status),d=getDeadline(o);let m=document.getElementById('ord-modal');if(!m){m=document.createElement('div');m.id='ord-modal';m.className='ord-modal';m.onclick=e=>{if(e.target===m)closeOrder()};document.body.appendChild(m)}const rows=it.length?it.map((a,i)=>`<div class="item"><span><b>${i+1}.</b> ${escapeHtml(a.name||'-')}<small class="sub">${escapeHtml(a.category||'Fournitures')}</small></span><b>${money(a.price)}</b></div>`).join(''):'<div class="detail">Liste importée ou aucun article détaillé.</div>';m.innerHTML=`<div class="ord-card"><div class="ord-head"><div><span class="lab">Commande client</span><h2 class="text-3xl font-black mt-1">#${escapeHtml(o.numero_commande||o.id)}</h2><div class="flex gap-2 mt-3">${chip(o.id,'status',st)}${chip(o.id,'payment',o.payment_status||'unpaid')}</div></div><button class="close">×</button></div><div class="ord-body"><div class="ord-summary"><div class="customer"><span class="lab">Client</span><b class="block text-lg mt-1">${escapeHtml(o.client_name||'-')}</b><span class="block text-sm text-stone-500 mt-2">${escapeHtml(o.client_phone||'-')}</span><span class="block text-sm text-stone-500">${escapeHtml(o.client_email||'-')}</span></div><div class="total"><span class="lab text-white/70">Total</span><strong>${money(orderTotal(o))}</strong><span class="text-xs text-white/75">Paiement au retrait</span></div></div><div class="details"><div class="detail"><span class="lab">Échéance</span><span class="val">${d.toLocaleDateString('fr-FR')}</span></div><div class="detail"><span class="lab">Créée le</span><span class="val">${getCreatedDate(o).toLocaleString('fr-FR')}</span></div><div class="detail"><span class="lab">Code QR</span><span class="val">${escapeHtml(o.qr_code||'-')}</span></div></div>${o.order_instructions ? `<div class="order-instructions-admin"><span class="lab">Consignes pour la commande</span><p>${escapeHtml(o.order_instructions)}</p></div>` : ''}<div class="items"><div class="flex justify-between mb-2"><h3 class="font-black">Articles commandés</h3><span class="sub">${it.length} article(s)</span></div><div class="border rounded-2xl overflow-hidden">${rows}</div></div></div></div>`;m.querySelector('.close').onclick=closeOrder;bindChips(m);m.classList.add('open');document.body.style.overflow='hidden'}
     window.printAdminOrder=printOrder;window.openAdminOrderModal=openOrder;window.closeAdminOrderModal=closeOrder;
 
     let currentOrders = [];
@@ -639,10 +639,37 @@ document.addEventListener('DOMContentLoaded', () => {
         return [];
     }
 
+    function normalizeDriveImageUrl(url) {
+        const value = String(url || '').trim();
+        if (!value) return '';
+        const driveMatch = value.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?id=)([a-zA-Z0-9_-]+)/);
+        return driveMatch ? `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w800` : value;
+    }
+
+    function updateSchoolLogoPreview() {
+        const input = document.getElementById('cfg-school-logo-url');
+        const preview = document.getElementById('cfg-school-logo-preview');
+        const image = preview?.querySelector('img');
+        if (!input || !preview || !image) return;
+        const src = normalizeDriveImageUrl(input.value);
+        if (!src) {
+            preview.classList.add('hidden');
+            preview.classList.remove('flex');
+            image.removeAttribute('src');
+            return;
+        }
+        image.src = src;
+        image.onload = () => { preview.classList.remove('hidden'); preview.classList.add('flex'); };
+        image.onerror = () => { preview.classList.add('hidden'); preview.classList.remove('flex'); };
+    }
+
+    document.getElementById('cfg-school-logo-url')?.addEventListener('input', updateSchoolLogoPreview);
+
     function resetPackForm() {
         editingListId = null;
         editingItemId = null;
         if (formAdd) formAdd.reset();
+        updateSchoolLogoPreview();
         currentFormItems = [];
         if (inputItemAvailability) inputItemAvailability.value = 'available';
         renderAdminPreviewList();
@@ -657,6 +684,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!list) return;
         editingListId = list.id;
         document.getElementById('cfg-school').value = list.school_name || '';
+        document.getElementById('cfg-school-logo-url').value = list.school_logo_url || '';
+        updateSchoolLogoPreview();
         document.getElementById('cfg-level').value = list.level || '';
         currentFormItems = parseSchoolListItems(list.items).map((item, index) => ({
             id: item.id || `item-${Date.now()}-${index}`,
@@ -677,12 +706,13 @@ document.addEventListener('DOMContentLoaded', () => {
     formAdd?.addEventListener('submit', async (event) => {
         event.preventDefault();
         const school = document.getElementById('cfg-school').value.trim();
+        const schoolLogoUrl = document.getElementById('cfg-school-logo-url').value.trim();
         const level = document.getElementById('cfg-level').value.trim();
         if (!school || !level || !currentFormItems.length) {
             alert("Veuillez saisir l'école, le niveau et au moins un article.");
             return;
         }
-        const payload = { school_name: school, level, items: [JSON.stringify(currentFormItems)] };
+        const payload = { school_name: school, school_logo_url: schoolLogoUrl || null, level, items: [JSON.stringify(currentFormItems)] };
         const { error } = editingListId
             ? await supabaseClient.from('school_lists').update(payload).eq('id', editingListId)
             : await supabaseClient.from('school_lists').insert([payload]);
@@ -712,10 +742,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return `
                 <div class="bg-white p-5 rounded-2xl border flex flex-col justify-between shadow-sm">
                     <div class="flex items-start justify-between gap-4">
-                        <div>
+                        <div class="flex items-start gap-3">
+                            ${list.school_logo_url ? `<span class="shrink-0 w-11 h-11 rounded-xl border border-gray-200 bg-white p-1.5 flex items-center justify-center overflow-hidden"><img src="${escapeHtml(normalizeDriveImageUrl(list.school_logo_url))}" alt="" class="max-w-full max-h-full object-contain" onerror="this.parentElement.style.display='none'"></span>` : ''}
+                            <div>
                             <span class="text-xs font-bold text-[#E75C25] uppercase">${escapeHtml(list.school_name)}</span>
                             <h4 class="text-base font-bold text-gray-900">Classe : ${escapeHtml(list.level)}</h4>
                             <p class="text-xs text-stone-400 mt-1">${items.length} articles configurés · ${out} rupture</p>
+                            </div>
                         </div>
                         <button type="button" class="btn-edit-list text-gray-400 hover:text-[#E75C25] transition" data-id="${list.id}" title="Modifier ce pack">✎</button>
                     </div>

@@ -1,140 +1,116 @@
 <!DOCTYPE html>
-<html lang="fr" class="scroll-smooth">
+<html lang="fr">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Commande Réussie — Librairie & Papeterie El Qods</title>
-<script src="https://cdn.tailwindcss.com"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-<link href="https://fonts.googleapis.com.rproxy.goskope.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<style>body{font-family:'Plus Jakarta Sans',sans-serif}.font-header{font-family:'Inter',sans-serif}@keyframes mapPulse{0%{transform:scale(1);opacity:1}100%{transform:scale(3.5);opacity:0}}.map-marker-pulse{animation:mapPulse 2s infinite ease-out}</style>
-</head>
-<body class="bg-white text-gray-900 min-h-screen flex flex-col justify-between antialiased">
-<div id="splash-screen" class="fixed inset-0 bg-white flex flex-col items-center justify-center z-50 transition-opacity duration-500"><img src="images/logo.png" alt="Logo" class="w-28 h-28 object-contain mb-4 animate-pulse"><h1 class="font-header text-sm font-black tracking-widest text-[#E75C25] uppercase text-center px-4">Commande en cours d'envoi</h1></div>
-<header class="fixed top-0 left-0 right-0 z-40 bg-white shadow-md border-b border-gray-100 py-4 px-6 md:px-12"><div class="max-w-7xl mx-auto flex justify-between items-center font-header"><a href="index.html"><img src="images/logo.png" alt="Logo" class="h-11 w-auto object-contain"></a><nav class="hidden md:flex space-x-8 text-[14px] font-medium text-[#E75C25]"><a href="index.html" class="font-bold">Accueil</a><a href="index.html?tab=section-rentree">Rentrée scolaire</a><a href="index.html?tab=section-autres">Autres produits</a><a href="index.html?tab=section-suivi">Suivre ma commande</a></nav><a href="index.html?tab=section-rentree" class="bg-[#E75C25] hover:bg-[#CE4E1D] text-white font-medium px-5 py-2.5 rounded-lg transition text-[14px] shadow-sm">Commander</a></div></header>
-<main class="flex-grow w-full pt-32 pb-16 px-6 max-w-xl mx-auto flex items-center justify-center"><div class="bg-white border border-stone-200/80 shadow-xl rounded-3xl p-8 text-center space-y-6 w-full"><div class="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto border border-emerald-100 shadow-inner">✨</div><div class="space-y-2"><h2 class="text-2xl font-extrabold text-gray-900 tracking-tight font-header">Merci <span id="client-display-name" class="text-[#E75C25]"></span> !</h2><p class="text-xs text-gray-500 max-w-sm mx-auto">Votre réservation a bien été enregistrée. Notre équipe prépare actuellement vos articles.</p></div><div class="bg-stone-50 rounded-2xl p-4 border border-stone-100 max-w-xs mx-auto"><span class="block text-[10px] uppercase font-bold tracking-widest text-stone-400">Numéro de commande</span><span id="order-display-id" class="text-xl font-black tracking-tight text-[#E75C25] font-header">------</span></div><div id="success-qr-block" class="hidden bg-stone-50 rounded-2xl p-5 border border-stone-100 max-w-xs mx-auto space-y-3"><span class="block text-[10px] uppercase font-bold tracking-widest text-stone-400">QR Code de commande</span><canvas id="success-qr-canvas" class="mx-auto bg-white p-2 rounded-xl shadow-sm"></canvas><p id="success-qr-code-label" class="text-[11px] text-stone-500 break-all"></p><button id="btn-download-success-qr" type="button" class="w-full bg-stone-900 hover:bg-black text-white text-xs font-black py-3 rounded-xl transition uppercase tracking-wider">Télécharger ma commande</button></div><div class="text-left bg-orange-50/40 border border-orange-100 rounded-2xl p-4 space-y-2.5 text-xs"><h4 class="font-bold text-orange-800 flex items-center gap-1.5">📦 Informations pratiques :</h4><ul class="list-disc list-inside space-y-1 text-gray-600"><li>Vos fournitures restent réservées pendant <span class="font-bold">5 jours</span>.</li><li>Le règlement se fait directement au comptoir lors du retrait.</li><li>Veuillez présenter votre numéro de commande ou votre QR code lors de votre passage.</li></ul></div><a href="index.html" class="block w-full bg-[#E75C25] hover:bg-[#CE4E1D] text-white text-xs font-black py-3.5 rounded-xl transition shadow-md font-header text-center uppercase tracking-wider">Retourner sur la boutique</a></div></main>
-<footer class="bg-[#0D0D0D] text-stone-400 w-full pt-16 pb-8 px-6 md:px-12 font-header"><div class="max-w-7xl mx-auto text-center text-[11px] text-stone-500"><p>&copy; 2026 Librairie El Qods Berkane - Tous droits réservés.</p></div></footer>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Commande confirmée — Librairie El Qods</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<style>
+:root{--orange:#ef571d;--green:#32d19a;--paper:#fffaf7}*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:var(--paper);color:#292524}
+.header{height:81px;position:fixed;inset:0 0 auto;z-index:40;background:#fff;border-bottom:1px solid #f6f2ef}.header-inner{height:100%;padding:0 33px 0 42px;display:flex;align-items:center;justify-content:space-between}.logo{height:47px;width:auto}.nav{display:flex;align-items:center;gap:34px;color:var(--orange);font-size:14px}.nav .active{font-weight:700}.header-actions{display:flex;align-items:center;gap:13px}.round{width:39px;height:39px;display:grid;place-items:center;border:1px solid var(--orange);border-radius:50%;color:var(--orange);font-size:12px;font-weight:700}.commander{height:43px;padding:0 23px;display:flex;align-items:center;border-radius:10px;background:var(--orange);color:#fff;font-size:14px;font-weight:700}
+.page{min-height:100vh;padding-top:81px;display:grid;grid-template-columns:minmax(0,1fr) 337px}.main{display:flex;flex-direction:column;align-items:center;padding:62px 42px 36px;text-align:center}.check{width:83px;height:83px;display:grid;place-items:center;border-radius:50%;background:#cdf8e7;color:#009c69;font-size:44px;font-weight:700;line-height:1}.title{margin:16px 0 0;color:var(--orange);font-size:49px;font-weight:800;line-height:1;letter-spacing:-2.2px}.copy{margin:20px 0 0;color:#57534e;font-size:16px;line-height:1.3}.subcopy{margin:10px 0 0;color:#57534e;font-size:16px;line-height:1.3}.rules{width:100%;margin-top:44px;padding:12px 18px;border:2px solid #dc4c12;border-radius:7px;background:#fff5ef;text-align:left}.rules ul{margin:0;padding-left:20px;color:#111;font-size:14px;line-height:1.42}.rules li{padding-left:2px}.rules li::marker{font-size:10px}
+.side{padding:27px 24px 16px 3px}.card{width:310px;min-height:530px;padding:24px 17px 16px;border:1px solid #fbf4ef;border-radius:31px;background:rgba(255,255,255,.84);box-shadow:0 16px 45px rgba(62,35,18,.045);text-align:center}.reference{margin-bottom:14px;color:var(--orange);font-size:27px;font-weight:800;line-height:1.05;letter-spacing:-1px}.qr-box{height:214px;display:grid;place-items:center;padding:14px;border:1px solid #eee7df;border-radius:23px;background:#fff}.qr-box canvas,.qr-box img{width:180px!important;height:180px!important;object-fit:contain;display:block}.note{margin:15px 6px;color:#8c8783;font-size:11px;font-style:italic;font-weight:700;line-height:1.35}.buttons{display:grid;gap:8px}.btn{width:100%;height:47px;display:flex;align-items:center;justify-content:center;border-radius:13px;font-size:12px;font-weight:700}.orange{background:var(--orange);color:#fff}.green{background:var(--green);color:#fff}.white{border:1px solid #e7e5e4;background:#fff;color:#292524}.btn:disabled{opacity:.55}.loading{margin:6px 0 0;color:#aaa;font-size:10px}.error{display:none;margin-top:12px;padding:10px;border:1px solid #fecaca;border-radius:10px;background:#fef2f2;color:#b91c1c;font-size:12px}
+.drawer{position:fixed;inset:0;z-index:9999;display:none;background:rgba(13,13,13,.44);backdrop-filter:blur(6px)}.drawer.open{display:block}.panel{position:absolute;inset:0 0 0 auto;width:min(460px,100vw);height:100vh;padding:24px;overflow:auto;background:#fff;box-shadow:-30px 0 90px rgba(0,0,0,.28)}.row{display:flex;justify-content:space-between;gap:16px;padding:12px 14px;border:1px solid #f1ebe5;border-radius:16px;background:#fbfaf8;font-size:12px}.row b{text-align:right}
+@media(max-width:950px){.nav{gap:18px;font-size:12px}}@media(max-width:850px){.nav{display:none}.page{grid-template-columns:1fr}.main{padding:35px 18px 26px}.side{padding:0 18px 35px}.card{width:min(100%,310px);min-height:0;margin:auto}.rules{margin-top:30px}}@media(max-width:560px){.header{height:64px}.header-inner{padding:0 16px}.logo{height:40px}.commander{display:none}.page{padding-top:64px}.title{font-size:41px}.copy,.subcopy{font-size:14px}.rules ul{font-size:13px}}
+</style>
+</head><body>
+<header class="header"><div class="header-inner"><a href="index.html"><img src="images/logo.png" class="logo" alt="Librairie El Qods"></a><nav class="nav"><a href="index.html">Accueil</a><a href="index.html?tab=section-rentree" class="active">Rentrée scolaire 2026/2027</a><a href="index.html?tab=section-autres">Autres produits</a><a href="index.html?tab=section-suivi">Suivre ma commande</a><a href="index.html?tab=section-plan-magasin">Plan & Rayons</a></nav><div class="header-actions"><span class="round">FR</span><a href="index.html?tab=section-suivi" class="round" aria-label="Rechercher"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg></a><a href="index.html?tab=section-rentree" class="commander">Commander</a></div></div></header>
+<main class="page"><section class="main"><div class="check">✓</div><h1 class="title">Merci <span id="name"></span></h1><p class="copy">Votre commande a été enregistrée !</p><p class="subcopy">Conservez la référence ou télécharger la facture pour suivre son avancement</p><div id="error" class="error"></div><div class="rules"><ul><li>Conservez votre <b>référence</b> et votre <b>QR code</b>.</li><li>Suivez l’avancement depuis « <b>Suivre ma commande</b> » avec la référence et le téléphone.</li><li>Attendez le statut « <b>Prête au retrait</b> » avant de vous déplacer.</li><li>Présentez le <b>QR code</b> lors de la récupération en magasin.</li><li>Pour une liste personnalisée, le <b>montant final</b> sera confirmé <b>après vérification</b>.</li></ul></div></section><aside class="side"><div class="card"><div id="reference" class="reference">—</div><div class="qr-box"><canvas id="qr"></canvas></div><p class="note">Présentez ce QR code lors de la récupération de votre commande. Télécharger la facture pour le retrait !</p><div class="buttons"><button id="details" class="btn orange" disabled>Détails de ma commande</button><button id="download" class="btn green" disabled>Télécharger ma commande</button><a href="index.html" class="btn white">Retour à l’accueil</a></div><p id="loading" class="loading">Chargement de la commande…</p></div></aside></main>
 <script>
-document.addEventListener('DOMContentLoaded', async () => {
-    setTimeout(() => {
-        const splash = document.getElementById('splash-screen');
-        if (splash) {
-            splash.classList.add('opacity-0');
-            setTimeout(() => splash.style.setProperty('display', 'none', 'important'), 500);
-        }
-    }, 1500);
+const SUPABASE_URL='https://jgfkshsizrtwzqsdrhhp.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_Rdn2yMULDq05BGBV-X-zCA_S934mdEh';
+const db=window.supabase?.createClient ? supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY) : null;
+const params=new URLSearchParams(location.search);
+const orderReference=(params.get('order')||'').trim();
+const qrCode=(params.get('qr')||'').trim();
+const paramName=(params.get('name')||'').trim();
+let order=null,items=[],history=[],payload='';
+const nameBox=document.getElementById('name');
+const referenceBox=document.getElementById('reference');
+const qrBox=document.querySelector('.qr-box');
+const detailsButton=document.getElementById('details');
+const downloadButton=document.getElementById('download');
+const loadingBox=document.getElementById('loading');
+const errorBox=document.getElementById('error');
 
-    const params = new URLSearchParams(window.location.search);
-    const orderReference = params.get('order');
-    const clientName = params.get('name');
-    let qrCode = params.get('qr');
-    let qrPayload = '';
-    let orderDetails = null;
+nameBox.textContent=paramName.split(/\s+/)[0]||'';
+referenceBox.textContent=orderReference||'Commande confirmée';
 
-    if (orderReference) document.getElementById('order-display-id').innerText = orderReference;
-    if (clientName) document.getElementById('client-display-name').innerText = decodeURIComponent(clientName);
+function parseItems(value){if(!value)return[];if(Array.isArray(value))return value;try{return JSON.parse(value)}catch{return[]}}
+function buildTrackingPayload(code){const url=new URL('index.html',location.href);url.searchParams.set('tab','section-suivi');if(code)url.searchParams.set('qr',code);else if(orderReference)url.searchParams.set('order',orderReference);return url.toString()}
+function currentQrPayload(){return payload||buildTrackingPayload(qrCode)}
+function qrFallbackUrl(value,size=180){return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&margin=1&data=${encodeURIComponent(value)}`}
 
-    const SUPABASE_URL = "https://jgfkshsizrtwzqsdrhhp.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_Rdn2yMULDq05BGBV-X-zCA_S934mdEh";
-    const supabaseClient = window.supabase ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
-
-    if (supabaseClient && orderReference) {
-        const { data: order } = await supabaseClient.from('orders').select('*').eq('numero_commande', orderReference).maybeSingle();
-        if (order) {
-            orderDetails = order;
-            if (order.qr_code) qrCode = order.qr_code;
-            qrPayload = order.qr_payload || '';
-        }
+async function renderQr(value){
+  const canvas=document.getElementById('qr');
+  if(!value||!canvas)return;
+  try{
+    if(window.QRCode&&typeof QRCode.toCanvas==='function'){
+      await QRCode.toCanvas(canvas,value,{width:180,margin:1,color:{dark:'#000000',light:'#FFFFFF'}});
+      canvas.style.display='block';
+      return;
     }
+  }catch(error){console.warn('Rendu QR local indisponible, utilisation du secours.',error)}
+  const image=document.createElement('img');
+  image.src=qrFallbackUrl(value,180);
+  image.alt='QR code de la commande';
+  image.width=180;image.height=180;
+  image.onerror=()=>{image.alt='QR code momentanément indisponible'};
+  canvas.replaceWith(image);
+}
 
-    function buildSuccessQrPayload(qr) {
-        const url = new URL('index.html', window.location.href);
-        url.searchParams.set('tab', 'section-suivi');
-        url.searchParams.set('qr', qr);
-        return url.toString();
-    }
+// Le QR et la référence sont affichés immédiatement depuis l’URL de succès.
+payload=buildTrackingPayload(qrCode);
+renderQr(payload);
+detailsButton.disabled=false;
+detailsButton.onclick=()=>{location.href=payload};
+loadingBox.textContent='';
 
+function closeDrawer(){document.getElementById('drawer')?.classList.remove('open')}
+window.closeDrawer=closeDrawer;
+function showDetails(){
+  let drawer=document.getElementById('drawer');
+  if(!drawer){drawer=document.createElement('div');drawer.id='drawer';drawer.className='drawer';drawer.innerHTML='<aside class="panel"><div id="panel-content"></div></aside>';document.body.appendChild(drawer);drawer.onclick=event=>{if(event.target===drawer)closeDrawer()}}
+  const rows=items.map(item=>`<div class="row"><span>${item.name||'-'}</span><b>${(Number(item.price)||0).toFixed(2)} DH</b></div>`).join('')||'<p>Aucun article détaillé.</p>';
+  drawer.querySelector('#panel-content').innerHTML=`<div class="flex justify-between mb-6"><div><h3 class="text-2xl font-black text-[#E75C25]">Détails de ma commande</h3><p class="text-sm text-stone-500">${order?.numero_commande||orderReference||'-'}</p></div><button onclick="closeDrawer()" class="text-2xl">×</button></div><div class="grid gap-2">${rows}</div>`;
+  drawer.classList.add('open');
+}
+async function makeData(url){const response=await fetch(url);const blob=await response.blob();return await new Promise(resolve=>{const reader=new FileReader();reader.onloadend=()=>resolve(reader.result);reader.readAsDataURL(blob)})}
+async function makeQrData(){
+  if(window.QRCode&&typeof QRCode.toCanvas==='function'){const canvas=document.createElement('canvas');await QRCode.toCanvas(canvas,currentQrPayload(),{width:260,margin:2});return canvas.toDataURL('image/png')}
+  return makeData(qrFallbackUrl(currentQrPayload(),260));
+}
+async function pdf(){
+  if(!order)return location.href=payload;
+  if(!window.jspdf?.jsPDF)return alert('La librairie PDF n’est pas chargée.');
+  const{jsPDF}=window.jspdf,doc=new jsPDF(),pageWidth=doc.internal.pageSize.getWidth(),margin=16,total=Number(order.total_amount||items.reduce((sum,item)=>sum+(Number(item.price)||0),0));
+  try{doc.addImage(await makeData('images/logo.png'),'PNG',margin,10,24,24)}catch{}
+  doc.setFont('helvetica','bold');doc.setFontSize(18);doc.setTextColor(231,92,37);doc.text('Librairie & Papeterie El Qods',margin+32,18);
+  try{doc.addImage(await makeQrData(),'PNG',pageWidth-margin-34,10,34,34)}catch{}
+  let y=54;doc.setFontSize(15);doc.text(`Commande ${order.numero_commande||orderReference||'-'}`,margin,y);y+=10;doc.setTextColor(40);doc.setFontSize(10);doc.setFont('helvetica','normal');
+  for(const text of [`Nom : ${order.client_name||'-'}`,`Téléphone : ${order.client_phone||'-'}`,`E-mail : ${order.client_email||'-'}`]){doc.text(text,margin,y);y+=6}
+  y+=5;items.forEach((item,index)=>{doc.text(`${index+1}. ${item.name||'-'}`.slice(0,90),margin,y);doc.text(`${(Number(item.price)||0).toFixed(2)} DH`,pageWidth-margin,y,{align:'right'});y+=6});
+  y+=8;doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(231,92,37);doc.text(`Total à payer : ${total?total.toFixed(2)+' DH':'Sur devis'}`,margin,y);doc.save(`commande-${order.numero_commande||orderReference||'elqods'}.pdf`);
+}
 
-    function parseItems(raw) {
-        if (!raw) return [];
-        if (Array.isArray(raw)) return raw;
-        try { return JSON.parse(raw); } catch { return []; }
-    }
-    async function urlToDataUrl(url) {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        return await new Promise(resolve => { const reader = new FileReader(); reader.onloadend = () => resolve(reader.result); reader.readAsDataURL(blob); });
-    }
-    async function makeQrDataUrl(payload) {
-        if (window.QRCode && typeof QRCode.toCanvas === 'function') {
-            const canvas = document.createElement('canvas');
-            await QRCode.toCanvas(canvas, payload, { width: 260, margin: 2, color: { dark: '#0D0D0D', light: '#FFFFFF' } });
-            return canvas.toDataURL('image/png');
-        }
-        return await urlToDataUrl(`https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=10&data=${encodeURIComponent(payload)}`);
-    }
-    async function downloadSuccessOrderPdf(order, payload) {
-        if (!window.jspdf || !window.jspdf.jsPDF) { alert("La librairie PDF n'est pas chargée. Vérifiez votre connexion internet puis réessayez."); return; }
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF('p', 'mm', 'a4');
-        const margin = 16, pageW = doc.internal.pageSize.getWidth();
-        const items = parseItems(order.items);
-        const total = Number(order.total_amount ?? items.reduce((sum, item) => sum + (Number(item.price) || 0), 0));
-        let y = 18;
-        try { const logo = await urlToDataUrl('images/logo.png'); doc.addImage(logo, 'PNG', margin, 10, 24, 24); } catch (_) {}
-        doc.setFont('helvetica', 'bold'); doc.setFontSize(18); doc.setTextColor(231, 92, 37); doc.text('Librairie & Papeterie El Qods', margin + 32, 18);
-        doc.setFontSize(10); doc.setTextColor(90, 90, 90); doc.text('Bon de commande / réservation', margin + 32, 25); doc.text('Berkane - Maroc', margin + 32, 31);
-        try { const qrData = await makeQrDataUrl(payload); doc.addImage(qrData, 'PNG', pageW - margin - 34, 10, 34, 34); } catch (_) {}
-        y = 52; doc.setDrawColor(231, 92, 37); doc.line(margin, y, pageW - margin, y); y += 10;
-        doc.setFont('helvetica', 'bold'); doc.setFontSize(15); doc.setTextColor(20, 20, 20); doc.text(`Commande ${order.numero_commande || orderReference || '-'}`, margin, y); y += 8;
-        doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(70, 70, 70);
-        doc.text(`Nom : ${order.client_name || decodeURIComponent(clientName || '') || '-'}`, margin, y); y += 6;
-        doc.text(`Téléphone : ${order.client_phone || '-'}`, margin, y); y += 6;
-        doc.text(`E-mail : ${order.client_email || '-'}`, margin, y); y += 6;
-        doc.text(`Paiement : ${(order.payment_status || 'unpaid') === 'paid' ? 'Payé' : 'Non payé'}`, margin, y); y += 6;
-        doc.text(`Code QR : ${order.qr_code || qrCode || '-'}`, margin, y); y += 10;
-        doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(231, 92, 37); doc.text('Articles commandés', margin, y); y += 7;
-        doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(40, 40, 40);
-        if (!items.length || items.some(i => i.type === 'photo_upload' || i.url || i.photo_url)) { doc.text('Commande par photo : la liste sera préparée manuellement par la boutique.', margin, y); y += 7; }
-        else items.forEach((item, index) => { if (y > 260) { doc.addPage(); y = 20; } doc.text(`${index + 1}. ${item.name || '-'}`.substring(0, 90), margin, y); doc.text(`${(Number(item.price) || 0).toFixed(2)} DH`, pageW - margin - 28, y, { align: 'right' }); y += 6; });
-        y += 5; doc.line(margin, y, pageW - margin, y); y += 9; doc.setFont('helvetica', 'bold'); doc.setFontSize(14); doc.setTextColor(231, 92, 37); doc.text(`Total à payer : ${total > 0 ? total.toFixed(2) + ' DH' : 'Sur devis'}`, margin, y);
-        doc.setFontSize(8); doc.setTextColor(120, 120, 120); doc.text('Merci de présenter ce document ou votre QR code lors du retrait en boutique.', margin, 287);
-        doc.save(`commande-${order.numero_commande || orderReference || 'elqods'}.pdf`);
-    }
-
-    function renderSuccessQr(qr) {
-        if (!qr) return;
-        const block = document.getElementById('success-qr-block');
-        const canvas = document.getElementById('success-qr-canvas');
-        const btn = document.getElementById('btn-download-success-qr');
-        const label = document.getElementById('success-qr-code-label');
-        const payload = qrPayload || buildSuccessQrPayload(qr);
-        if (block) block.classList.remove('hidden');
-        if (label) label.textContent = qr;
-        const fallbackUrl = `https://api.qrserver.com/v1/create-qr-code/?size=190x190&margin=10&data=${encodeURIComponent(payload)}`;
-        if (window.QRCode && typeof QRCode.toCanvas === 'function' && canvas) {
-            QRCode.toCanvas(canvas, payload, { width: 190, margin: 2, color: { dark: '#0D0D0D', light: '#FFFFFF' } });
-            if (btn) btn.addEventListener('click', () => downloadSuccessOrderPdf(orderDetails || { numero_commande: orderReference, client_name: decodeURIComponent(clientName || ''), qr_code: qr }, payload));
-        } else if (canvas) {
-            const img = document.createElement('img');
-            img.src = fallbackUrl;
-            img.alt = 'QR Code';
-            img.className = 'mx-auto bg-white p-2 rounded-xl shadow-sm w-[190px] h-[190px] object-contain';
-            canvas.replaceWith(img);
-            if (btn) btn.addEventListener('click', () => downloadSuccessOrderPdf(orderDetails || { numero_commande: orderReference, client_name: decodeURIComponent(clientName || ''), qr_code: qr }, payload));
-        }
-    }
-
-    renderSuccessQr(qrCode);
-
-    if (supabaseClient) {
-        supabaseClient.from('site_settings').select('*').then(({ data: settings }) => {
-            if (settings) {
-                settings.forEach(s => {
-                    if (s.key === 'contact_address' && document.getElementById('info-address')) document.getElementById('info-address').innerText = s.value;
-                    if (s.key === 'contact_phone' && document.getElementById('info-phone')) document.getElementById('info-phone').innerText = s.value;
-                    if (s.key === 'contact_email' && document.getElementById('info-email')) document.getElementById('info-email').innerText = s.value;
-                });
-            }
-        }).catch(() => {});
-    }
-});
-</script>
-</body></html>
+(async()=>{
+  if(!db||(!orderReference&&!qrCode))return;
+  try{
+    let query=db.from('orders').select('*');
+    query=orderReference?query.eq('numero_commande',orderReference):query.eq('qr_code',qrCode);
+    const result=await query.maybeSingle();
+    if(result.error||!result.data)return;
+    order=result.data;items=parseItems(order.items);
+    const historyResult=await db.from('order_history').select('*').eq('order_id',order.id).order('created_at',{ascending:true});history=historyResult.data||[];
+    referenceBox.textContent=order.numero_commande||orderReference;
+    nameBox.textContent=(order.client_name||paramName).trim().split(/\s+/)[0]||'';
+    payload=order.qr_payload||buildTrackingPayload(order.qr_code||qrCode);
+    await renderQr(payload);
+    detailsButton.onclick=showDetails;
+    downloadButton.disabled=false;
+    downloadButton.onclick=pdf;
+  }catch(error){console.warn('Détails Supabase indisponibles, référence et QR conservés depuis l’URL.',error)}
+})();
+</script></body></html>

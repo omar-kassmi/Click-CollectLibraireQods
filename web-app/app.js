@@ -202,6 +202,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    function normalizeSchoolLogoUrl(url) {
+        const value = String(url || '').trim();
+        if (!value) return '';
+        const driveMatch = value.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?id=)([a-zA-Z0-9_-]+)/);
+        return driveMatch ? `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w800` : value;
+    }
+
+    function escapeHtmlAttribute(value) {
+        return String(value || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
     function populateSchoolsDropdown() {
         const selectEcole = document.getElementById('select-ecole');
         const buttonsBox = document.getElementById('school-logo-buttons');
@@ -219,11 +230,18 @@ document.addEventListener('DOMContentLoaded', () => {
             selectEcole.appendChild(opt);
         });
         if (!buttonsBox) return;
-        buttonsBox.innerHTML = [...schoolMap.entries()].map(([school, logo]) => `
-            <button type="button" class="school-logo-button" data-school="${school.replace(/"/g, '&quot;')}">
-                <span class="school-logo-visual">${logo ? `<img src="${logo}" alt="Logo ${school}" onerror="this.parentElement.innerHTML='<span class=school-logo-fallback>${school.charAt(0).toUpperCase()}</span>'">` : `<span class="school-logo-fallback">${school.charAt(0).toUpperCase()}</span>`}</span>
-                <strong>${school}</strong>
-            </button>`).join('') || '<p class="flow-muted">Aucun établissement configuré.</p>';
+        buttonsBox.innerHTML = [...schoolMap.entries()].map(([school, logo]) => {
+            const initial = String(school).trim().charAt(0).toUpperCase() || 'E';
+            const logoSrc = normalizeSchoolLogoUrl(logo);
+            const safeSchool = escapeHtmlAttribute(school);
+            const visual = logoSrc
+                ? `<img src="${escapeHtmlAttribute(logoSrc)}" alt="Logo ${safeSchool}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="school-logo-fallback" style="display:none">${escapeHtmlAttribute(initial)}</span>`
+                : `<span class="school-logo-fallback">${escapeHtmlAttribute(initial)}</span>`;
+            return `<button type="button" class="school-logo-button" data-school="${safeSchool}">
+                <span class="school-logo-visual">${visual}</span>
+                <strong>${safeSchool}</strong>
+            </button>`;
+        }).join('') || '<p class="flow-muted">Aucun établissement configuré.</p>';
         buttonsBox.querySelectorAll('.school-logo-button').forEach(button => {
             button.addEventListener('click', () => selectSchoolFromButton(button.dataset.school));
         });
@@ -341,10 +359,40 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         total.innerText = isPhotoOrder ? 'Sur devis' : `${grandTotal.toFixed(2)} DH`;
     }
-    function unlockAndScroll(id,step){
-        const el=document.getElementById(id);if(!el)return;el.classList.remove('hidden');el.setAttribute('aria-hidden','false');setOrderFlowStep(step);el.classList.remove('flow-unlock');void el.offsetWidth;el.classList.add('flow-unlock');setTimeout(()=>{const o=(document.getElementById('main-header')?.offsetHeight||72)+18;window.scrollTo({top:Math.max(0,el.getBoundingClientRect().top+window.scrollY-o),behavior:'smooth'});},70);
+    const orderFlowPages = ['options-container', 'school-selection-view', 'pack-details-view', 'checkout-form-container'];
+
+    function showOrderFlowPage(id, step) {
+        orderFlowPages.forEach(pageId => {
+            const page = document.getElementById(pageId);
+            if (!page) return;
+            const active = pageId === id;
+            page.classList.toggle('hidden', !active);
+            page.setAttribute('aria-hidden', active ? 'false' : 'true');
+        });
+        setOrderFlowStep(step);
+        const target = document.getElementById(id);
+        if (target) {
+            target.classList.remove('flow-unlock');
+            void target.offsetWidth;
+            target.classList.add('flow-unlock');
+        }
+        // Pas de défilement vers le bas : la nouvelle étape remplace simplement l'ancienne.
+        window.scrollTo({ top: 0, behavior: 'auto' });
     }
-    function lockFollowingSteps(){['school-selection-view','pack-details-view','checkout-form-container'].forEach(id=>{const el=document.getElementById(id);el?.classList.add('hidden');el?.setAttribute('aria-hidden','true');});}
+
+    function unlockAndScroll(id, step) {
+        showOrderFlowPage(id, step);
+    }
+
+    function lockFollowingSteps() {
+        orderFlowPages.forEach(pageId => {
+            const page = document.getElementById(pageId);
+            if (!page) return;
+            const active = pageId === 'options-container';
+            page.classList.toggle('hidden', !active);
+            page.setAttribute('aria-hidden', active ? 'false' : 'true');
+        });
+    }
     function scrollBackTo(element) {
         if (!element) return;
         const offset = (document.getElementById('main-header')?.offsetHeight || 72) + 18;
@@ -354,32 +402,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    document.getElementById('flow-back-step-2')?.addEventListener('click', () => {
-        document.getElementById('school-selection-view')?.classList.add('hidden');
-        document.getElementById('pack-details-view')?.classList.add('hidden');
-        document.getElementById('checkout-form-container')?.classList.add('hidden');
-        setOrderFlowStep(1);
-        scrollBackTo(document.getElementById('options-container'));
-    });
-
-    document.getElementById('flow-back-step-3')?.addEventListener('click', () => {
-        document.getElementById('pack-details-view')?.classList.add('hidden');
-        document.getElementById('checkout-form-container')?.classList.add('hidden');
-        setOrderFlowStep(2);
-        scrollBackTo(document.getElementById('school-selection-view'));
-    });
-
-    document.getElementById('flow-back-step-4')?.addEventListener('click', () => {
-        document.getElementById('checkout-form-container')?.classList.add('hidden');
-        if (isPhotoOrder) {
-            setOrderFlowStep(1);
-            scrollBackTo(document.getElementById('options-container'));
-        } else {
-            setOrderFlowStep(3);
-            scrollBackTo(document.getElementById('pack-details-view'));
-        }
-    });
-
+    document.getElementById('flow-back-step-2')?.addEventListener('click', () => showOrderFlowPage('options-container', 1));
+    document.getElementById('flow-back-step-3')?.addEventListener('click', () => showOrderFlowPage('school-selection-view', 2));
+    document.getElementById('flow-back-step-4')?.addEventListener('click', () => showOrderFlowPage(isPhotoOrder ? 'options-container' : 'pack-details-view', isPhotoOrder ? 1 : 3));
     function advanceFirstViewIfComplete(){
         if(!selectedFulfillment()||!selectedListType)return;
         if(selectedListType==='official'){isPhotoOrder=false;unlockAndScroll('school-selection-view',2);}
@@ -396,10 +421,7 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedListType='custom';isPhotoOrder=true;selectedPhotoFile=null;lockFollowingSteps();
         const official=document.getElementById('choose-official-list');official?.classList.remove('is-selected');official?.setAttribute('aria-pressed','false');btnCustomList.classList.add('is-selected');btnCustomList.setAttribute('aria-pressed','true');advanceFirstViewIfComplete();
     });
-    document.getElementById('btn-back-to-list')?.addEventListener('click',()=>{
-        document.getElementById('checkout-form-container')?.classList.add('hidden');
-        const target=isPhotoOrder?document.getElementById('options-container'):document.getElementById('pack-details-view');if(target){const o=(document.getElementById('main-header')?.offsetHeight||72)+18;window.scrollTo({top:Math.max(0,target.getBoundingClientRect().top+window.scrollY-o),behavior:'smooth'});}
-    });
+    document.getElementById('btn-back-to-list')?.addEventListener('click',()=>showOrderFlowPage(isPhotoOrder ? 'options-container' : 'pack-details-view', isPhotoOrder ? 1 : 3));
 
     // ==========================================
     // 5. CLIC SUR "SUIVANT"
@@ -546,7 +568,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // NAVIGATION DU PANIER DE COMMANDE
     const btnChangeChoice=document.getElementById('btn-change-choice-top');
-    btnChangeChoice?.addEventListener('click',()=>{document.getElementById('pack-details-view')?.classList.add('hidden');const t=document.getElementById('school-selection-view');if(t){const o=(document.getElementById('main-header')?.offsetHeight||72)+18;window.scrollTo({top:Math.max(0,t.getBoundingClientRect().top+window.scrollY-o),behavior:'smooth'});}});
+    btnChangeChoice?.addEventListener('click',()=>showOrderFlowPage('school-selection-view', 2));
     const btnNextToForm=document.getElementById('btn-next-to-form');
     btnNextToForm?.addEventListener('click',()=>{updateDeliveryFields();updateFinalSummary();unlockAndScroll('checkout-form-container',4);});
 
@@ -584,8 +606,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function setOrderFlowStep(step, scrollTargetId = null) {
         const rentree = document.getElementById('section-rentree');
         if (rentree) rentree.dataset.flowStep = String(step);
-        const progress = document.getElementById('school-flow-progress-fill');
-        if (progress) progress.style.width = `${Math.max(1, Math.min(3, step)) / 3 * 100}%`;
         updateStepper(step);
         const title = document.getElementById('flow-guide-title');
         const text = document.getElementById('flow-guide-text');

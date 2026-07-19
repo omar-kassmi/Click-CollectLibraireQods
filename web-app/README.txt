@@ -1,1 +1,6 @@
-Les valeurs du récapitulatif sont alignées complètement à droite. Un champ facultatif 'Consignes pour la commande' a été ajouté au formulaire client. La valeur est enregistrée dans orders.order_instructions et affichée uniquement dans la fenêtre de détail ouverte en cliquant sur une commande dans l'administration. Exécuter supabase-setup.sql une fois pour ajouter la colonne si nécessaire.
+Correctif référence et QR :
+- la référence est affichée directement depuis le paramètre ?order= ;
+- le QR est généré immédiatement depuis ?qr= sans attendre Supabase ;
+- si la librairie QRCode n'est pas chargée, une image QR de secours est utilisée ;
+- une erreur de lecture Supabase ne vide plus la référence et le QR ;
+- le design de la capture est conservé.

@@ -471,3 +471,170 @@ body.tracking-drawer-open{overflow:hidden}.tracking-section{width:100%;padding-t
         grid-template-columns: minmax(0, 1fr) auto !important;
     }
 }
+
+
+/* CORRECTIF FINAL : étapes en pages, flèche seule, barre visible */
+#section-rentree .flow-progressive-step.hidden,
+#section-rentree #options-container.hidden { display: none !important; }
+
+/* Le numéro et le titre restent alignés exactement au bord du widget. */
+#section-rentree .flow-view-head-with-back {
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: 42px minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: 14px !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+}
+#section-rentree .flow-view-head-with-back > span { grid-column: 1 !important; margin: 0 !important; }
+#section-rentree .flow-view-head-with-back > div { grid-column: 2 !important; min-width: 0 !important; }
+
+/* La flèche est seule dans la marge gauche et ne décale rien. */
+#section-rentree .flow-view-head-with-back .flow-step-back {
+    position: absolute !important;
+    left: -56px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 2px solid #E75C25 !important;
+    border-radius: 999px !important;
+    background: #fff !important;
+    color: #E75C25 !important;
+}
+#section-rentree .flow-step-back svg {
+    width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.3;
+    stroke-linecap: round; stroke-linejoin: round;
+}
+#section-rentree .flow-step-back:hover { background:#E75C25 !important; color:#fff !important; }
+
+/* Barre restaurée, fixe et collée au header. */
+body.school-order-active #section-rentree .school-flow-progress {
+    display: block !important;
+    position: fixed !important;
+    top: calc(var(--main-header-bottom, 82px) - 2px) !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100vw !important;
+    height: 6px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 9999 !important;
+    overflow: hidden !important;
+    background: #e9e4df !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: none !important;
+}
+body.school-order-active #section-rentree #school-flow-progress-fill {
+    display: block !important;
+    height: 100% !important;
+    background: #E75C25 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+@media(max-width:640px){
+    #section-rentree .flow-view-head-with-back{grid-template-columns:36px minmax(0,1fr)!important;gap:10px!important}
+    #section-rentree .flow-view-head-with-back .flow-step-back{left:-42px!important;width:36px!important;height:36px!important;min-height:36px!important}
+}
+
+
+/* Barre supprimée */
+.school-flow-progress { display:none !important; }
+/* Boutons sélectionnés orange */
+#section-rentree .flow-radio-card input:checked + span,
+#section-rentree .flow-type-card.is-selected,
+#section-rentree .flow-type-card[aria-pressed="true"] { border-color:#E75C25!important;background:#E75C25!important;color:#fff!important;box-shadow:0 8px 22px rgba(231,92,37,.22)!important; }
+#section-rentree .flow-radio-card input:checked + span b,
+#section-rentree .flow-radio-card input:checked + span small,
+#section-rentree .flow-type-card.is-selected b,
+#section-rentree .flow-type-card.is-selected small,
+#section-rentree .flow-type-card[aria-pressed="true"] b,
+#section-rentree .flow-type-card[aria-pressed="true"] small { color:#fff!important; }
+/* Récapitulatif : colonne de valeurs complètement à droite */
+#section-rentree .checkout-summary-card .summary-lines,
+#section-rentree .checkout-summary-card .summary-group { width:100%!important; }
+#section-rentree .checkout-summary-card .summary-row { display:grid!important;grid-template-columns:minmax(0,1fr) minmax(150px,44%)!important;align-items:center!important;column-gap:24px!important;width:100%!important; }
+#section-rentree .checkout-summary-card .summary-row > span:first-child { justify-self:start!important;text-align:left!important; }
+#section-rentree .checkout-summary-card .summary-row > b { display:block!important;width:100%!important;max-width:none!important;margin:0!important;justify-self:stretch!important;text-align:right!important;overflow-wrap:anywhere; }
+#section-rentree .checkout-summary-card .summary-count-row > b { display:inline-flex!important;width:max-content!important;max-width:100%!important;justify-self:end!important;align-items:center!important;justify-content:center!important;text-align:center!important; }
+#section-rentree .checkout-summary-card .summary-subtotal-row > b { width:max-content!important;justify-self:end!important;text-align:right!important;color:#E75C25!important; }
+#section-rentree .checkout-summary-card .summary-grand-total { display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;column-gap:24px!important;width:100%!important; }
+#section-rentree .checkout-summary-card .summary-grand-total strong { width:auto!important;margin:0!important;justify-self:end!important;text-align:right!important;white-space:nowrap!important; }
+@media(max-width:600px){#section-rentree .checkout-summary-card .summary-row{grid-template-columns:minmax(0,1fr) minmax(118px,46%)!important;column-gap:14px!important}}
+
+/* Espacement compact entre le header et le titre des étapes */
+#section-rentree.school-order-flow {
+    padding-top: 88px !important;
+}
+
+#section-rentree #options-container,
+#section-rentree .flow-progressive-step {
+    min-height: calc(100vh - 88px) !important;
+    padding-top: 28px !important;
+    padding-bottom: 54px !important;
+}
+
+#section-rentree .flow-view-head {
+    margin-top: 0 !important;
+    margin-bottom: 20px !important;
+}
+
+@media (max-width: 800px) {
+    #section-rentree.school-order-flow {
+        padding-top: 68px !important;
+    }
+    #section-rentree #options-container,
+    #section-rentree .flow-progressive-step {
+        min-height: calc(100vh - 68px) !important;
+        padding-top: 22px !important;
+        padding-bottom: 40px !important;
+    }
+}
+
+/* Ajustement final : en-tête des étapes encore plus proche du header */
+#section-rentree.school-order-flow {
+    padding-top: 72px !important;
+}
+
+#section-rentree #options-container,
+#section-rentree .flow-progressive-step {
+    min-height: calc(100vh - 72px) !important;
+    padding-top: 12px !important;
+    padding-bottom: 48px !important;
+}
+
+#section-rentree .flow-view-head {
+    margin-top: 0 !important;
+    margin-bottom: 18px !important;
+}
+
+@media (max-width: 800px) {
+    #section-rentree.school-order-flow {
+        padding-top: 56px !important;
+    }
+    #section-rentree #options-container,
+    #section-rentree .flow-progressive-step {
+        min-height: calc(100vh - 56px) !important;
+        padding-top: 10px !important;
+        padding-bottom: 36px !important;
+    }
+}
+
+
+/* Logos des écoles : image Drive centrée et fallback initiale */
+#section-rentree .school-logo-visual img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+#section-rentree .school-logo-fallback {
+    width: 100%;
+    height: 100%;
+    place-items: center;
+}
