@@ -725,6 +725,90 @@ document.addEventListener('DOMContentLoaded', () => {
         loadSchoolLists();
     });
 
+    function normalizeSchoolListFilterValue(value) {
+        return String(value || '').trim().toLocaleLowerCase('fr-FR');
+    }
+
+    function fillSchoolListFilterOptions(lists) {
+        const schoolSelect = document.getElementById('filter-school-lists-school');
+        const levelSelect = document.getElementById('filter-school-lists-level');
+        if (!schoolSelect || !levelSelect) return;
+        const selectedSchool = schoolSelect.value;
+        const selectedLevel = levelSelect.value;
+        const schools = [...new Set((lists || []).map(item => String(item.school_name || '').trim()).filter(Boolean))]
+            .sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
+        const levels = [...new Set((lists || []).map(item => String(item.level || '').trim()).filter(Boolean))]
+            .sort((a, b) => a.localeCompare(b, 'fr', { numeric: true, sensitivity: 'base' }));
+        schoolSelect.innerHTML = '<option value="">Toutes les écoles</option>' + schools.map(value => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('');
+        levelSelect.innerHTML = '<option value="">Tous les niveaux</option>' + levels.map(value => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('');
+        if (schools.includes(selectedSchool)) schoolSelect.value = selectedSchool;
+        if (levels.includes(selectedLevel)) levelSelect.value = selectedLevel;
+    }
+
+    function renderFilteredSchoolLists() {
+        const container = document.getElementById('config-lists-container');
+        const schoolSelect = document.getElementById('filter-school-lists-school');
+        const levelSelect = document.getElementById('filter-school-lists-level');
+        const countBox = document.getElementById('school-lists-filter-count');
+        const resetButton = document.getElementById('btn-reset-school-list-filters');
+        if (!container) return;
+        const schoolFilter = normalizeSchoolListFilterValue(schoolSelect?.value);
+        const levelFilter = normalizeSchoolListFilterValue(levelSelect?.value);
+        const source = window.schoolListsCache || [];
+        const filtered = source.filter(list => {
+            const schoolMatches = !schoolFilter || normalizeSchoolListFilterValue(list.school_name) === schoolFilter;
+            const levelMatches = !levelFilter || normalizeSchoolListFilterValue(list.level) === levelFilter;
+            return schoolMatches && levelMatches;
+        });
+        if (countBox) countBox.textContent = `${filtered.length} pack${filtered.length > 1 ? 's' : ''} affiché${filtered.length > 1 ? 's' : ''} sur ${source.length}`;
+        resetButton?.classList.toggle('hidden', !schoolFilter && !levelFilter);
+        if (!filtered.length) {
+            container.innerHTML = `<div class="sm:col-span-2 rounded-2xl border border-dashed border-gray-300 bg-white p-8 text-center"><p class="text-sm font-bold text-gray-700">Aucun pack ne correspond aux filtres.</p><p class="mt-1 text-xs text-gray-400">Modifiez l’école ou le niveau sélectionné.</p></div>`;
+            return;
+        }
+        container.innerHTML = filtered.map(list => {
+            const items = parseSchoolListItems(list.items);
+            const out = items.filter(item => item.availability === 'out_of_stock').length;
+            return `
+                <div class="bg-white p-5 rounded-2xl border flex flex-col justify-between shadow-sm">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex items-start gap-3">
+                            ${list.school_logo_url ? `<span class="shrink-0 w-11 h-11 rounded-xl border border-gray-200 bg-white p-1.5 flex items-center justify-center overflow-hidden"><img src="${escapeHtml(normalizeDriveImageUrl(list.school_logo_url))}" alt="" class="max-w-full max-h-full object-contain" onerror="this.parentElement.style.display='none'"></span>` : ''}
+                            <div>
+                                <span class="text-xs font-bold text-[#E75C25] uppercase">${escapeHtml(list.school_name)}</span>
+                                <h4 class="text-base font-bold text-gray-900">Classe : ${escapeHtml(list.level)}</h4>
+                                <p class="text-xs text-stone-400 mt-1">${items.length} articles configurés · ${out} rupture</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-edit-list text-gray-400 hover:text-[#E75C25] transition" data-id="${list.id}" title="Modifier ce pack">✎</button>
+                    </div>
+                    <div class="flex items-center gap-4 mt-4">
+                        <button class="btn-edit-list text-left text-xs font-semibold text-[#E75C25]" data-id="${list.id}">Modifier</button>
+                        <button class="btn-delete-list text-left text-xs font-semibold text-red-600" data-id="${list.id}">Supprimer</button>
+                    </div>
+                </div>`;
+        }).join('');
+        container.querySelectorAll('.btn-edit-list').forEach(button => button.addEventListener('click', () => startEditSchoolList(button.dataset.id)));
+        container.querySelectorAll('.btn-delete-list').forEach(button => {
+            button.addEventListener('click', async () => {
+                if (!confirm('Supprimer ce pack ?')) return;
+                await supabaseClient.from('school_lists').delete().eq('id', button.dataset.id);
+                if (String(editingListId) === String(button.dataset.id)) resetPackForm();
+                loadSchoolLists();
+            });
+        });
+    }
+
+    document.getElementById('filter-school-lists-school')?.addEventListener('change', renderFilteredSchoolLists);
+    document.getElementById('filter-school-lists-level')?.addEventListener('change', renderFilteredSchoolLists);
+    document.getElementById('btn-reset-school-list-filters')?.addEventListener('click', () => {
+        const schoolSelect = document.getElementById('filter-school-lists-school');
+        const levelSelect = document.getElementById('filter-school-lists-level');
+        if (schoolSelect) schoolSelect.value = '';
+        if (levelSelect) levelSelect.value = '';
+        renderFilteredSchoolLists();
+    });
+
     async function loadSchoolLists() {
         const container = document.getElementById('config-lists-container');
         if (!container) return;
@@ -736,39 +820,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         window.schoolListsCache = data || [];
-        container.innerHTML = window.schoolListsCache.map(list => {
-            const items = parseSchoolListItems(list.items);
-            const out = items.filter(item => item.availability === 'out_of_stock').length;
-            return `
-                <div class="bg-white p-5 rounded-2xl border flex flex-col justify-between shadow-sm">
-                    <div class="flex items-start justify-between gap-4">
-                        <div class="flex items-start gap-3">
-                            ${list.school_logo_url ? `<span class="shrink-0 w-11 h-11 rounded-xl border border-gray-200 bg-white p-1.5 flex items-center justify-center overflow-hidden"><img src="${escapeHtml(normalizeDriveImageUrl(list.school_logo_url))}" alt="" class="max-w-full max-h-full object-contain" onerror="this.parentElement.style.display='none'"></span>` : ''}
-                            <div>
-                            <span class="text-xs font-bold text-[#E75C25] uppercase">${escapeHtml(list.school_name)}</span>
-                            <h4 class="text-base font-bold text-gray-900">Classe : ${escapeHtml(list.level)}</h4>
-                            <p class="text-xs text-stone-400 mt-1">${items.length} articles configurés · ${out} rupture</p>
-                            </div>
-                        </div>
-                        <button type="button" class="btn-edit-list text-gray-400 hover:text-[#E75C25] transition" data-id="${list.id}" title="Modifier ce pack">✎</button>
-                    </div>
-                    <div class="flex items-center gap-4 mt-4">
-                        <button class="btn-edit-list text-left text-xs font-semibold text-[#E75C25]" data-id="${list.id}">Modifier</button>
-                        <button class="btn-delete-list text-left text-xs font-semibold text-red-600" data-id="${list.id}">Supprimer</button>
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        document.querySelectorAll('.btn-edit-list').forEach(button => button.addEventListener('click', () => startEditSchoolList(button.dataset.id)));
-        document.querySelectorAll('.btn-delete-list').forEach(button => {
-            button.addEventListener('click', async () => {
-                if (!confirm("Supprimer ce pack ?")) return;
-                await supabaseClient.from('school_lists').delete().eq('id', button.dataset.id);
-                if (String(editingListId) === String(button.dataset.id)) resetPackForm();
-                loadSchoolLists();
-            });
-        });
+        fillSchoolListFilterOptions(window.schoolListsCache);
+        renderFilteredSchoolLists();
     }
 
     // Gestion du menu (Ouvrir/Fermer)

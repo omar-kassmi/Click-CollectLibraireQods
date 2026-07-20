@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const RESERVATION_DAYS = 5;
     // Déployez le fichier Apps Script Web App puis collez ici son URL /exec.
-    const APP_SCRIPT_UPLOAD_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzZXUQniWcbNXy9t6C9eRZH2BFST42vunh1t6VjDJF6LTUm-7w_F4eivLtB-OY7RMY/exec";
+    const APP_SCRIPT_UPLOAD_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwtZV02suWqk59Onjrk855uVI7dqZt-yDB96JHgLPfOBpwoS19ciNmxhiBbX-p9AGXQ/exec";
 
     let allSchoolData = []; 
     let selectedPackItems = []; 
@@ -599,6 +599,7 @@ document.addEventListener('DOMContentLoaded', () => {
         url.searchParams.set('phone', clientPhone || '');
         url.searchParams.set('email', clientEmail || '');
         url.searchParams.set('success_url', successUrl.toString());
+        url.searchParams.set('client_site_url', new URL('index.html', window.location.href).toString());
         return url.toString();
     }
 
