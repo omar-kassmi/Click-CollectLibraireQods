@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const RESERVATION_DAYS = 5;
     // Déployez le fichier Apps Script Web App puis collez ici son URL /exec.
-    const APP_SCRIPT_UPLOAD_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwtZV02suWqk59Onjrk855uVI7dqZt-yDB96JHgLPfOBpwoS19ciNmxhiBbX-p9AGXQ/exec";
+    const APP_SCRIPT_UPLOAD_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzZXUQniWcbNXy9t6C9eRZH2BFST42vunh1t6VjDJF6LTUm-7w_F4eivLtB-OY7RMY/exec";
 
     let allSchoolData = []; 
     let selectedPackItems = []; 
@@ -763,7 +763,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function normalizeTrackingStatus(status) {
-        return ({ en_attente: 'new', preparation: 'preparing', prete: 'ready', notifie: 'notified' })[status] || status || 'new';
+        const value = String(status || 'new').trim().toLocaleLowerCase('fr-FR');
+        return ({
+            en_attente: 'new', nouveau: 'new',
+            preparation: 'preparing', 'préparation': 'preparing',
+            prete: 'ready', 'prête': 'ready', pret: 'ready', 'prêt': 'ready',
+            notifie: 'ready', 'notifié': 'ready', notified: 'ready',
+            recupere: 'collected', 'récupéré': 'collected',
+            annule: 'cancelled', 'annulé': 'cancelled',
+            expire: 'expired', 'expiré': 'expired'
+        })[value] || value || 'new';
     }
 
     function formatTrackingDate(value) {
@@ -801,7 +810,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const pageW = doc.internal.pageSize.getWidth();
         const margin = 16;
         const total = Number(order.total_amount ?? items.reduce((sum, item) => sum + (Number(item.price) || 0), 0));
-        const statusLabel = ({ new: 'Commande reçue', preparing: 'En préparation', ready: 'Prête au retrait', notified: 'Prête au retrait', notifie: 'Prête au retrait', collected: 'Commande récupérée', cancelled: 'Commande annulée', expired: 'Réservation expirée', preparation: 'En préparation', prete: 'Prête au retrait', en_attente: 'Commande reçue' })[order.status] || order.status || 'Commande reçue';
+        const statusLabel = ({ new: 'Commande reçue', preparing: 'En préparation', ready: 'Prêt au retrait', notified: 'Prêt au retrait', notifie: 'Prêt au retrait', collected: 'Récupéré', cancelled: 'Commande annulée', expired: 'Réservation inactive', preparation: 'En préparation', prete: 'Prête au retrait', en_attente: 'Commande reçue' })[order.status] || order.status || 'Commande reçue';
         let y = 18;
 
         try {
@@ -874,7 +883,7 @@ document.addEventListener('DOMContentLoaded', () => {
         doc.text('Suivi de progression', margin, y); y += 7;
         doc.setFont('helvetica', 'normal');
         doc.setTextColor(70, 70, 70);
-        const labels = { new: 'Commande reçue', preparing: 'Préparation', ready: 'Prête au retrait', notified: 'Prête au retrait', notifie: 'Prête au retrait', collected: 'Récupérée' };
+        const labels = { new: 'Commande reçue', preparing: 'Préparation', ready: 'Prêt au retrait', notified: 'Prêt au retrait', notifie: 'Prêt au retrait', collected: 'Récupéré' };
         (history || []).slice(0, 8).forEach(event => {
             if (y > 270) { doc.addPage(); y = 20; }
             doc.text(`• ${labels[normalizeTrackingStatus(event.status)] || event.status} - ${formatTrackingDate(event.created_at)}`, margin, y);
@@ -934,8 +943,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const regularSteps = [
             { key: 'new', label: 'Commande' },
             { key: 'preparing', label: 'Préparation' },
-            { key: 'ready', label: 'Prête au retrait' },
-            { key: 'collected', label: 'Récupérée' }
+            { key: 'ready', label: 'Prêt au retrait' },
+            { key: 'collected', label: 'Récupéré' }
         ];
         const normalizedStatus = normalizeTrackingStatus(order.status);
         const isCancelled = normalizedStatus === 'cancelled';

@@ -10,18 +10,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const COLLECTED_STATUSES = ['collected'];
     const CLOSED_STATUSES = ['collected', 'cancelled', 'expired'];
     const STATUS_ALIASES = {
-        en_attente: 'new',
-        preparation: 'preparing',
-        prete: 'ready',
-        notifie: 'ready'
+        en_attente: 'new', nouveau: 'new',
+        preparation: 'preparing', 'préparation': 'preparing',
+        prete: 'ready', 'prête': 'ready', pret: 'ready', 'prêt': 'ready',
+        notifie: 'ready', 'notifié': 'ready', notified: 'ready',
+        recupere: 'collected', 'récupéré': 'collected',
+        annule: 'cancelled', 'annulé': 'cancelled',
+        expire: 'expired', 'expiré': 'expired'
     };
     const STATUS_META = {
-        new: ['New', 'bg-amber-50 text-amber-700'],
-        preparing: ['Preparing', 'bg-blue-50 text-blue-700'],
-        ready: ['Ready', 'bg-emerald-50 text-emerald-700'],
-        collected: ['Collected', 'bg-stone-900 text-white'],
-        cancelled: ['Cancelled', 'bg-red-50 text-red-700'],
-        expired: ['Expired', 'bg-gray-100 text-gray-600']
+        new: ['Nouveau', 'bg-amber-50 text-amber-700'],
+        preparing: ['Préparation', 'bg-blue-50 text-blue-700'],
+        ready: ['Prêt au retrait', 'bg-emerald-50 text-emerald-700'],
+        collected: ['Récupéré', 'bg-stone-900 text-white'],
+        cancelled: ['Annulé', 'bg-red-50 text-red-700'],
+        expired: ['Expiré', 'bg-gray-100 text-gray-600']
     };
 
 
@@ -40,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     @media(max-width:780px){.ord-info-column{grid-template-rows:auto}.ord-info-column:first-child .ord-customer,.ord-info-column:first-child .ord-mini-card{grid-row:auto}.ord-customer,.ord-mini-card{height:auto;overflow:visible}.ord-head{grid-template-columns:1fr}.ord-head-side{align-items:flex-start}.ord-price{font-size:24px}.ord-overview{grid-template-columns:1fr}.ord-qr{min-height:190px}.ord-body{max-height:calc(100vh - 245px)}.ord-title{font-size:26px}}
     .ord-reference-line{display:flex;align-items:center;gap:12px}.copy-order-reference{width:38px;height:38px;display:grid;place-items:center;border:1px solid transparent;border-radius:10px;background:transparent;color:#292524;cursor:pointer;transition:.15s}.copy-order-reference:hover{background:#f5f5f4;border-color:#d6d3d1}.copy-order-reference.is-copied{background:#ecfdf5;color:#16883a;border-color:#a7f3d0}.copy-order-reference svg{width:25px;height:25px}
     .admin-orders-v2-wrap{overflow-x:auto;padding:0 12px 12px;background:linear-gradient(180deg,#fff,#fcfbfa)}.admin-orders-v2{min-width:1080px!important;border-spacing:0 8px!important}.admin-orders-v2 thead th{padding:12px 14px!important;color:#9a918a!important;font-size:9px!important;letter-spacing:.11em!important}.admin-orders-v2 .order-v2 td{padding:13px 14px!important;background:#fff!important;border-top:1px solid #eee8e2!important;border-bottom:1px solid #eee8e2!important}.admin-orders-v2 .order-v2 td:first-child{border-left:1px solid #eee8e2!important}.admin-orders-v2 .order-v2 td:last-child{border-right:1px solid #eee8e2!important}.admin-orders-v2 .order-v2:hover td{background:#fff8f3!important;border-color:#f3c9b5!important}.admin-orders-v2 .order-v2 b{font-size:12px}.admin-orders-v2 .order-v2 td:first-child b{font-size:13px;font-weight:950}.admin-orders-v2 .sub{font-size:9px;margin-top:4px}.admin-orders-v2 .acts{gap:4px}.admin-orders-v2 .act{width:32px;height:32px;border-radius:9px}.admin-orders-v2 .chip-face{min-width:82px;padding:7px 9px;font-size:10px}.orders-table-card{border-radius:20px!important;border-color:#e9e3dd!important;box-shadow:0 12px 35px rgba(28,25,23,.05)!important;background:#fff!important}.admin-orders-v2 thead{position:relative}.admin-orders-v2 thead tr{background:linear-gradient(90deg,#fff4ec 0%,#fffaf7 55%,#fff 100%)!important;box-shadow:0 5px 16px rgba(231,92,37,.08)}.admin-orders-v2 thead th{height:44px!important;color:#6f625b!important;font-size:9px!important;font-weight:950!important;letter-spacing:.12em!important;border-top:1px solid #f4d7c8!important;border-bottom:1px solid #f4d7c8!important}.admin-orders-v2 thead th:first-child{border-left:1px solid #f4d7c8!important;border-radius:13px 0 0 13px!important;padding-left:18px!important}.admin-orders-v2 thead th:last-child{border-right:1px solid #f4d7c8!important;border-radius:0 13px 13px 0!important;padding-right:18px!important;text-align:center!important}.admin-orders-v2 thead th:nth-child(5),.admin-orders-v2 thead th:nth-child(6),.admin-orders-v2 thead th:nth-child(7){text-align:center!important}.admin-orders-v2 tbody td:nth-child(5),.admin-orders-v2 tbody td:nth-child(6),.admin-orders-v2 tbody td:nth-child(7),.admin-orders-v2 tbody td:last-child{text-align:center!important}.admin-orders-v2-wrap{padding-top:10px!important}
-    .orders-multifilter{min-width:0}.orders-filter-option{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;color:#44403c;font-size:12px;font-weight:800;cursor:pointer;transition:.15s}.orders-filter-option:hover{background:#fff4ec;color:#E75C25}.orders-filter-option input{width:16px;height:16px;accent-color:#E75C25;cursor:pointer}.orders-multifilter.is-open #orders-multifilter-toggle{border-color:#E75C25;box-shadow:0 0 0 3px rgba(231,92,37,.09)}
+    .orders-multifilter{min-width:0}.orders-filter-option{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;color:#44403c;font-size:12px;font-weight:800;cursor:pointer;transition:.15s}.orders-filter-option:hover{background:#fff4ec;color:#E75C25}.orders-filter-option input{width:16px;height:16px;accent-color:#E75C25;cursor:pointer}.orders-multifilter.is-open #orders-multifilter-toggle{border-color:#E75C25;box-shadow:0 0 0 3px rgba(231,92,37,.09)}.orders-filter-option.payment-filter-required{background:#fff1e8;color:#E75C25;animation:paymentRequiredShake .32s ease}@keyframes paymentRequiredShake{0%,100%{transform:translateX(0)}35%{transform:translateX(-3px)}70%{transform:translateX(3px)}}
     .imported-list-link{display:inline-flex;align-items:center;gap:6px;border:0;background:transparent;color:#E75C25;font-size:12px;font-weight:900;cursor:pointer;padding:4px 0;text-align:left}.imported-list-link:hover{text-decoration:underline}.imported-list-link svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
     .list-image-modal{position:fixed;inset:0;z-index:2147483640;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(28,25,23,.62);backdrop-filter:blur(8px)}.list-image-modal.open{display:flex}.list-image-card{width:min(900px,calc(100vw - 28px));max-height:calc(100vh - 28px);display:flex;flex-direction:column;overflow:hidden;border-radius:28px;background:#fff;box-shadow:0 35px 100px rgba(0,0,0,.38)}.list-image-head{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px 30px 18px}.list-image-head h2{margin:0;color:#E75C25;font-size:30px;font-weight:950;letter-spacing:-.02em}.list-image-close{width:42px;height:42px;display:grid;place-items:center;border:0;border-radius:13px;background:#f7f7f6;color:#a8a29e;font-size:28px;font-weight:700;cursor:pointer}.list-image-close:hover{background:#f1f1ef;color:#292524}.list-image-body{min-height:0;overflow:auto;padding:8px 36px 22px}.list-image-stage{min-height:520px;display:flex;align-items:flex-start;justify-content:center;padding:18px;border:1px solid #eeeae6;border-radius:22px;background:#fafafa}.list-image-stage img{display:block;max-width:100%;height:auto;max-height:68vh;object-fit:contain;border-radius:18px;background:#fff;box-shadow:0 8px 28px rgba(28,25,23,.05)}.list-image-loading{padding:38px;color:#a8a29e;font-size:13px;font-weight:800;text-align:center}.list-image-error{display:none;max-width:520px;margin:auto;padding:30px;color:#78716c;font-size:13px;line-height:1.6;text-align:center}.list-image-foot{padding:0 36px 28px}.list-image-open{display:inline-flex;color:#E75C25;font-size:15px;font-weight:900;text-decoration:none}.list-image-open:hover{text-decoration:underline}@media(max-width:700px){.list-image-modal{padding:8px}.list-image-card{max-height:calc(100vh - 16px);border-radius:20px}.list-image-head{padding:18px 18px 12px}.list-image-head h2{font-size:23px}.list-image-body{padding:6px 14px 16px}.list-image-stage{min-height:360px;padding:10px}.list-image-foot{padding:0 18px 20px}}
     @media(max-width:900px){.admin-orders-v2{min-width:1120px}}@media(max-width:700px){.ord-summary{grid-template-columns:1fr}.details{grid-template-columns:1fr 1fr}}`;
@@ -298,7 +301,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function normalizeStatus(status) {
-        return STATUS_ALIASES[status] || status || 'new';
+        const value = String(status || 'new').trim().toLocaleLowerCase('fr-FR');
+        return STATUS_ALIASES[value] || value || 'new';
     }
 
     function getStatusBadge(status) {
@@ -350,58 +354,75 @@ document.addEventListener('DOMContentLoaded', () => {
         return toDate(order.reservation_deadline) || addDays(getCreatedDate(order), RESERVATION_DAYS);
     }
 
-    const ORDER_FILTER_VALUES = ['status:new','status:preparing','status:ready','status:collected','status:cancelled','status:expired','payment:paid','payment:unpaid'];
-    const selectedOrderFilters = new Set(ORDER_FILTER_VALUES);
+    const ORDER_STATUS_FILTER_VALUES = ['new', 'preparing', 'ready', 'collected', 'cancelled', 'expired'];
+    const ORDER_PAYMENT_FILTER_VALUES = ['paid', 'unpaid'];
+    const selectedOrderStatuses = new Set(ORDER_STATUS_FILTER_VALUES);
+    const selectedOrderPayments = new Set(ORDER_PAYMENT_FILTER_VALUES);
+
+    function normalizePaymentStatus(value) {
+        const payment = String(value || 'unpaid').trim().toLocaleLowerCase('fr-FR');
+        if (['paid', 'paye', 'payé', 'true', '1'].includes(payment)) return 'paid';
+        return 'unpaid';
+    }
 
     function syncOrderMultiFilter() {
-        const root=document.getElementById('orders-multifilter');
-        const label=document.getElementById('orders-multifilter-label');
-        if(!root||!label)return;
-        root.querySelectorAll('input[type="checkbox"]').forEach(input=>{input.checked=selectedOrderFilters.has(input.value)});
-        const count=selectedOrderFilters.size;
-        const statusCount=[...selectedOrderFilters].filter(value=>value.startsWith('status:')).length;
-        const paymentCount=[...selectedOrderFilters].filter(value=>value.startsWith('payment:')).length;
-        label.textContent=count===ORDER_FILTER_VALUES.length?'Tous les statuts':count===0?'Aucun filtre sélectionné':`${statusCount} statut${statusCount>1?'s':''} · ${paymentCount} paiement${paymentCount>1?'s':''}`;
-        label.classList.toggle('text-[#E75C25]',count!==ORDER_FILTER_VALUES.length);
+        const root = document.getElementById('orders-multifilter');
+        const label = document.getElementById('orders-multifilter-label');
+        if (!root || !label) return;
+
+        root.querySelectorAll('input[type="checkbox"]').forEach(input => {
+            const [group, value] = String(input.value || '').split(':');
+            input.checked = group === 'status'
+                ? selectedOrderStatuses.has(value)
+                : selectedOrderPayments.has(value);
+        });
+
+        const statusCount = selectedOrderStatuses.size;
+        const paymentCount = selectedOrderPayments.size;
+        const allSelected = statusCount === ORDER_STATUS_FILTER_VALUES.length
+            && paymentCount === ORDER_PAYMENT_FILTER_VALUES.length;
+
+        if (allSelected) label.textContent = 'Tous les statuts';
+        else if (statusCount === 0 && paymentCount === 0) label.textContent = 'Aucun filtre sélectionné';
+        else label.textContent = `${statusCount} statut${statusCount > 1 ? 's' : ''} · ${paymentCount} paiement${paymentCount > 1 ? 's' : ''}`;
+
+        label.classList.toggle('text-[#E75C25]', !allSelected);
     }
 
     function applyOrderMultiFilter() {
-        currentOrdersPage=1;
+        currentOrdersPage = 1;
         syncOrderMultiFilter();
         renderOrdersTable();
     }
 
     function closeOrderMultiFilter() {
-        const root=document.getElementById('orders-multifilter');
-        const menu=document.getElementById('orders-multifilter-menu');
-        const toggle=document.getElementById('orders-multifilter-toggle');
-        menu?.classList.add('hidden');root?.classList.remove('is-open');toggle?.setAttribute('aria-expanded','false');
+        const root = document.getElementById('orders-multifilter');
+        const menu = document.getElementById('orders-multifilter-menu');
+        const toggle = document.getElementById('orders-multifilter-toggle');
+        menu?.classList.add('hidden');
+        root?.classList.remove('is-open');
+        toggle?.setAttribute('aria-expanded', 'false');
     }
 
-    // Recherche prenant en compte le numéro de commande généré par Supabase
     function getFilteredOrders() {
         const searchTerm = document.getElementById('orders-search')?.value.trim().toLowerCase() || '';
-        const selectedStatuses=new Set([...selectedOrderFilters].filter(value=>value.startsWith('status:')).map(value=>value.slice(7)));
-        const selectedPayments=new Set([...selectedOrderFilters].filter(value=>value.startsWith('payment:')).map(value=>value.slice(8)));
         const dateFilter = document.getElementById('orders-date-filter')?.value || '';
 
         return currentOrders.filter(order => {
             const status = normalizeStatus(order.status);
+            const payment = normalizePaymentStatus(order.payment_status);
             const created = getCreatedDate(order);
-            
-            // Inclusion de numero_commande et id pour maximiser la recherche
             const orderRef = order.numero_commande || order.id;
             const haystack = `#${orderRef} #${order.id} ${order.client_name || ''} ${order.client_phone || ''} ${order.client_email || ''}`.toLowerCase();
-            
+
             const matchesSearch = !searchTerm || haystack.includes(searchTerm);
-            const payment=order.payment_status||'unpaid';
-            const matchesStatus=selectedStatuses.has(status);
-            const matchesPayment=selectedPayments.has(payment);
+            const matchesStatus = selectedOrderStatuses.has(status);
+            const matchesPayment = selectedOrderPayments.has(payment);
             const matchesDate = !dateFilter || created.toISOString().slice(0, 10) === dateFilter;
+
             return matchesSearch && matchesStatus && matchesPayment && matchesDate;
         });
     }
-
     function isSameDay(a, b) {
         return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
     }
@@ -658,14 +679,68 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('btn-refresh-orders')?.addEventListener('click', loadOrders);
     document.getElementById('orders-search')?.addEventListener('input', () => { currentOrdersPage = 1; renderOrdersTable(); });
-    const orderFilterRoot=document.getElementById('orders-multifilter');
-    const orderFilterMenu=document.getElementById('orders-multifilter-menu');
-    document.getElementById('orders-multifilter-toggle')?.addEventListener('click',event=>{event.stopPropagation();const opening=orderFilterMenu?.classList.contains('hidden');closeOrderMultiFilter();if(opening){orderFilterMenu?.classList.remove('hidden');orderFilterRoot?.classList.add('is-open');event.currentTarget.setAttribute('aria-expanded','true');}});
-    orderFilterRoot?.querySelectorAll('input[type="checkbox"]').forEach(input=>input.addEventListener('change',()=>{input.checked?selectedOrderFilters.add(input.value):selectedOrderFilters.delete(input.value);applyOrderMultiFilter();}));
-    document.getElementById('orders-filter-all')?.addEventListener('click',()=>{ORDER_FILTER_VALUES.forEach(value=>selectedOrderFilters.add(value));applyOrderMultiFilter();});
-    document.getElementById('orders-filter-none')?.addEventListener('click',()=>{selectedOrderFilters.clear();applyOrderMultiFilter();});
-    document.addEventListener('pointerdown',event=>{if(!event.target.closest('#orders-multifilter'))closeOrderMultiFilter();});
-    window.addEventListener('scroll',closeOrderMultiFilter,true);
+    const orderFilterRoot = document.getElementById('orders-multifilter');
+    const orderFilterMenu = document.getElementById('orders-multifilter-menu');
+
+    document.getElementById('orders-multifilter-toggle')?.addEventListener('click', event => {
+        event.stopPropagation();
+        const opening = orderFilterMenu?.classList.contains('hidden');
+        closeOrderMultiFilter();
+        if (opening) {
+            orderFilterMenu?.classList.remove('hidden');
+            orderFilterRoot?.classList.add('is-open');
+            event.currentTarget.setAttribute('aria-expanded', 'true');
+        }
+    });
+
+    orderFilterMenu?.addEventListener('change', event => {
+        const input = event.target.closest('input[type="checkbox"]');
+        if (!input) return;
+
+        const [group, value] = String(input.value || '').split(':');
+        const targetSet = group === 'status' ? selectedOrderStatuses : selectedOrderPayments;
+
+        if (input.checked) {
+            targetSet.add(value);
+        } else {
+            // Le filtre Paiement doit toujours garder au moins une valeur active.
+            if (group === 'payment' && selectedOrderPayments.size === 1 && selectedOrderPayments.has(value)) {
+                input.checked = true;
+                input.closest('.orders-filter-option')?.classList.add('payment-filter-required');
+                setTimeout(() => input.closest('.orders-filter-option')?.classList.remove('payment-filter-required'), 450);
+                return;
+            }
+            targetSet.delete(value);
+        }
+
+        applyOrderMultiFilter();
+    });
+
+    document.getElementById('orders-filter-all')?.addEventListener('click', event => {
+        event.preventDefault();
+        ORDER_STATUS_FILTER_VALUES.forEach(value => selectedOrderStatuses.add(value));
+        ORDER_PAYMENT_FILTER_VALUES.forEach(value => selectedOrderPayments.add(value));
+        applyOrderMultiFilter();
+    });
+
+    document.getElementById('orders-filter-none')?.addEventListener('click', event => {
+        event.preventDefault();
+        selectedOrderStatuses.clear();
+        // Les deux états de paiement restent sélectionnés par défaut :
+        // il n'est jamais possible d'avoir zéro option de paiement active.
+        selectedOrderPayments.clear();
+        ORDER_PAYMENT_FILTER_VALUES.forEach(value => selectedOrderPayments.add(value));
+        applyOrderMultiFilter();
+    });
+
+    document.addEventListener('pointerdown', event => {
+        if (!event.target.closest('#orders-multifilter')) closeOrderMultiFilter();
+    });
+    window.addEventListener('scroll', closeOrderMultiFilter, true);
+    window.addEventListener('resize', closeOrderMultiFilter);
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') closeOrderMultiFilter();
+    });
     syncOrderMultiFilter();
     document.getElementById('orders-date-filter')?.addEventListener('change', () => { currentOrdersPage = 1; renderOrdersTable(); });
     

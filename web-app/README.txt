@@ -1,20 +1,11 @@
-Filtre Commandes remplacé par une dropdown multi-sélection :
-- New
-- Préparation
-- Prête au retrait
-- Récupérée
-- Annulé
-- Expiré
-- Payé
-- Non payé
+Correctif cumulatif du filtre multi-selection Admin.
 
-Fonctionnement :
-- toutes les valeurs sont sélectionnées par défaut ;
-- combinaison libre de plusieurs statuts et états de paiement ;
-- bouton Tout sélectionner ;
-- bouton Tout effacer ;
-- fermeture au clic extérieur ou au scroll ;
-- le libellé affiche le nombre de statuts et paiements sélectionnés.
+Paiement :
+- Paye et Non paye sont selectionnes par defaut.
+- Il est impossible de decocher la derniere option de paiement active.
+- Si l'utilisateur tente de le faire, la case est automatiquement reactivee.
+- Tout selectionner selectionne tous les statuts et les deux paiements.
+- Tout effacer efface les statuts mais conserve Paye et Non paye actifs.
 
-Tous les correctifs précédents sont conservés.
-Remplacer admin.html, admin.js et app.js, puis faire Ctrl+F5.
+Installation : remplacer admin.html et admin.js, puis Ctrl+F5.
+app.js est inclus sans modification pour conserver la version de reference.
