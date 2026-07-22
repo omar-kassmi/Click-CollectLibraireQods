@@ -638,3 +638,5 @@ body.school-order-active #section-rentree #school-flow-progress-fill {
     height: 100%;
     place-items: center;
 }
+
+#section-rentree #delivery-choice.delivery-choice-disabled{cursor:not-allowed!important;pointer-events:none}#section-rentree #delivery-choice.delivery-choice-disabled>span{border-color:#e7e5e4!important;background:#f1f1f0!important;color:#a8a29e!important;box-shadow:none!important;filter:grayscale(1);opacity:.82}#section-rentree .delivery-unavailable-note{display:inline-flex;margin-top:9px;padding:5px 9px;border:1px solid #d6d3d1;border-radius:999px;background:#fff;color:#78716c;font-size:9px;font-style:normal;font-weight:900}#section-rentree .delivery-unavailable-note[hidden]{display:none!important}

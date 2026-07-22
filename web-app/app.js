@@ -599,7 +599,6 @@ document.addEventListener('DOMContentLoaded', () => {
         url.searchParams.set('phone', clientPhone || '');
         url.searchParams.set('email', clientEmail || '');
         url.searchParams.set('success_url', successUrl.toString());
-        url.searchParams.set('client_site_url', new URL('index.html', window.location.href).toString());
         return url.toString();
     }
 
@@ -1076,7 +1075,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const rows = !photoOrder && items.length
             ? items.map(item => `<div class="tracking-details-row"><span>${item.name || '-'}</span><b>${(Number(item.price) || 0).toFixed(2)} DH</b></div>`).join('')
             : `<div class="p-4 rounded-2xl bg-orange-50 border border-orange-100 text-orange-700 text-sm">Cette commande est passée à partir d’une liste personnalisée importée.${photoUrl ? ` <a href="${photoUrl}" target="_blank" class="font-black underline">Voir l’image</a>` : ''}</div>`;
-        openTrackingDrawer(`<div class="flex items-start justify-between gap-4 mb-6"><div><h3 class="text-2xl font-black text-[#E75C25]">Détails de ma commande</h3><p class="text-sm text-stone-500 mt-1">${order.numero_commande || '-'}</p></div><button onclick="closeTrackingDrawer()" class="text-stone-400 hover:text-stone-900 text-2xl leading-none">×</button></div><div class="grid gap-3 text-sm"><div class="tracking-details-row"><span>Type de commande</span><b>${photoOrder ? 'Liste personnalisée importée' : 'Liste officielle'}</b></div>${!photoOrder ? `<div class="tracking-details-row"><span>École / niveau</span><b>${[schoolInfo.school, schoolInfo.level].filter(Boolean).join(' · ') || '-'}</b></div>` : ''}${photoUrl ? `<div class="tracking-details-row"><span>Image importée</span><b><a href="${photoUrl}" target="_blank" class="text-[#E75C25] hover:underline">Ouvrir l’image</a></b></div>` : ''}<div class="grid gap-2 mt-2">${rows}</div></div>`);
+        const trackedTotal = Number(order.total_amount ?? items.reduce((sum, item) => sum + (Number(item.price) || 0), 0));
+        const trackedTotalText = trackedTotal > 0 ? `${trackedTotal.toFixed(2)} DH` : 'En attente de validation';
+        openTrackingDrawer(`<div class="flex items-start justify-between gap-4 mb-6"><div><h3 class="text-2xl font-black text-[#E75C25]">Détails de ma commande</h3><p class="text-sm text-stone-500 mt-1">${order.numero_commande || '-'}</p></div><button onclick="closeTrackingDrawer()" class="text-stone-400 hover:text-stone-900 text-2xl leading-none">×</button></div><div class="grid gap-3 text-sm"><div class="tracking-details-row"><span>Type de commande</span><b>${photoOrder ? 'Liste personnalisée importée' : 'Liste officielle'}</b></div>${!photoOrder ? `<div class="tracking-details-row"><span>École / niveau</span><b>${[schoolInfo.school, schoolInfo.level].filter(Boolean).join(' · ') || '-'}</b></div>` : ''}${photoUrl ? `<div class="tracking-details-row"><span>Image importée</span><b><a href="${photoUrl}" target="_blank" class="text-[#E75C25] hover:underline">Ouvrir l’image</a></b></div>` : ''}${photoOrder ? `<div class="tracking-details-row"><span>Prix à payer</span><b class="text-[#16883a]">${trackedTotalText}</b></div>` : ''}<div class="grid gap-2 mt-2">${rows}</div></div>`);
     }
     window.openOrderDetails = openOrderDetails;
 
@@ -1103,7 +1104,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const photoOrder = items.some(i => i.type === 'photo_upload' || i.url || i.photo_url) || !!photoUrl;
             const school = await inferSchoolFromItems(items);
             const totalAmount = Number(data.total_amount ?? items.reduce((sum, item) => sum + (Number(item.price) || 0), 0));
-            const amountText = photoOrder ? 'Sur devis' : (totalAmount > 0 ? totalAmount.toFixed(2) + ' DH' : '0.00 DH');
+            const amountText = photoOrder ? (totalAmount > 0 ? totalAmount.toFixed(2) + ' DH' : 'Sur devis') : (totalAmount > 0 ? totalAmount.toFixed(2) + ' DH' : '0.00 DH');
             const qrCode = data.qr_code || '';
             const qrPayload = data.qr_payload || (qrCode ? buildQrPayload(qrCode) : buildQrPayload(data.numero_commande));
             const qrCanvasId = `tracking-qr-${data.id}`;

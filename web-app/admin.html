@@ -10,6 +10,24 @@
     <link rel="stylesheet" href="styles.css">
     <style>
         body { font-family: 'Inter', sans-serif; }
+        #admin-sidebar{width:216px;top:69px;bottom:0;transition:width .24s ease;background:#E75C25;color:#fff}
+        #admin-sidebar.is-collapsed{width:54px}
+        #admin-header{left:0;transition:none}
+        #admin-main{margin-left:216px;max-width:none;transition:margin-left .24s ease}
+        body.admin-sidebar-collapsed #admin-header{left:0}
+        body.admin-sidebar-collapsed #admin-main{margin-left:54px}
+        #admin-sidebar.is-collapsed .sidebar-label{display:none}
+        #admin-sidebar.is-collapsed .admin-sidebar-link{justify-content:center;padding-left:0;padding-right:0;gap:0}
+        #admin-sidebar.is-collapsed #btn-sidebar-toggle{justify-content:center;padding-left:0;padding-right:0}
+        .admin-sidebar-link.is-active{background:#fff;color:#E75C25;box-shadow:0 10px 24px rgba(110,46,18,.22)}
+        .admin-sidebar-link:not(.is-active){color:#fff}.admin-sidebar-link:not(.is-active):hover{background:rgba(255,255,255,.15);color:#fff}
+        @media(max-width:1023px){
+            #admin-sidebar{width:54px!important}
+            #admin-sidebar .sidebar-label{display:none!important}
+            #admin-sidebar .admin-sidebar-link{justify-content:center;padding-left:0;padding-right:0;gap:0}
+            #admin-header{left:0!important}
+            #admin-main{margin-left:54px!important}
+        }
     </style>
 </head>
 <body class="bg-[#F3F6FB] text-gray-900 min-h-screen">
@@ -37,7 +55,7 @@
     <div class="min-h-screen">
 
     <div class="min-h-screen flex flex-col">
-        <header class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-200/80 px-5 md:px-8 py-3 shadow-sm">
+        <header id="admin-header" class="fixed top-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-200/80 px-5 md:px-8 py-3 shadow-sm">
             <div class="flex items-center justify-between gap-4">
                 <div class="flex items-center gap-3 min-w-0">
                     <img src="images/logo.png" alt="Logo Librairie El Qods" class="h-11 w-auto object-contain flex-shrink-0">
@@ -56,7 +74,28 @@
                 </div>
             </div>
         </header>
-        <main class="pt-28 md:pt-32 p-5 md:p-8 w-full max-w-7xl mx-auto">
+        <aside id="admin-sidebar" class="fixed left-0 z-[40] border-r border-gray-200 shadow-[8px_0_28px_rgba(28,25,23,0.05)] flex flex-col">
+            <nav class="flex-1 px-2.5 py-5 space-y-2">
+                <button type="button" data-pane="orders" class="admin-sidebar-link is-active w-full min-h-11 px-3 rounded-xl flex items-center gap-3 text-left text-[13px] font-extrabold text-gray-700 transition" title="Commandes">
+                    <svg class="w-[19px] h-[19px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16v13H4z"/><path d="M8 7V4h8v3M8 11h8"/></svg><span class="sidebar-label whitespace-nowrap">Commandes</span>
+                </button>
+                <button type="button" data-pane="metrics" class="admin-sidebar-link w-full min-h-11 px-3 rounded-xl flex items-center gap-3 text-left text-[13px] font-extrabold text-gray-700 transition" title="Metrics et rapport">
+                    <svg class="w-[19px] h-[19px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span class="sidebar-label whitespace-nowrap">Metrics et rapport</span>
+                </button>
+                <button type="button" data-pane="config" class="admin-sidebar-link w-full min-h-11 px-3 rounded-xl flex items-center gap-3 text-left text-[13px] font-extrabold text-gray-700 transition" title="Packs scolaires">
+                    <svg class="w-[19px] h-[19px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5M3 16l9 5 9-5"/></svg><span class="sidebar-label whitespace-nowrap">Packs scolaires</span>
+                </button>
+                <button type="button" data-pane="settings" class="admin-sidebar-link w-full min-h-11 px-3 rounded-xl flex items-center gap-3 text-left text-[13px] font-extrabold text-gray-700 transition" title="Configuration">
+                    <svg class="w-[19px] h-[19px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span class="sidebar-label whitespace-nowrap">Configuration</span>
+                </button>
+            </nav>
+            <div class="p-2.5 border-t border-gray-100">
+                <button id="btn-sidebar-toggle" type="button" class="w-full min-h-10 px-3 rounded-xl flex items-center gap-3 text-white hover:bg-white/15 transition" title="Réduire ou développer le menu" aria-expanded="true">
+                    <svg id="sidebar-toggle-icon" class="w-[19px] h-[19px] shrink-0 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg><span class="sidebar-label whitespace-nowrap text-[11px] font-black">Réduire</span>
+                </button>
+            </div>
+        </aside>
+        <main id="admin-main" class="pt-28 md:pt-32 p-5 md:p-8 w-auto min-h-screen">
             <section id="pane-metrics" class="hidden space-y-6">
                 <div class="flex items-center justify-between gap-4">
                     <div>
@@ -99,15 +138,29 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
                     <input id="orders-search" type="search" placeholder="Rechercher client, téléphone ou Référence" class="md:col-span-2 bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#E75C25]">
-                    <select id="orders-status-filter" class="bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#E75C25]">
-                        <option value="">Tous les statuts</option>
-                        <option value="new">New</option>
-                        <option value="preparing">Preparing</option>
-                        <option value="ready">Ready</option>
-                        <option value="collected">Collected</option>
-                        <option value="cancelled">Cancelled</option>
-                        <option value="expired">Expired</option>
-                    </select>
+                    <div id="orders-multifilter" class="orders-multifilter relative">
+                        <button id="orders-multifilter-toggle" type="button" class="w-full min-h-[42px] bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none hover:border-[#E75C25] focus:border-[#E75C25] flex items-center justify-between gap-3" aria-expanded="false">
+                            <span id="orders-multifilter-label" class="truncate font-semibold text-gray-700">Tous les statuts</span>
+                            <svg class="w-4 h-4 shrink-0 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+                        </button>
+                        <div id="orders-multifilter-menu" class="hidden absolute left-0 top-[calc(100%+8px)] z-[200] w-[260px] max-w-[calc(100vw-32px)] rounded-2xl border border-gray-200 bg-white p-2 shadow-2xl">
+                            <div class="px-2 py-1.5 text-[9px] font-black uppercase tracking-[.12em] text-gray-400">Statut de la commande</div>
+                            <label class="orders-filter-option"><input type="checkbox" value="status:new" checked><span>New</span></label>
+                            <label class="orders-filter-option"><input type="checkbox" value="status:preparing" checked><span>Préparation</span></label>
+                            <label class="orders-filter-option"><input type="checkbox" value="status:ready" checked><span>Prête au retrait</span></label>
+                            <label class="orders-filter-option"><input type="checkbox" value="status:collected" checked><span>Récupérée</span></label>
+                            <label class="orders-filter-option"><input type="checkbox" value="status:cancelled" checked><span>Annulé</span></label>
+                            <label class="orders-filter-option"><input type="checkbox" value="status:expired" checked><span>Expiré</span></label>
+                            <div class="mx-2 my-2 border-t border-gray-100"></div>
+                            <div class="px-2 py-1.5 text-[9px] font-black uppercase tracking-[.12em] text-gray-400">Paiement</div>
+                            <label class="orders-filter-option"><input type="checkbox" value="payment:paid" checked><span>Payé</span></label>
+                            <label class="orders-filter-option"><input type="checkbox" value="payment:unpaid" checked><span>Non payé</span></label>
+                            <div class="flex gap-2 p-2 pt-3">
+                                <button id="orders-filter-all" type="button" class="flex-1 rounded-xl border border-gray-200 px-3 py-2 text-[10px] font-black text-gray-600 hover:border-[#E75C25] hover:text-[#E75C25]">Tout sélectionner</button>
+                                <button id="orders-filter-none" type="button" class="flex-1 rounded-xl bg-gray-900 px-3 py-2 text-[10px] font-black text-white hover:bg-gray-700">Tout effacer</button>
+                            </div>
+                        </div>
+                    </div>
                     <input id="orders-date-filter" type="date" class="bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#E75C25]">
                 </div>
 
@@ -214,18 +267,8 @@
                             <button id="btn-reset-school-list-filters" type="button" class="hidden shrink-0 px-3 py-2 rounded-xl border border-gray-200 bg-white text-[11px] font-bold text-gray-600 hover:border-[#E75C25] hover:text-[#E75C25] transition">Réinitialiser</button>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-white border border-gray-200 rounded-2xl p-3 shadow-sm">
-                            <label class="block">
-                                <span class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5">Filtrer par école</span>
-                                <select id="filter-school-lists-school" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white focus:border-[#E75C25]">
-                                    <option value="">Toutes les écoles</option>
-                                </select>
-                            </label>
-                            <label class="block">
-                                <span class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5">Filtrer par niveau</span>
-                                <select id="filter-school-lists-level" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white focus:border-[#E75C25]">
-                                    <option value="">Tous les niveaux</option>
-                                </select>
-                            </label>
+                            <label class="block"><span class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5">Filtrer par école</span><select id="filter-school-lists-school" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white focus:border-[#E75C25]"><option value="">Toutes les écoles</option></select></label>
+                            <label class="block"><span class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5">Filtrer par niveau</span><select id="filter-school-lists-level" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white focus:border-[#E75C25]"><option value="">Tous les niveaux</option></select></label>
                         </div>
                     </div>
                     <div id="config-lists-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
@@ -272,6 +315,14 @@
                         <div>
                             <label class="block text-xs font-bold text-gray-500 mb-1">Titre de l'onglet Rentrée</label>
                             <input type="text" id="set-rentree-title" required placeholder="Ex: Rentrée scolaire 2026/2027" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none">
+                        </div>
+                        <div class="pt-3 mt-1 border-t border-gray-100">
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Option de livraison</label>
+                            <select id="set-delivery-enabled" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:border-[#E75C25]">
+                                <option value="true">Activer la livraison</option>
+                                <option value="false">Désactiver temporairement la livraison</option>
+                            </select>
+                            <p class="text-[10px] text-gray-400 mt-1.5 leading-relaxed">Quand la livraison est désactivée, l’option reste visible sur le site client, mais elle est grisée, non cliquable et accompagnée d’une note d’indisponibilité.</p>
                         </div>
                         <button type="submit" class="w-full bg-gray-900 text-white text-xs font-semibold py-2.5 rounded-xl hover:bg-gray-800 transition">Sauvegarder l'état</button>
                     </form>
@@ -323,18 +374,9 @@
                 </div>
             </section>
         </main>
-        <div id="admin-bottom-nav-zone" class="group fixed bottom-0 left-0 right-0 z-40 h-24 hidden lg:block">
-            <div id="admin-floating-nav" class="absolute bottom-5 left-1/2 -translate-x-1/2 translate-y-24 opacity-0 pointer-events-none group-hover:translate-y-0 group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 ease-out flex items-center gap-2 bg-[#E75C25] text-white rounded-full px-5 py-3 shadow-2xl shadow-orange-900/20">
-                <button data-pane="orders" class="admin-float-link px-4 py-2 rounded-full text-sm font-bold bg-white/15">Commandes</button>
-                <button data-pane="metrics" class="admin-float-link px-4 py-2 rounded-full text-sm font-bold hover:bg-white/10">Metrics et rapport</button>
-                <button data-pane="config" class="admin-float-link px-4 py-2 rounded-full text-sm font-bold hover:bg-white/10">Packs scolaires</button>
-                <button data-pane="settings" class="admin-float-link px-4 py-2 rounded-full text-sm font-bold hover:bg-white/10">Configuration</button>
-            </div>
-        </div>
     </div>
     </div>
     </div>
-
     <script src="admin.js"></script>
 </body>
 </html>

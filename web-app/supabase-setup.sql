@@ -102,3 +102,5 @@ add column if not exists school_logo_url text;
 
 comment on column public.school_lists.school_logo_url is
 'URL facultative du logo de l école. Si vide, le site affiche l initiale de l établissement.';
+
+insert into public.site_settings (key,value) values ('delivery_enabled','false') on conflict (key) do nothing;
