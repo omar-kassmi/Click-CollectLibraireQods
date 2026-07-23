@@ -457,6 +457,117 @@
             }
         }
 
+
+        /* Champ téléphone international */
+        .phone-field-wrap{display:grid;grid-template-columns:112px minmax(0,1fr);gap:.6rem;align-items:stretch}.phone-country-picker{position:relative;min-width:0}.phone-country-trigger,.phone-national-input{width:100%;min-width:0;min-height:48px;border:1px solid #e7e5e4;border-radius:14px;background:#fbfaf8;color:#292524;outline:none;transition:border-color .18s ease,box-shadow .18s ease,background .18s ease}.phone-country-trigger{display:flex;align-items:center;justify-content:center;gap:8px;padding:0 12px;cursor:pointer;font-size:13px;font-weight:850}.phone-country-trigger:hover,.phone-national-input:hover{border-color:#fdba8c;background:#fff}.phone-country-trigger:focus-visible,.phone-country-picker.is-open .phone-country-trigger,.phone-national-input:focus{border-color:#E75C25;background:#fff;box-shadow:0 0 0 4px rgba(231,92,37,.08)}.phone-country-flag{font-size:20px;line-height:1}.phone-country-dial{white-space:nowrap}.phone-country-chevron{width:7px;height:7px;border-right:2px solid #9ca3af;border-bottom:2px solid #9ca3af;transform:translateY(-2px) rotate(45deg);transition:transform .18s ease}.phone-country-picker.is-open .phone-country-chevron{transform:translateY(2px) rotate(225deg)}.phone-country-menu{position:absolute;left:0;top:calc(100% + 8px);z-index:90;width:min(310px,calc(100vw - 48px));max-height:280px;overflow:auto;padding:7px;border:1px solid #ebe5df;border-radius:16px;background:rgba(255,255,255,.98);box-shadow:0 24px 70px rgba(28,25,23,.20);backdrop-filter:blur(16px)}.phone-country-menu[hidden]{display:none}.phone-country-option{width:100%;display:grid;grid-template-columns:28px minmax(0,1fr) auto;align-items:center;gap:9px;padding:9px 10px;border:0;border-radius:11px;background:transparent;color:#44403c;cursor:pointer;text-align:left;font-size:12px}.phone-country-option:hover,.phone-country-option.is-selected{background:#fff2e9;color:#E75C25}.phone-country-option .country-name{font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.phone-country-option .country-dial{font-weight:900}.phone-national-input{padding:0 14px;font-size:13px;font-weight:750;letter-spacing:.04em}.phone-help{display:none;margin-top:.45rem;color:#dc2626;font-size:10px;font-weight:700;line-height:1.45}.phone-help.phone-field-error{display:block}@media(max-width:620px){.phone-field-wrap{grid-template-columns:102px minmax(0,1fr)}.phone-country-menu{width:min(290px,calc(100vw - 36px))}}
+
+        /* Suivi commande - téléphone compact et aligné */
+        #order-tracking-form .tracking-phone-control{display:grid;grid-template-columns:104px minmax(0,1fr);min-width:0;height:52px;border:1px solid #f0e9e2;border-radius:16px;background:#fbfaf8;overflow:visible;transition:.18s}
+        #order-tracking-form .tracking-phone-control:focus-within{border-color:#E75C25;background:#fff;box-shadow:0 0 0 4px rgba(231,92,37,.08)}
+        #order-tracking-form .tracking-country-picker{position:relative;height:100%;border-right:1px solid #ebe5df}
+        #order-tracking-form .tracking-country-trigger{height:100%;min-height:0;border:0!important;border-radius:15px 0 0 15px!important;background:transparent!important;box-shadow:none!important;padding:0 10px;gap:7px}
+        #order-tracking-form .tracking-phone-input{width:100%;min-width:0;height:100%;border:0!important;border-radius:0 15px 15px 0!important;background:transparent!important;padding:0 14px!important;font-size:13px;font-weight:750;letter-spacing:.035em;outline:none;box-shadow:none!important}
+        #order-tracking-form .tracking-country-menu{left:0;top:calc(100% + 9px);z-index:500;width:300px;max-height:270px;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#E75C25 #fff4ec;padding:7px;border:1px solid #eadfd7;border-radius:16px;background:#fff;box-shadow:0 24px 65px rgba(28,25,23,.23)}
+        #order-tracking-form .tracking-country-menu::-webkit-scrollbar{width:7px}#order-tracking-form .tracking-country-menu::-webkit-scrollbar-track{background:#fff4ec;border-radius:20px}#order-tracking-form .tracking-country-menu::-webkit-scrollbar-thumb{background:#E75C25;border-radius:20px}
+        #order-tracking-form .phone-country-option{min-height:42px;padding:8px 10px;border-radius:10px;grid-template-columns:28px minmax(0,1fr) auto;font-size:12px}
+        #order-tracking-form .phone-country-option.is-selected{background:#fff0e6;color:#E75C25}
+        @media(max-width:960px){#order-tracking-form .tracking-phone-control{width:100%;grid-template-columns:100px minmax(0,1fr)}#order-tracking-form .tracking-country-menu{width:min(300px,calc(100vw - 60px))}}
+
+        /* Correctif final du sélecteur téléphone de suivi.
+           Ces règles neutralisent le style orange appliqué à tous les boutons du formulaire de suivi. */
+        #order-tracking-form .tracking-phone-control {
+            background:#fff !important;
+            border:1px solid #e7e5e4 !important;
+            overflow:visible !important;
+        }
+        #order-tracking-form .tracking-country-trigger {
+            width:100% !important;
+            min-height:50px !important;
+            padding:0 11px !important;
+            border:0 !important;
+            border-radius:15px 0 0 15px !important;
+            background:#fff !important;
+            color:#292524 !important;
+            box-shadow:none !important;
+            text-transform:none !important;
+            letter-spacing:0 !important;
+            transform:none !important;
+        }
+        #order-tracking-form .tracking-country-trigger:hover,
+        #order-tracking-form .tracking-country-trigger:focus {
+            background:#fff !important;
+            color:#292524 !important;
+            transform:none !important;
+        }
+        #order-tracking-form .tracking-country-trigger .phone-country-flag {
+            color:#292524 !important;
+            font-size:16px !important;
+            font-weight:900 !important;
+        }
+        #order-tracking-form .tracking-country-trigger .phone-country-dial {
+            display:inline-block !important;
+            color:#292524 !important;
+            font-size:13px !important;
+            font-weight:900 !important;
+            opacity:1 !important;
+            visibility:visible !important;
+        }
+        #order-tracking-form .tracking-country-trigger .phone-country-chevron {
+            border-color:#a8a29e !important;
+        }
+        #order-tracking-form .tracking-phone-input {
+            background:#fff !important;
+            color:#292524 !important;
+        }
+        #order-tracking-form .tracking-country-menu {
+            padding:6px !important;
+            border:1px solid #e7e5e4 !important;
+            border-radius:14px !important;
+            background:#fff !important;
+            color:#292524 !important;
+            box-shadow:0 18px 45px rgba(28,25,23,.16) !important;
+        }
+        #order-tracking-form .tracking-country-menu .phone-country-option {
+            min-height:42px !important;
+            width:100% !important;
+            margin:0 !important;
+            padding:9px 10px !important;
+            border:0 !important;
+            border-radius:9px !important;
+            background:#fff !important;
+            color:#292524 !important;
+            box-shadow:none !important;
+            text-transform:none !important;
+            letter-spacing:0 !important;
+            transform:none !important;
+        }
+        #order-tracking-form .tracking-country-menu .phone-country-option:hover {
+            background:#f7f7f6 !important;
+            color:#292524 !important;
+            transform:none !important;
+        }
+        #order-tracking-form .tracking-country-menu .phone-country-option.is-selected {
+            background:#fff7f2 !important;
+            color:#E75C25 !important;
+        }
+        #order-tracking-form .tracking-country-menu .phone-country-option .phone-country-flag {
+            color:inherit !important;
+            font-size:13px !important;
+            font-weight:900 !important;
+        }
+        #order-tracking-form .tracking-country-menu .phone-country-option .country-name {
+            color:inherit !important;
+            font-size:12px !important;
+            font-weight:750 !important;
+        }
+        #order-tracking-form .tracking-country-menu .phone-country-option .country-dial {
+            display:block !important;
+            color:inherit !important;
+            font-size:12px !important;
+            font-weight:900 !important;
+            opacity:1 !important;
+            visibility:visible !important;
+        }
     </style>
 </head>
 <body class="bg-white text-gray-900 min-h-screen flex flex-col justify-between antialiased">
@@ -707,7 +818,7 @@
                         <div class="flow-card checkout-form-card">
                             <form id="order-submit-form" class="flow-form">
                                 <label><span>Nom et prénom</span><input type="text" id="client-name" required placeholder="Ahmed Alami"></label>
-                                <label><span>Numéro WhatsApp</span><input type="tel" id="client-phone" required placeholder="0612345678"></label>
+                                <label class="phone-field-label"><span>Numéro WhatsApp</span><div class="phone-field-wrap"><div id="client-phone-country-picker" class="phone-country-picker"><input type="hidden" id="client-phone-country" value="MA"><button id="client-phone-country-trigger" class="phone-country-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Choisir le pays et l’indicatif"><span id="client-phone-country-flag" class="phone-country-flag">🇲🇦</span><span id="client-phone-country-dial" class="phone-country-dial">+212</span><span class="phone-country-chevron" aria-hidden="true"></span></button><div id="client-phone-country-menu" class="phone-country-menu" role="listbox" hidden></div></div><input type="tel" id="client-phone" class="phone-national-input" required inputmode="numeric" pattern="[0-9]*" autocomplete="tel-national" maxlength="20" placeholder="0612345678" aria-describedby="client-phone-help"></div><small id="client-phone-help" class="phone-help" role="alert"></small></label>
                                 <label><span>Adresse e-mail</span><input type="email" id="client-email" required placeholder="ahmed@mail.com"></label>
                                 <div id="delivery-address-fields" class="hidden delivery-fields">
                                     <label><span>Adresse de livraison</span><input id="delivery-address" type="text" placeholder="Rue, numéro, résidence"></label>
@@ -787,7 +898,7 @@
                 <div id="tracking-search-heading" class="tracking-search-heading reveal"><span>Accéder à ma commande</span><h2>Suivre ma commande</h2><p>Retrouvez les détails, le montant à régler et l’avancement de votre commande.</p></div>
                 <form id="order-tracking-form" class="tracking-search-form reveal delay-100">
                 <input id="tracking-order-id" type="text" placeholder="Numéro de commande" class="w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm outline-none focus:border-orange-300">
-                <input id="tracking-phone" type="tel" placeholder="Numéro de téléphone" class="w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm outline-none focus:border-orange-300">
+                <div class="tracking-phone-control"><div id="tracking-phone-country-picker" class="phone-country-picker tracking-country-picker"><input type="hidden" id="tracking-phone-country" value="MA"><button id="tracking-phone-country-trigger" class="phone-country-trigger tracking-country-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Choisir le pays et l’indicatif"><span id="tracking-phone-country-flag" class="phone-country-flag">🇲🇦</span><span id="tracking-phone-country-dial" class="phone-country-dial">+212</span><span class="phone-country-chevron" aria-hidden="true"></span></button><div id="tracking-phone-country-menu" class="phone-country-menu tracking-country-menu" role="listbox" hidden></div></div><input id="tracking-phone" type="tel" class="tracking-phone-input" required inputmode="numeric" pattern="[0-9]*" maxlength="20" autocomplete="tel-national" placeholder="0612345678"></div>
                 <button type="submit" class="w-full bg-[#E75C25] text-white py-3 rounded-xl text-sm transition hover:bg-[#CE4E1D]">Rechercher</button>
                 </form>
                 <div id="tracking-result" class="hidden text-sm rounded-xl border p-4"></div>

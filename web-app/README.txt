@@ -1,11 +1,20 @@
-Correctif cumulatif du filtre multi-selection Admin.
+Bon A5 épuré - modifications ciblées :
 
-Paiement :
-- Paye et Non paye sont selectionnes par defaut.
-- Il est impossible de decocher la derniere option de paiement active.
-- Si l'utilisateur tente de le faire, la case est automatiquement reactivee.
-- Tout selectionner selectionne tous les statuts et les deux paiements.
-- Tout effacer efface les statuts mais conserve Paye et Non paye actifs.
+Éléments supprimés :
+- « Commande à préparer »
+- le bloc « X articles à contrôler / Cocher chaque ligne avant fermeture du carton »
+- « Consignes de commande » et son contenu
+- « Contrôlé par »
+- le pied de page « Document interne à placer dans le carton »
+- le pied de page « Librairie El Qods - [référence] »
 
-Installation : remplacer admin.html et admin.js, puis Ctrl+F5.
-app.js est inclus sans modification pour conserver la version de reference.
+Éléments conservés :
+- format A5 portrait
+- informations de la commande
+- tableau des articles avec cases de contrôle
+- total de la commande
+- zone « Préparé par »
+- QR code
+- impression depuis le bouton Print du tableau et de la right panel
+
+Remplacer admin.js. admin.html est inclus sans modification.
