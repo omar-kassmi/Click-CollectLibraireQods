@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const RESERVATION_DAYS = 5;
     // Déployez le fichier Apps Script Web App puis collez ici son URL /exec.
-    const APP_SCRIPT_UPLOAD_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwtZV02suWqk59Onjrk855uVI7dqZt-yDB96JHgLPfOBpwoS19ciNmxhiBbX-p9AGXQ/exec";
+    const APP_SCRIPT_UPLOAD_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbw9-tf1vAPawKsO1DtsxpCMMRbIMpDjG-kZZy1HJu7XQl61qQlKX6zS7PzYDsa6na3a/exec";
 
     let allSchoolData = []; 
     let selectedPackItems = []; 
@@ -214,6 +214,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    function getPersonalSupplyUnitPrice(item) {
+        const range=document.querySelector('input[name="personal-supply-range"]:checked')?.value || 'standard';
+        return Number.parseFloat(range==='quality' ? item.quality_price : item.standard_price) || 0;
+    }
+    function renderPersonalSupplyItems() {
+        const container=document.getElementById('personal-independent-supply-items'); if(!container)return;
+        if(!allSupplyItems.length){container.innerHTML='<p class="flow-muted">Aucune fourniture active configurée dans l’administration.</p>';updatePersonalSupplyTotal();return;}
+        const selected=new Set(Array.from(container.querySelectorAll('.personal-supply-checkbox:checked')).map(x=>String(x.dataset.id)));
+        container.innerHTML=allSupplyItems.map(item=>`<label class="supply-item-row"><input type="checkbox" class="personal-supply-checkbox" data-id="${item.id}" ${selected.has(String(item.id))?'checked':''}><span class="supply-item-name">${item.name||'Fourniture'}</span><span class="item-price-chip">${getPersonalSupplyUnitPrice(item).toFixed(2)} DH</span></label>`).join('');
+        container.querySelectorAll('.personal-supply-checkbox').forEach(input=>input.addEventListener('change',()=>{updatePersonalSupplyTotal();updateFinalSummary();}));updatePersonalSupplyTotal();
+    }
+    function getSelectedPersonalSupplies(){
+        return Array.from(document.querySelectorAll('.personal-supply-checkbox:checked')).map(cb=>{const item=allSupplyItems.find(entry=>String(entry.id)===String(cb.dataset.id));return item?{id:item.id,name:item.name,category:item.category||'Fournitures',price:getPersonalSupplyUnitPrice(item),supply_range:document.querySelector('input[name="personal-supply-range"]:checked')?.value||'standard',item_source:'independent_supply'}:null;}).filter(Boolean);
+    }
+    function updatePersonalSupplyTotal(){const total=getSelectedPersonalSupplies().reduce((sum,item)=>sum+item.price,0);const box=document.getElementById('personal-supply-total-price');if(box)box.innerText=`${total.toFixed(2)} DH`;}
+    document.querySelectorAll('input[name="personal-supply-range"]').forEach(input=>input.addEventListener('change',()=>{renderPersonalSupplyItems();updateFinalSummary();}));
+
     function normalizeSchoolLogoUrl(url) {
         const value = String(url || '').trim();
         if (!value) return '';
@@ -351,12 +368,14 @@ document.addEventListener('DOMContentLoaded', () => {
             ? ''
             : `<div class="summary-row"><span>École</span><b>${selectedSchoolName || '-'}</b></div>
                <div class="summary-row"><span>Niveau</span><b>${selectedSchoolLevel || '-'}</b></div>`;
+        const personalSupplies = isPhotoOrder ? getSelectedPersonalSupplies() : [];
+        const personalSupplySubtotal = personalSupplies.reduce((sum,item)=>sum+item.price,0);
         const quantities = isPhotoOrder
-            ? `<div class="summary-row summary-count-row"><span>Liste personnelle</span><b>Image à importer</b></div>`
+            ? `<div class="summary-row summary-count-row"><span>Liste personnelle</span><b>Document ajouté</b></div><div class="summary-row summary-count-row"><span>Fournitures choisies</span><b>${countLabel(personalSupplies.length)}</b></div>`
             : `<div class="summary-row summary-count-row"><span>Articles de la liste</span><b>${countLabel(schoolCount)}</b></div>
                <div class="summary-row summary-count-row"><span>Fournitures choisies</span><b>${countLabel(supplyCount)}</b></div>`;
         const subtotals = isPhotoOrder
-            ? `<div class="summary-row summary-subtotal-row"><span>Montant</span><b>Sur devis</b></div>`
+            ? `<div class="summary-row summary-subtotal-row"><span>Liste importée</span><b>Sur devis</b></div><div class="summary-row summary-subtotal-row"><span>Sous-total fournitures</span><b>${personalSupplySubtotal.toFixed(2)} DH</b></div>`
             : `<div class="summary-row summary-subtotal-row"><span>Sous-total liste</span><b>${schoolSubtotal.toFixed(2)} DH</b></div>
                <div class="summary-row summary-subtotal-row"><span>Sous-total fournitures</span><b>${supplySubtotal.toFixed(2)} DH</b></div>`;
 
@@ -369,9 +388,9 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="summary-group summary-quantities">${quantities}</div>
             <div class="summary-group summary-subtotals">${subtotals}</div>
         `;
-        total.innerText = isPhotoOrder ? 'Sur devis' : `${grandTotal.toFixed(2)} DH`;
+        total.innerText = isPhotoOrder ? (personalSupplySubtotal ? `${personalSupplySubtotal.toFixed(2)} DH + liste sur devis` : 'Sur devis') : `${grandTotal.toFixed(2)} DH`;
     }
-    const orderFlowPages = ['options-container', 'school-selection-view', 'pack-details-view', 'checkout-form-container'];
+    const orderFlowPages = ['options-container', 'school-selection-view', 'pack-details-view', 'personal-upload-view', 'personal-supplies-view', 'checkout-form-container'];
 
     function showOrderFlowPage(id, step) {
         orderFlowPages.forEach(pageId => {
@@ -416,11 +435,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('flow-back-step-2')?.addEventListener('click', () => showOrderFlowPage('options-container', 1));
     document.getElementById('flow-back-step-3')?.addEventListener('click', () => showOrderFlowPage('school-selection-view', 2));
-    document.getElementById('flow-back-step-4')?.addEventListener('click', () => showOrderFlowPage(isPhotoOrder ? 'options-container' : 'pack-details-view', isPhotoOrder ? 1 : 3));
+    document.getElementById('flow-back-step-4')?.addEventListener('click', () => showOrderFlowPage(isPhotoOrder ? 'personal-supplies-view' : 'pack-details-view', 3));
+    document.getElementById('flow-back-upload')?.addEventListener('click', () => showOrderFlowPage('options-container', 1));
+    document.getElementById('flow-back-personal-supplies')?.addEventListener('click', () => showOrderFlowPage('personal-upload-view', 2));
     function advanceFirstViewIfComplete(){
         if(!selectedFulfillment()||!selectedListType)return;
         if(selectedListType==='official'){isPhotoOrder=false;unlockAndScroll('school-selection-view',2);}
-        else{isPhotoOrder=true;updateDeliveryFields();updateFinalSummary();unlockAndScroll('checkout-form-container',4);}
+        else{isPhotoOrder=true;updateDeliveryFields();updateFinalSummary();unlockAndScroll('personal-upload-view',2);}
     }
     document.querySelectorAll('input[name="fulfillment-method"]').forEach(input=>input.addEventListener('change',()=>{updateDeliveryFields();advanceFirstViewIfComplete();}));
     document.getElementById('choose-official-list')?.addEventListener('click',()=>{
@@ -430,10 +451,88 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusText=document.getElementById('upload-status-text');
     const btnCustomList=document.getElementById('btn-custom-list');
     btnCustomList?.addEventListener('click',()=>{
-        selectedListType='custom';isPhotoOrder=true;selectedPhotoFile=null;lockFollowingSteps();
+        selectedListType='custom';isPhotoOrder=true;clearPersonalFile();lockFollowingSteps();
         const official=document.getElementById('choose-official-list');official?.classList.remove('is-selected');official?.setAttribute('aria-pressed','false');btnCustomList.classList.add('is-selected');btnCustomList.setAttribute('aria-pressed','true');advanceFirstViewIfComplete();
     });
     document.getElementById('btn-back-to-list')?.addEventListener('click',()=>showOrderFlowPage(isPhotoOrder ? 'options-container' : 'pack-details-view', isPhotoOrder ? 1 : 3));
+
+
+    const PERSONAL_UPLOAD_MAX = 10 * 1024 * 1024;
+    const PERSONAL_UPLOAD_TYPES = ['image/jpeg','image/png','image/webp','application/pdf'];
+    let personalPreviewUrl = '';
+    function personalUploadMessage(type, text) {
+        const box=document.getElementById('personal-upload-status'); if(!box)return;
+        box.hidden=!text; box.className=`personal-upload-status ${type?`is-${type}`:''}`; box.textContent=text||'';
+    }
+    function validatePersonalFile(file) {
+        if(!file)return 'La pièce jointe est obligatoire.';
+        if(!PERSONAL_UPLOAD_TYPES.includes(file.type))return 'Format non accepté. Utilisez JPG, PNG, WEBP ou PDF.';
+        if(file.size>=PERSONAL_UPLOAD_MAX)return 'Le fichier doit être strictement inférieur à 10 Mo.';
+        return '';
+    }
+    function clearPersonalFile() {
+        selectedPhotoFile=null;
+        const input=document.getElementById('personal-list-file'),preview=document.getElementById('personal-upload-preview'),drop=document.getElementById('personal-upload-dropzone'),button=document.getElementById('personal-upload-continue'),thumb=document.getElementById('personal-upload-thumb');
+        if(input)input.value=''; if(preview)preview.hidden=true; drop?.classList.remove('is-valid','is-dragging'); if(button)button.disabled=true;
+        if(personalPreviewUrl){URL.revokeObjectURL(personalPreviewUrl);personalPreviewUrl='';} if(thumb)thumb.innerHTML=''; personalUploadMessage('','');
+    }
+    function choosePersonalFile(file) {
+        const error=validatePersonalFile(file); if(error){clearPersonalFile();personalUploadMessage('error',error);return;}
+        selectedPhotoFile=file;
+        const preview=document.getElementById('personal-upload-preview'),drop=document.getElementById('personal-upload-dropzone'),button=document.getElementById('personal-upload-continue'),thumb=document.getElementById('personal-upload-thumb');
+        document.getElementById('personal-upload-name').textContent=file.name;
+        document.getElementById('personal-upload-size').textContent=`${(file.size/1024/1024).toFixed(2)} Mo · ${file.type==='application/pdf'?'PDF':'Image'}`;
+        if(personalPreviewUrl)URL.revokeObjectURL(personalPreviewUrl);
+        if(file.type.startsWith('image/')){personalPreviewUrl=URL.createObjectURL(file);thumb.innerHTML=`<img src="${personalPreviewUrl}" alt="Aperçu de la liste">`;}else thumb.textContent='PDF';
+        preview.hidden=false;drop.classList.add('is-valid');button.disabled=false;personalUploadMessage('','');
+    }
+    function initPersonalUpload() {
+        const input=document.getElementById('personal-list-file'),drop=document.getElementById('personal-upload-dropzone'); if(!input||!drop)return;
+        input.addEventListener('change',()=>choosePersonalFile(input.files[0]));
+        document.getElementById('personal-upload-remove')?.addEventListener('click',clearPersonalFile);
+        ['dragenter','dragover'].forEach(type=>drop.addEventListener(type,event=>{event.preventDefault();drop.classList.add('is-dragging')}));
+        ['dragleave','drop'].forEach(type=>drop.addEventListener(type,event=>{event.preventDefault();drop.classList.remove('is-dragging')}));
+        drop.addEventListener('drop',event=>choosePersonalFile(event.dataTransfer.files[0]));
+        document.getElementById('personal-upload-continue')?.addEventListener('click',()=>{const error=validatePersonalFile(selectedPhotoFile);if(error)return personalUploadMessage('error',error);updateFinalSummary();renderPersonalSupplyItems();showOrderFlowPage('personal-supplies-view',3);});
+    }
+    initPersonalUpload();
+    function fileToDataUrl(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(new Error('Lecture du fichier impossible.'));reader.readAsDataURL(file);});}
+    async function uploadPersonalListInBackground(orderData, clientName) {
+        const error=validatePersonalFile(selectedPhotoFile);if(error)throw new Error(error);
+        if(!APP_SCRIPT_UPLOAD_WEBAPP_URL||APP_SCRIPT_UPLOAD_WEBAPP_URL.includes('PASTE_APPS_SCRIPT'))throw new Error('URL Apps Script non configurée.');
+        personalUploadMessage('loading','Enregistrement sécurisé du document dans Google Drive…');
+        const fileData=await fileToDataUrl(selectedPhotoFile);
+        const successUrl=new URL('success.html',window.location.href);successUrl.searchParams.set('order',orderData.numero_commande||'');successUrl.searchParams.set('name',clientName||'');successUrl.searchParams.set('qr',orderData.qr_code||'');
+        const channel=`elqods-upload-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        return await new Promise((resolve,reject)=>{
+            const iframe=document.createElement('iframe');iframe.name=channel;iframe.hidden=true;iframe.setAttribute('aria-hidden','true');
+            const form=document.createElement('form');form.method='POST';form.action=APP_SCRIPT_UPLOAD_WEBAPP_URL;form.target=channel;form.hidden=true;
+            const fields={action:'uploadPersonalList',channel,reference:orderData.numero_commande||'',orderId:orderData.id||'',successUrl:successUrl.toString(),mimeType:selectedPhotoFile.type,fileName:selectedPhotoFile.name,fileData};
+            Object.entries(fields).forEach(([name,value])=>{const input=document.createElement('input');input.type='hidden';input.name=name;input.value=String(value||'');form.appendChild(input)});
+            let timer,pollTimer,finished=false;
+            const cleanup=()=>{clearTimeout(timer);clearTimeout(pollTimer);window.removeEventListener('message',onMessage);setTimeout(()=>{form.remove();iframe.remove()},250)};
+            const finishSuccess=message=>{if(finished)return;finished=true;cleanup();resolve(message);};
+            const finishError=error=>{if(finished)return;finished=true;cleanup();reject(error);};
+            const onMessage=event=>{const message=event.data;if(!message||message.type!=='elqods-upload-result'||message.channel!==channel)return;if(message.success)finishSuccess(message);else finishError(new Error(message.error||'Échec de l’envoi vers Google Drive.'));};
+            const pollUploadState=async()=>{
+                if(finished)return;
+                try{
+                    const {data,error}=await supabaseClient.from('orders').select('status,upload_completed,google_drive_url,google_drive_file_id').eq('id',orderData.id).maybeSingle();
+                    if(!error&&data&&(data.upload_completed===true||Boolean(data.google_drive_url))){
+                        finishSuccess({success:true,redirectUrl:successUrl.toString(),fileId:data.google_drive_file_id||'',fileUrl:data.google_drive_url||''});return;
+                    }
+                }catch(pollError){console.warn('Vérification upload Drive :',pollError)}
+                pollTimer=setTimeout(pollUploadState,1500);
+            };
+            window.addEventListener('message',onMessage);
+            timer=setTimeout(()=>finishError(new Error('Le document n’a pas été confirmé par Google Drive après 2 minutes. Vérifiez le déploiement Apps Script puis réessayez.')),120000);
+            document.body.append(iframe,form);form.submit();pollTimer=setTimeout(pollUploadState,1200);
+        });
+    }
+
+    const continuePersonalSupplies=()=>{updatePersonalSupplyTotal();updateFinalSummary();showOrderFlowPage('checkout-form-container',4);};
+    document.getElementById('personal-supplies-continue')?.addEventListener('click',continuePersonalSupplies);
+    document.getElementById('personal-supplies-skip')?.addEventListener('click',()=>{document.querySelectorAll('.personal-supply-checkbox').forEach(box=>box.checked=false);continuePersonalSupplies();});
 
     // ==========================================
     // 5. CLIC SUR "SUIVANT"
@@ -728,6 +827,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert("Veuillez vérifier le nom complet et renseigner un numéro WhatsApp valide.");
                 return;
             }
+            if (isPhotoOrder) {
+                const fileError=validatePersonalFile(selectedPhotoFile);
+                if(fileError){personalUploadMessage('error',fileError);showOrderFlowPage('personal-upload-view',2);return;}
+            }
 
             if (submitButton) {
                 submitButton.disabled = true;
@@ -792,7 +895,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                const totalAmount = isPhotoOrder ? 0 : payloadItems.reduce((sum, item) => sum + (item.price || 0), 0);
+                if (isPhotoOrder) payloadItems.push(...getSelectedPersonalSupplies());
+                const totalAmount = payloadItems.reduce((sum, item) => sum + (item.price || 0), 0);
                 const qrCodeValue = generateQrCodeValue();
                 const qrPayload = buildQrPayload(qrCodeValue);
                 const orderPayload = {
@@ -820,7 +924,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (error) throw error;
 
                 if (isPhotoOrder && data && data.numero_commande) {
-                    window.location.href = buildUploadWebAppUrl(data, clientName, clientPhone, clientEmail);
+                    submitButton.textContent='⏳ Envoi de la liste vers Drive…';
+                    const uploadResult=await uploadPersonalListInBackground(data,clientName);
+                    personalUploadMessage('success','Document enregistré. Redirection…');
+                    window.location.href=uploadResult.redirectUrl;
                     return;
                 }
                 if (data && data.id) {
@@ -912,6 +1019,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const list=(items||[]).filter(i=>i.type!=='photo_upload');
         const photo=(items||[]).some(i=>i.type==='photo_upload'||i.url||i.photo_url)||!!order.google_drive_url;
         const total=Number(order.total_amount??list.reduce((sum,i)=>sum+(Number(i.price)||0)*(Number(i.quantity)||1),0));
+        const suppliesTotal=list.filter(i=>i.item_source==='independent_supply'||Boolean(i.supply_range)).reduce((sum,i)=>sum+(Number(i.price)||0)*(Number(i.quantity)||1),0);
+        const photoPrice=photo?Math.max(0,total-suppliesTotal):0;
+        const documentItems=photo?[{name:'Commande par photo',price:photoPrice,quantity:1,type:'photo_price'},...list]:list;
         const created=order.created_at||order.inserted_at||new Date().toISOString();
         const deadline=order.reservation_deadline||new Date(new Date(created).getTime()+5*86400000).toISOString();
         const meta=(items||[]).find(i=>i.school_name||i.school_level)||{};
@@ -919,7 +1029,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const fmt=v=>new Date(v).toLocaleDateString('fr-FR');
         const short=(v,n)=>{const t=String(v||'-');return t.length>n?t.slice(0,n-1)+'…':t};
         const write=(v,x,y,o={})=>{doc.setFont('Aptos',o.bold?'bold':'normal');doc.setFontSize(10);doc.setTextColor(...(o.color||[20,20,20]));doc.text(String(v??''),x*PT,y*PT,{align:o.align||'left',baseline:'alphabetic'})};
-        const chunks=[]; if(!list.length) chunks.push([]); else { chunks.push(list.slice(0,12)); for(let i=12;i<list.length;i+=15) chunks.push(list.slice(i,i+15)); }
+        const chunks=[]; if(!documentItems.length) chunks.push([]); else { chunks.push(documentItems.slice(0,12)); for(let i=12;i<documentItems.length;i+=15) chunks.push(documentItems.slice(i,i+15)); }
         for(let pi=0;pi<chunks.length;pi++){
             if(pi)doc.addPage(); doc.addImage(template,'PNG',0,0,210,297,undefined,'FAST'); const pageItems=chunks[pi];
             write('Téléphone : +212 5 36 23 02 59',38,197,{bold:true});
@@ -930,7 +1040,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const left=38,right=559,xa=42,xu=420,xq=486,xt=559,top=458,rh=pi?16:17;
             write('Article',xa,top,{bold:true}); write('Coût unitaire',xu,top,{bold:true,align:'right'}); write('Quantité',xq,top,{bold:true,align:'right'}); write('Total',xt,top,{bold:true,align:'right'});
             doc.setDrawColor(75);doc.setLineWidth(.45);doc.line(left*PT,(top+7)*PT,right*PT,(top+7)*PT);
-            const rows=photo&&!list.length?[{name:'Commande par photo - montant sur devis',price:0,quantity:1}]:pageItems;
+            const rows=pageItems.length?pageItems:(photo?[{name:'Commande par photo',price:photoPrice,quantity:1}]:[]);
             rows.forEach((item,n)=>{const rule=top+7+(n+1)*rh,base=rule-5,q=Number(item.quantity)||1,u=Number(item.price)||0;write(short(item.name||'Article',62),xa,base);write(u.toFixed(2),xu,base,{align:'right'});write(q,xq,base,{align:'right'});write((u*q).toFixed(2),xt,base,{align:'right'});doc.setDrawColor(205);doc.setLineWidth(.22);doc.line(left*PT,rule*PT,right*PT,rule*PT)});
             const ty=top+7+(Math.max(rows.length,1)+1)*rh;doc.setFillColor(231,92,37);doc.roundedRect(left*PT,ty*PT,(right-left)*PT,24*PT,2,2,'F');
             write('TOTAL DE COMMANDE À RÉGLER',left+6,ty+16,{bold:true,color:[255,255,255]});

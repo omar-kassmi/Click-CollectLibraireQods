@@ -811,6 +811,33 @@
                     <div class="flow-view-actions"><button id="btn-next-to-form" class="flow-primary">Continuer vers mes informations</button></div>
                 </div>
 
+                <!-- VUE IMPORT : liste personnelle, sans quitter le site -->
+                <div id="personal-upload-view" class="flow-view flow-progressive-step hidden" data-view="2" aria-hidden="true">
+                    <div class="flow-view-head flow-view-head-with-back"><button type="button" id="flow-back-upload" class="flow-step-back" aria-label="Retour à l’étape précédente" title="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button><span>02</span><div><h3>J’importe ma liste scolaire</h3><p>Ajoutez une photo claire ou un fichier PDF de votre liste personnelle.</p></div></div>
+                    <div class="personal-upload-card">
+                        <input id="personal-list-file" class="personal-upload-input" type="file" accept="image/jpeg,image/png,image/webp,application/pdf">
+                        <label id="personal-upload-dropzone" class="personal-upload-dropzone" for="personal-list-file">
+                            <span class="personal-upload-icon" aria-hidden="true">⇧</span>
+                            <strong>Déposez votre liste ici</strong>
+                            <span>Cliquez pour sélectionner un fichier<br>ou faites glisser le document dans cette zone.</span>
+                            <small>JPG · PNG · WEBP · PDF</small>
+                        </label>
+                        <div id="personal-upload-preview" class="personal-upload-preview" hidden>
+                            <div id="personal-upload-thumb" class="personal-upload-thumb"></div>
+                            <div class="personal-upload-file-copy"><b id="personal-upload-name"></b><span id="personal-upload-size"></span></div>
+                            <button id="personal-upload-remove" type="button" aria-label="Supprimer le fichier">×</button>
+                        </div>
+                        <p class="personal-upload-security">Le document est utilisé uniquement pour préparer votre commande. Taille maximale : strictement inférieure à 10 Mo.</p>
+                        <div id="personal-upload-status" class="personal-upload-status" hidden></div>
+                    </div>
+                    <div class="flow-view-actions"><button id="personal-upload-continue" type="button" class="flow-primary" disabled>Continuer vers mes informations</button></div>
+                </div>
+                <!-- VUE 03 : fournitures complémentaires pour une liste personnelle -->
+                <div id="personal-supplies-view" class="flow-view flow-progressive-step hidden" data-view="3" aria-hidden="true">
+                    <div class="flow-view-head flow-view-head-with-back"><button type="button" id="flow-back-personal-supplies" class="flow-step-back" aria-label="Retour à l’import" title="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button><span>03</span><div><h3>Je choisis mes fournitures</h3><p>Ajoutez, si vous le souhaitez, des fournitures complémentaires à votre liste personnelle.</p></div></div>
+                    <div class="step-three-widget personal-supplies-widget"><div class="step-three-pane step-three-supplies personal-supplies-pane"><h4>Je choisis mes fournitures</h4><p class="flow-card-copy">Cette étape est facultative. Les articles choisis seront ajoutés à votre commande.</p><div class="range-switch"><label><input type="radio" name="personal-supply-range" value="standard" checked><span>Standard</span></label><label><input type="radio" name="personal-supply-range" value="quality"><span>Qualité</span></label></div><div id="personal-independent-supply-items" class="flow-items-list"><p class="flow-muted">Chargement des fournitures…</p></div><div class="flow-total"><span>Sous-total fournitures</span><strong id="personal-supply-total-price">0.00 DH</strong></div></div></div>
+                    <div class="flow-view-actions personal-supplies-actions"><button id="personal-supplies-skip" type="button" class="flow-secondary">Passer cette étape</button><button id="personal-supplies-continue" type="button" class="flow-primary">Continuer vers mes informations</button></div>
+                </div>
                 <!-- VUE 3 : informations + récapitulatif -->
                 <div id="checkout-form-container" class="flow-view flow-progressive-step hidden" data-view="4" aria-hidden="true">
                     <div class="flow-view-head flow-view-head-with-back"><button type="button" id="flow-back-step-4" class="flow-step-back" aria-label="Retour à l’étape précédente" title="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button><span>04</span><div><h3>Mes informations et le récapitulatif</h3><p>Vérifiez la commande puis confirmez la réservation.</p></div></div>

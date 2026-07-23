@@ -91,6 +91,9 @@ async function generateElQodsOrderPdf(order, items) {
         const list=(items||[]).filter(i=>i.type!=='photo_upload');
         const photo=(items||[]).some(i=>i.type==='photo_upload'||i.url||i.photo_url)||!!order.google_drive_url;
         const total=Number(order.total_amount??list.reduce((sum,i)=>sum+(Number(i.price)||0)*(Number(i.quantity)||1),0));
+        const suppliesTotal=list.filter(i=>i.item_source==='independent_supply'||Boolean(i.supply_range)).reduce((sum,i)=>sum+(Number(i.price)||0)*(Number(i.quantity)||1),0);
+        const photoPrice=photo?Math.max(0,total-suppliesTotal):0;
+        const documentItems=photo?[{name:'Commande par photo',price:photoPrice,quantity:1,type:'photo_price'},...list]:list;
         const created=order.created_at||order.inserted_at||new Date().toISOString();
         const deadline=order.reservation_deadline||new Date(new Date(created).getTime()+5*86400000).toISOString();
         const meta=(items||[]).find(i=>i.school_name||i.school_level)||{};
@@ -98,7 +101,7 @@ async function generateElQodsOrderPdf(order, items) {
         const fmt=v=>new Date(v).toLocaleDateString('fr-FR');
         const short=(v,n)=>{const t=String(v||'-');return t.length>n?t.slice(0,n-1)+'…':t};
         const write=(v,x,y,o={})=>{doc.setFont('Aptos',o.bold?'bold':'normal');doc.setFontSize(10);doc.setTextColor(...(o.color||[20,20,20]));doc.text(String(v??''),x*PT,y*PT,{align:o.align||'left',baseline:'alphabetic'})};
-        const chunks=[]; if(!list.length) chunks.push([]); else { chunks.push(list.slice(0,12)); for(let i=12;i<list.length;i+=15) chunks.push(list.slice(i,i+15)); }
+        const chunks=[]; if(!documentItems.length) chunks.push([]); else { chunks.push(documentItems.slice(0,12)); for(let i=12;i<documentItems.length;i+=15) chunks.push(documentItems.slice(i,i+15)); }
         for(let pi=0;pi<chunks.length;pi++){
             if(pi)doc.addPage(); doc.addImage(template,'PNG',0,0,210,297,undefined,'FAST'); const pageItems=chunks[pi];
             write('Téléphone : +212 5 36 23 02 59',38,197,{bold:true});
@@ -109,7 +112,7 @@ async function generateElQodsOrderPdf(order, items) {
             const left=38,right=559,xa=42,xu=420,xq=486,xt=559,top=458,rh=pi?16:17;
             write('Article',xa,top,{bold:true}); write('Coût unitaire',xu,top,{bold:true,align:'right'}); write('Quantité',xq,top,{bold:true,align:'right'}); write('Total',xt,top,{bold:true,align:'right'});
             doc.setDrawColor(75);doc.setLineWidth(.45);doc.line(left*PT,(top+7)*PT,right*PT,(top+7)*PT);
-            const rows=photo&&!list.length?[{name:'Commande par photo - montant sur devis',price:0,quantity:1}]:pageItems;
+            const rows=pageItems.length?pageItems:(photo?[{name:'Commande par photo',price:photoPrice,quantity:1}]:[]);
             rows.forEach((item,n)=>{const rule=top+7+(n+1)*rh,base=rule-5,q=Number(item.quantity)||1,u=Number(item.price)||0;write(short(item.name||'Article',62),xa,base);write(u.toFixed(2),xu,base,{align:'right'});write(q,xq,base,{align:'right'});write((u*q).toFixed(2),xt,base,{align:'right'});doc.setDrawColor(205);doc.setLineWidth(.22);doc.line(left*PT,rule*PT,right*PT,rule*PT)});
             const ty=top+7+(Math.max(rows.length,1)+1)*rh;doc.setFillColor(231,92,37);doc.roundedRect(left*PT,ty*PT,(right-left)*PT,24*PT,2,2,'F');
             write('TOTAL DE COMMANDE À RÉGLER',left+6,ty+16,{bold:true,color:[255,255,255]});

@@ -640,3 +640,29 @@ body.school-order-active #section-rentree #school-flow-progress-fill {
 }
 
 #section-rentree #delivery-choice.delivery-choice-disabled{cursor:not-allowed!important;pointer-events:none}#section-rentree #delivery-choice.delivery-choice-disabled>span{border-color:#e7e5e4!important;background:#f1f1f0!important;color:#a8a29e!important;box-shadow:none!important;filter:grayscale(1);opacity:.82}#section-rentree .delivery-unavailable-note{display:inline-flex;margin-top:9px;padding:5px 9px;border:1px solid #d6d3d1;border-radius:999px;background:#fff;color:#78716c;font-size:9px;font-style:normal;font-weight:900}#section-rentree .delivery-unavailable-note[hidden]{display:none!important}
+
+
+/* Import de liste personnelle integre au site */
+#section-rentree .personal-upload-card{padding:34px;border:1px solid #e9e4df;border-radius:26px;background:#fff;box-shadow:0 16px 45px rgba(60,35,20,.06)}
+#section-rentree .personal-upload-input{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none}
+#section-rentree .personal-upload-dropzone{min-height:350px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;border:2px dashed #f2a47d;border-radius:24px;background:#fffaf7;text-align:center;cursor:pointer;transition:.2s}
+#section-rentree .personal-upload-dropzone:hover,#section-rentree .personal-upload-dropzone.is-dragging{border-color:#E75C25;background:#fff5ef}
+#section-rentree .personal-upload-dropzone.is-valid{border-color:#34d6a0;background:#f0fdf8}
+#section-rentree .personal-upload-icon{width:82px;height:82px;margin-bottom:20px;display:grid;place-items:center;border-radius:23px;background:#fff0e8;color:#E75C25;font-size:34px;font-weight:900}
+#section-rentree .personal-upload-dropzone strong{font:900 23px/1.2 'Inter',sans-serif;color:#292524}
+#section-rentree .personal-upload-dropzone>span:not(.personal-upload-icon){margin-top:12px;color:#918a85;font-size:14px;line-height:1.55}
+#section-rentree .personal-upload-dropzone small{margin-top:16px;color:#aaa5a1;font-size:11px;font-weight:900}
+#section-rentree .personal-upload-preview{display:grid;grid-template-columns:58px minmax(0,1fr) 38px;gap:12px;align-items:center;margin-top:14px;padding:11px;border:1px solid #bbf7d0;border-radius:14px;background:#f0fdf8}
+#section-rentree .personal-upload-preview[hidden]{display:none!important}
+#section-rentree .personal-upload-thumb{width:58px;height:58px;display:grid;place-items:center;overflow:hidden;border-radius:10px;background:#fff;color:#E75C25;font-size:11px;font-weight:900}
+#section-rentree .personal-upload-thumb img{width:100%;height:100%;object-fit:cover}
+#section-rentree .personal-upload-file-copy{min-width:0}.personal-upload-file-copy b,.personal-upload-file-copy span{display:block}.personal-upload-file-copy b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}.personal-upload-file-copy span{margin-top:4px;color:#78716c;font-size:10px}
+#section-rentree #personal-upload-remove{width:36px;height:36px;border:0;border-radius:10px;background:#fff;color:#dc2626;font-size:22px;font-weight:900}
+#section-rentree .personal-upload-security{margin:16px 0 0;color:#aaa5a1;font-size:10px;text-align:center}
+#section-rentree .personal-upload-status{margin-top:12px;padding:11px 13px;border-radius:12px;font-size:11px;font-weight:800}
+#section-rentree .personal-upload-status[hidden]{display:none!important}#section-rentree .personal-upload-status.is-error{background:#fef2f2;color:#b91c1c}#section-rentree .personal-upload-status.is-loading{background:#fff7ed;color:#9a3412}#section-rentree .personal-upload-status.is-success{background:#ecfdf5;color:#047857}
+#section-rentree #personal-upload-continue:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:640px){#section-rentree .personal-upload-card{padding:18px}#section-rentree .personal-upload-dropzone{min-height:290px;padding:20px}#section-rentree .personal-upload-dropzone strong{font-size:19px}}
+
+/* Etape 03 : fournitures de la liste personnelle */
+#section-rentree .personal-supplies-widget{grid-template-columns:1fr;max-width:760px;margin:0 auto}#section-rentree .personal-supplies-pane{border-left:0!important;padding:30px}#section-rentree .personal-supplies-pane>.flow-items-list{min-height:120px}#section-rentree .personal-supplies-actions{max-width:760px;margin:18px auto 0;justify-content:space-between;gap:12px}#section-rentree .personal-supplies-actions .flow-primary,#section-rentree .personal-supplies-actions .flow-secondary{margin-top:0}@media(max-width:640px){#section-rentree .personal-supplies-pane{padding:20px}#section-rentree .personal-supplies-actions{display:grid;grid-template-columns:1fr}#section-rentree .personal-supplies-actions button{width:100%}}

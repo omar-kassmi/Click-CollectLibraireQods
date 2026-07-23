@@ -168,7 +168,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const pickup=orderPickupLabel(order);
         const payment=String(order.payment_status||'unpaid')==='paid'?'Payé':'Non payé';
         const total=orderTotal(order);
-        const itemRows=(items.length?items:[{name:'Commande par photo - contenu à vérifier',quantity:1,price:0}]).map((item,index)=>{
+        const suppliesTotal=items.filter(item=>item.item_source==='independent_supply'||Boolean(item.supply_range)).reduce((sum,item)=>sum+(Number(item.price)||0)*(Number(item.quantity)||1),0);
+        const photoPrice=photoOrder?Math.max(0,Number(total)-suppliesTotal):0;
+        const printableItems=photoOrder?[{name:'Commande par photo',quantity:1,price:photoPrice},...items]:items;
+        const itemRows=(printableItems.length?printableItems:[{name:'Commande par photo',quantity:1,price:0}]).map((item,index)=>{
             const quantity=Number(item.quantity)||1;
             const unit=Number(item.price)||0;
             return `<tr><td class="check"><span></span></td><td class="num">${index+1}</td><td class="article">${escapeHtml(item.name||'Article')}</td><td class="qty">${quantity}</td><td class="price">${unit.toFixed(2)}</td><td class="line-total">${(unit*quantity).toFixed(2)}</td></tr>`;
@@ -190,7 +193,9 @@ document.addEventListener('DOMContentLoaded', () => {
             .control{display:grid;grid-template-columns:1fr 30mm;gap:4mm;margin-top:3mm;align-items:end;break-inside:avoid}.control-lines{display:grid;grid-template-columns:1fr;gap:3mm}.sign{height:12mm;border-bottom:1px solid #78716c;color:#78716c;font-size:7pt;padding-top:1mm}.qr{display:flex;justify-content:flex-end}.qr img{width:24mm;height:24mm;object-fit:contain}
             @media screen{body{background:#eee;padding:12px}.sheet{width:148mm;min-height:210mm;margin:auto;padding:7mm;background:#fff;box-shadow:0 8px 30px rgba(0,0,0,.14)}}
             @media print{.sheet{min-height:196mm}.no-print{display:none!important}}
-        </style></head><body><main class="sheet">
+        
+    .photo-price-warning-card{width:min(430px,calc(100vw - 24px))!important;max-width:430px!important;overflow:hidden!important;border:1px solid #e7ded7!important;border-radius:20px!important;background:#fff!important;box-shadow:0 22px 58px rgba(28,25,23,.22)!important}.photo-price-warning-head{min-height:76px!important;padding:16px 18px!important;display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:14px!important;background:linear-gradient(135deg,#fffaf7,#fff)!important;border-bottom:1px solid #f0e7e1!important}.photo-price-warning-title{min-width:0}.photo-price-warning-title h3{margin:0;color:#111827;font-size:19px;font-weight:950;line-height:1.15;letter-spacing:-.025em}.photo-price-warning-title p{margin:7px 0 0;color:#8b8580;font-size:9.5px;line-height:1.35}.photo-price-warning-close{width:36px!important;height:36px!important;flex:0 0 auto!important;display:grid!important;place-items:center!important;border:0!important;border-radius:12px!important;background:#f5f5f4!important;color:#78716c!important;font-size:20px!important;line-height:1!important}.photo-price-warning-close:hover{background:#eceae8!important;color:#292524!important}.photo-price-warning-body{padding:16px 18px 18px!important}.photo-price-warning-message{padding:14px 15px;border:1px solid #fecaca;border-radius:14px;background:#fff7f7;color:#b91c1c;font-size:11.5px;line-height:1.5}.photo-price-warning-message strong{font-weight:950}.photo-price-warning-actions{margin-top:16px!important;display:flex!important;justify-content:flex-end!important}.photo-price-warning-confirm{width:auto!important;min-width:82px!important;padding:10px 18px!important;border-radius:12px!important;background:#e62424!important;color:#fff!important;font-size:11.5px!important;font-weight:950!important;box-shadow:none!important}.photo-price-warning-confirm:hover{background:#c91e1e!important}@media(max-width:480px){.photo-price-warning-card{width:calc(100vw - 18px)!important;border-radius:18px!important}.photo-price-warning-head,.photo-price-warning-body{padding:14px!important}.photo-price-warning-title h3{font-size:18px}.photo-price-warning-title p{font-size:9px}}
+</style></head><body><main class="sheet">
             <header class="top"><div class="brand"><img src="images/logo.png" alt=""><div><h1>Librairie El Qods</h1><p>50 Bd Chouhada, 60300 Berkane, Maroc<br><span class="nowrap">Téléphone : +212 5 36 23 02 59</span></p></div></div><div class="ref"><small>Bon de préparation A5</small><strong>#${reference}</strong><time>${created}</time></div></header>
             <section class="info"><div class="field"><b>Client</b><span>${escapeHtml(order.client_name||'-')}</span></div><div class="field"><b>WhatsApp</b><span class="nowrap">${escapeHtml(order.client_phone||'-')}</span></div><div class="field"><b>École</b><span>${school}</span></div><div class="field"><b>Niveau</b><span>${level}</span></div><div class="field wide"><b>Type de liste</b><span>${escapeHtml(listType)}</span></div><div class="field"><b>Paiement</b><span>${payment}</span></div><div class="field"><b>Réservation</b><span>jusqu'au ${deadline}</span></div></section>
             <table><thead><tr><th class="check">OK</th><th class="num">#</th><th>Article</th><th class="qty">Qté</th><th class="price">Unitaire</th><th class="line-total">Total</th></tr></thead><tbody>${itemRows}</tbody></table>
@@ -207,14 +212,32 @@ document.addEventListener('DOMContentLoaded', () => {
         const value = String(order.fulfillment_method || order.delivery_method || order.delivery_type || '').toLowerCase();
         return value === 'delivery' || value.includes('livraison') ? 'Livraison' : 'Retrait au magasin';
     }
+    function photoOrderSuppliesMinimum(order) {
+        return parseItems(order?.items).filter(item=>item.item_source==='independent_supply'||Boolean(item.supply_range)).reduce((sum,item)=>sum+(Number(item.price)||0)*(Number(item.quantity)||1),0);
+    }
     async function savePhotoOrderPrice(orderId, value) {
         const amount = Number(value);
+        const order = currentOrders.find(entry => String(entry.id) === String(orderId));
+        const minimum = photoOrderSuppliesMinimum(order);
         if (!Number.isFinite(amount) || amount < 0) throw new Error('Saisissez un prix valide.');
+        if (amount < minimum) throw new Error(`Le prix total ne peut pas être inférieur aux fournitures sélectionnées (${minimum.toFixed(2)} DH).`);
         const { error } = await supabaseClient.from('orders').update({ total_amount: amount }).eq('id', orderId);
         if (error) throw error;
-        const order = currentOrders.find(entry => String(entry.id) === String(orderId));
         if (order) order.total_amount = amount;
         return amount;
+    }
+    function openPhotoPriceMinimumDialog(minimum) {
+        const dialog=openAdminActionDialog(`<div class="admin-action-card photo-price-warning-card">
+            <div class="admin-action-head photo-price-warning-head">
+                <div class="photo-price-warning-title"><h3>Montant insuffisant</h3><p>Le total doit couvrir les fournitures déjà ajoutées à la commande.</p></div>
+                <button class="admin-action-close photo-price-warning-close" data-dialog-close aria-label="Fermer">×</button>
+            </div>
+            <div class="admin-action-body photo-price-warning-body">
+                <div class="photo-price-warning-message">Le prix total doit être au minimum de <strong>${Number(minimum||0).toFixed(2)} DH</strong>, correspondant aux fournitures ajoutées.</div>
+                <div class="admin-action-buttons photo-price-warning-actions"><button class="admin-action-button photo-price-warning-confirm" data-dialog-close>Fermer</button></div>
+            </div>
+        </div>`);
+        dialog.querySelector('.photo-price-warning-confirm')?.focus();
     }
     function openOrder(id){
         const o=currentOrders.find(x=>String(x.id)===String(id));if(!o)return;
@@ -251,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
         drawer.querySelector('.close').onclick=closeOrder;drawer.querySelectorAll('.ord-tab').forEach(tab=>tab.onclick=()=>{drawer.querySelectorAll('.ord-tab').forEach(b=>b.classList.toggle('is-active',b===tab));drawer.querySelectorAll('.ord-tab-panel').forEach(panel=>panel.classList.toggle('is-active',panel.dataset.orderPanel===tab.dataset.orderTab))});
         drawer.querySelector('.drawer-wa').onclick=()=>openWhatsappDialog(o.id);drawer.querySelector('.drawer-print').onclick=()=>printOrder(o.id);drawer.querySelector('.drawer-delete').onclick=()=>openDeleteOrderDialog(o.id);
         const copy=drawer.querySelector('.copy-order-reference');copy.onclick=async()=>{const ref=String(o.numero_commande||o.id||'').replace(/^#/,'');try{await navigator.clipboard.writeText(ref)}catch(_){const t=document.createElement('textarea');t.value=ref;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}copy.classList.add('is-copied');setTimeout(()=>copy.classList.remove('is-copied'),1100)};
-        const price=drawer.querySelector('#modal-order-price.is-editable');if(price){price.dataset.savedAmount=amount.toFixed(2);price.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();price.blur();return}if(e.ctrlKey||e.metaKey||e.altKey||['Backspace','Delete','ArrowLeft','ArrowRight','Home','End','Tab'].includes(e.key))return;if(!/^[0-9.]$/.test(e.key)||(e.key==='.'&&price.textContent.includes('.')))e.preventDefault()};price.oninput=()=>{let clean=price.textContent.replace(/[^0-9.]/g,''),dot=clean.indexOf('.');if(dot!==-1)clean=clean.slice(0,dot+1)+clean.slice(dot+1).replace(/\./g,'');if(price.textContent!==clean)price.textContent=clean};price.onfocus=()=>{price.textContent=Number(price.dataset.savedAmount||0).toFixed(2);const r=document.createRange();r.selectNodeContents(price);const sel=window.getSelection();sel.removeAllRanges();sel.addRange(r)};price.onblur=async()=>{const state=drawer.querySelector('#ord-price-save-state'),next=Number(price.textContent.replace(/[^0-9.]/g,''));if(!Number.isFinite(next)||next<0){price.textContent=`Prix : ${money(Number(price.dataset.savedAmount||0))}`;return}if(next===Number(price.dataset.savedAmount)){price.textContent=`Prix : ${money(next)}`;return}price.classList.add('is-saving');if(state)state.textContent='Enregistrement…';try{const saved=await savePhotoOrderPrice(o.id,next);price.dataset.savedAmount=saved.toFixed(2);price.textContent=`Prix : ${money(saved)}`;if(state)state.textContent='Enregistré ✓'}catch(err){price.textContent=`Prix : ${money(Number(price.dataset.savedAmount||0))}`;alert(err.message)}finally{price.classList.remove('is-saving')}}}
+        const price=drawer.querySelector('#modal-order-price.is-editable');if(price){price.dataset.savedAmount=amount.toFixed(2);price.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();price.blur();return}if(e.ctrlKey||e.metaKey||e.altKey||['Backspace','Delete','ArrowLeft','ArrowRight','Home','End','Tab'].includes(e.key))return;if(!/^[0-9.]$/.test(e.key)||(e.key==='.'&&price.textContent.includes('.')))e.preventDefault()};price.oninput=()=>{let clean=price.textContent.replace(/[^0-9.]/g,''),dot=clean.indexOf('.');if(dot!==-1)clean=clean.slice(0,dot+1)+clean.slice(dot+1).replace(/\./g,'');if(price.textContent!==clean)price.textContent=clean};price.onfocus=()=>{price.textContent=Number(price.dataset.savedAmount||0).toFixed(2);const r=document.createRange();r.selectNodeContents(price);const sel=window.getSelection();sel.removeAllRanges();sel.addRange(r)};price.onblur=async()=>{const state=drawer.querySelector('#ord-price-save-state'),next=Number(price.textContent.replace(/[^0-9.]/g,''));const minimum=photoOrderSuppliesMinimum(o);if(!Number.isFinite(next)||next<minimum){price.textContent=`Prix : ${money(Number(price.dataset.savedAmount||0))}`;if(state)state.textContent='';if(Number.isFinite(next)&&next<minimum)openPhotoPriceMinimumDialog(minimum);return}if(next===Number(price.dataset.savedAmount)){price.textContent=`Prix : ${money(next)}`;if(state)state.textContent='';return}price.classList.add('is-saving');if(state)state.textContent='Enregistrement…';try{const saved=await savePhotoOrderPrice(o.id,next);price.dataset.savedAmount=saved.toFixed(2);price.textContent=`Prix : ${money(saved)}`;if(state)state.textContent=''}catch(err){price.textContent=`Prix : ${money(Number(price.dataset.savedAmount||0))}`;alert(err.message)}finally{price.classList.remove('is-saving')}}}
         bindChips(drawer);drawer.classList.add('open');document.body.style.overflow='hidden';
     }
     window.printAdminOrder=printOrder;window.openAdminOrderModal=openOrder;window.closeAdminOrderModal=closeOrder;
