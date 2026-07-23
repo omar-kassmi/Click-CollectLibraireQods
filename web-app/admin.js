@@ -311,6 +311,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnSavePack = document.getElementById('btn-save-pack');
     const btnCancelEditPack = document.getElementById('btn-cancel-edit-pack');
 
+    const packEditorOverlay=document.getElementById('pack-editor-overlay'),packDrawerTitle=document.getElementById('pack-editor-drawer-title'),packDrawerKicker=document.getElementById('pack-editor-drawer-kicker'),packDrawerPrice=document.getElementById('pack-drawer-price'),schoolDrawerTabs=document.getElementById('school-drawer-tabs');
+    let activePackDrawerKind=null,packDrawerBaseline='';
+    function packFormSnapshot(kind=activePackDrawerKind){if(kind==='school')return JSON.stringify({school:document.getElementById('cfg-school')?.value||'',logo:document.getElementById('cfg-school-logo-url')?.value||'',level:document.getElementById('cfg-level')?.value||'',items:currentFormItems});if(kind==='supply')return JSON.stringify({id:document.getElementById('supply-item-id')?.value||'',name:document.getElementById('supply-item-name')?.value||'',category:document.getElementById('supply-item-category')?.value||'',standard:document.getElementById('supply-item-standard')?.value||'',quality:document.getElementById('supply-item-quality')?.value||'',active:document.getElementById('supply-item-active')?.checked!==false});return ''}
+    function isPackDrawerDirty(){return Boolean(activePackDrawerKind)&&packFormSnapshot()!==packDrawerBaseline}
+    function updatePackDrawerPrice(){let amount=0;if(activePackDrawerKind==='school')amount=currentFormItems.reduce((sum,item)=>sum+(Number(item.price)||0),0);else if(activePackDrawerKind==='supply')amount=Number(document.getElementById('supply-item-standard')?.value)||0;if(packDrawerPrice)packDrawerPrice.textContent=`Prix : ${amount.toFixed(2)} DH`;const count=document.getElementById('school-items-tab-count');if(count)count.textContent=String(currentFormItems.length)}
+    function setSchoolDrawerTab(tab){document.querySelectorAll('[data-school-tab]').forEach(button=>button.classList.toggle('is-active',button.dataset.schoolTab===tab));document.querySelectorAll('[data-school-panel]').forEach(panel=>panel.hidden=panel.dataset.schoolPanel!==tab)}
+    function prepareSchoolDrawerForm(){if(!formAdd||formAdd.dataset.drawerReady)return;formAdd.dataset.drawerReady='true';const children=[...formAdd.children],info=document.createElement('section'),items=document.createElement('section');info.className='pack-drawer-form-section';info.dataset.schoolPanel='info';items.className='pack-drawer-form-section';items.dataset.schoolPanel='items';items.hidden=true;children.slice(0,3).forEach(node=>{node.className='pack-drawer-field';node.querySelector('p')?.remove();info.appendChild(node)});const builder=children[3],preview=children[4];if(builder){builder.className='pack-drawer-items-builder';items.appendChild(builder)}if(preview){preview.className='pack-drawer-items-list';items.appendChild(preview)}[btnSavePack,btnCancelEditPack].forEach(node=>node?.remove());formAdd.innerHTML='';formAdd.append(info,items);document.getElementById('school-form-host')?.appendChild(formAdd)}
+    function prepareSupplyDrawerForm(){if(!supplyAdminForm||supplyAdminForm.dataset.drawerReady)return;supplyAdminForm.dataset.drawerReady='true';supplyAdminForm.className='pack-drawer-supply-form';supplyAdminForm.querySelector('button[type="submit"]')?.closest('div')?.remove();document.getElementById('supply-form-host')?.appendChild(supplyAdminForm)}
+    function openPackDrawer(kind,{editing=false}={}){prepareSchoolDrawerForm();prepareSupplyDrawerForm();activePackDrawerKind=kind;document.getElementById('school-form-host').hidden=kind!=='school';document.getElementById('supply-form-host').hidden=kind!=='supply';schoolDrawerTabs?.classList.toggle('is-hidden',kind!=='school');packDrawerTitle.textContent=kind==='school'?'Liste scolaire':'Fourniture';packDrawerKicker.textContent=editing?'MODIFICATION':'NOUVEL ÉLÉMENT';if(kind==='school')setSchoolDrawerTab('info');packEditorOverlay.classList.add('is-open');packEditorOverlay.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';updatePackDrawerPrice();requestAnimationFrame(()=>packDrawerBaseline=packFormSnapshot(kind))}
+    function closePackDrawerNow(){packEditorOverlay.classList.remove('is-open');packEditorOverlay.setAttribute('aria-hidden','true');document.body.style.overflow='';activePackDrawerKind=null;packDrawerBaseline=''}
+    function discardAndClosePackDrawer(){const kind=activePackDrawerKind;closePackDrawerNow();if(kind==='school')resetPackForm();else if(kind==='supply')resetSupplyAdminForm()}
+    function confirmPackDrawerClose(){if(!isPackDrawerDirty())return discardAndClosePackDrawer();const dialog=openAdminActionDialog(`<div class="admin-action-card pack-leave-warning"><div class="admin-action-head"><div><h3>Quitter sans enregistrer ?</h3><p>Les modifications en cours seront perdues.</p></div><button class="admin-action-close" data-dialog-close>×</button></div><div class="admin-action-body"><div class="admin-action-alert">Les changements effectués ne seront pas enregistrés. Voulez-vous vraiment fermer ce panneau ?</div><div class="admin-action-buttons"><button class="admin-action-button admin-action-cancel" data-dialog-close>Continuer</button><button id="confirm-pack-drawer-close" class="admin-action-button admin-action-danger">Quitter</button></div></div></div>`);dialog.querySelector('#confirm-pack-drawer-close')?.addEventListener('click',()=>{closeAdminActionDialog();discardAndClosePackDrawer()})}
+    document.querySelectorAll('[data-school-tab]').forEach(button=>button.addEventListener('click',()=>setSchoolDrawerTab(button.dataset.schoolTab)));document.getElementById('pack-drawer-close')?.addEventListener('click',confirmPackDrawerClose);document.getElementById('pack-drawer-quit')?.addEventListener('click',confirmPackDrawerClose);packEditorOverlay?.addEventListener('click',event=>{if(event.target===packEditorOverlay)confirmPackDrawerClose()});document.getElementById('pack-drawer-validate')?.addEventListener('click',()=>{if(activePackDrawerKind==='school')formAdd?.requestSubmit();else supplyAdminForm?.requestSubmit()});
+    const addTrigger=document.getElementById('pack-add-trigger'),addDropdown=document.getElementById('pack-add-dropdown');addTrigger?.addEventListener('click',event=>{event.stopPropagation();addDropdown.hidden=!addDropdown.hidden;addTrigger.setAttribute('aria-expanded',addDropdown.hidden?'false':'true')});document.querySelectorAll('[data-create-kind]').forEach(button=>button.addEventListener('click',()=>{addDropdown.hidden=true;if(button.dataset.createKind==='school'){resetPackForm();openPackDrawer('school')}else{resetSupplyAdminForm();openPackDrawer('supply')}}));document.addEventListener('click',event=>{if(!event.target.closest('.pack-add-inline')&&addDropdown)addDropdown.hidden=true});
+
     // ==========================================
     // MENU VERTICAL GAUCHE, EXTENSIBLE ET COMPACT
     // ==========================================
@@ -839,6 +854,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderAdminPreviewList() {
         if (!previewBox) return;
+        updatePackDrawerPrice();
         if (!currentFormItems.length) {
             previewBox.innerHTML = "Aucun article ajouté pour le moment.";
             return;
@@ -991,8 +1007,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderAdminPreviewList();
         if (packFormTitle) packFormTitle.textContent = "✎ Modifier le pack d'objets";
         if (btnSavePack) btnSavePack.textContent = "Enregistrer les modifications";
-        if (btnCancelEditPack) btnCancelEditPack.classList.remove('hidden');
-        if (formAdd) formAdd.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        openPackDrawer('school',{editing:true});
     };
 
     btnCancelEditPack?.addEventListener('click', resetPackForm);
@@ -1006,7 +1021,8 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("Veuillez saisir l'école, le niveau et au moins un article.");
             return;
         }
-        const payload = { school_name: school, school_logo_url: schoolLogoUrl || null, level, items: [JSON.stringify(currentFormItems)] };
+        const existingList=editingListId ? window.schoolListsCache?.find(item=>String(item.id)===String(editingListId)) : null;
+        const payload = { school_name: school, school_logo_url: schoolLogoUrl || null, level, items: [JSON.stringify(currentFormItems)], is_active: existingList?.is_active !== false };
         const { error } = editingListId
             ? await supabaseClient.from('school_lists').update(payload).eq('id', editingListId)
             : await supabaseClient.from('school_lists').insert([payload]);
@@ -1015,7 +1031,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert(`Erreur lors de l'enregistrement : ${error.message}`);
             return;
         }
-        resetPackForm();
+        closePackDrawerNow();resetPackForm();
         loadSchoolLists();
     });
 
@@ -1040,15 +1056,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const filtered = source.filter(list => (!schoolFilter || normalizeSchoolListFilterValue(list.school_name) === schoolFilter) && (!levelFilter || normalizeSchoolListFilterValue(list.level) === levelFilter));
         const count = document.getElementById('school-lists-filter-count');
         if (count) count.textContent = `${filtered.length} pack${filtered.length > 1 ? 's' : ''} affiché${filtered.length > 1 ? 's' : ''} sur ${source.length}`;
-        document.getElementById('btn-reset-school-list-filters')?.classList.toggle('hidden', !schoolFilter && !levelFilter);
+        const resetFilters=document.getElementById('btn-reset-school-list-filters');if(resetFilters)resetFilters.disabled=!schoolFilter&&!levelFilter;
         if (!filtered.length) { container.innerHTML = '<div class="sm:col-span-2 rounded-2xl border border-dashed border-gray-300 bg-white p-8 text-center"><p class="text-sm font-bold text-gray-700">Aucun pack ne correspond aux filtres.</p></div>'; return; }
-        container.innerHTML = filtered.map(list => { const items=parseSchoolListItems(list.items), out=items.filter(x=>x.availability==='out_of_stock').length; return `<div class="bg-white p-5 rounded-2xl border flex flex-col justify-between shadow-sm"><div class="flex items-start justify-between gap-4"><div class="flex items-start gap-3">${list.school_logo_url ? (() => { const candidates=adminSchoolLogoCandidates(list.school_logo_url), initial=escapeHtml(String(list.school_name||'E').trim().charAt(0).toUpperCase()||'E'); return `<span class="shrink-0 w-11 h-11 rounded-xl border border-gray-200 bg-white p-1.5 flex items-center justify-center overflow-hidden"><img src="${escapeHtml(candidates[0]||'')}" data-logo-candidates="${escapeHtml(JSON.stringify(candidates))}" data-logo-index="0" alt="" class="max-w-full max-h-full object-contain" onerror="retryAdminSchoolLogo(this)"><span class="hidden w-full h-full rounded-lg bg-orange-50 text-[#E75C25] font-black items-center justify-center">${initial}</span></span>`; })() : ''}<div><span class="text-xs font-bold text-[#E75C25] uppercase">${escapeHtml(list.school_name)}</span><h4 class="text-base font-bold text-gray-900">Classe : ${escapeHtml(list.level)}</h4><p class="text-xs text-stone-400 mt-1">${items.length} articles configurés · ${out} rupture</p></div></div><button type="button" class="btn-edit-list text-gray-400 hover:text-[#E75C25]" data-id="${list.id}">✎</button></div><div class="flex items-center gap-4 mt-4"><button class="btn-edit-list text-xs font-semibold text-[#E75C25]" data-id="${list.id}">Modifier</button><button class="btn-delete-list text-xs font-semibold text-red-600" data-id="${list.id}">Supprimer</button></div></div>`; }).join('');
+        container.innerHTML = filtered.map(list => { const items=parseSchoolListItems(list.items), out=items.filter(x=>x.availability==='out_of_stock').length; const active=list.is_active!==false;return `<div class="bg-white p-5 rounded-2xl border flex flex-col justify-between shadow-sm ${active?'':'school-list-inactive'}"><div class="flex items-start justify-between gap-4"><div class="flex items-start gap-3">${list.school_logo_url ? (() => { const candidates=adminSchoolLogoCandidates(list.school_logo_url), initial=escapeHtml(String(list.school_name||'E').trim().charAt(0).toUpperCase()||'E'); return `<span class="shrink-0 w-11 h-11 rounded-xl border border-gray-200 bg-white p-1.5 flex items-center justify-center overflow-hidden"><img src="${escapeHtml(candidates[0]||'')}" data-logo-candidates="${escapeHtml(JSON.stringify(candidates))}" data-logo-index="0" alt="" class="max-w-full max-h-full object-contain" onerror="retryAdminSchoolLogo(this)"><span class="hidden w-full h-full rounded-lg bg-orange-50 text-[#E75C25] font-black items-center justify-center">${initial}</span></span>`; })() : ''}<div><span class="text-xs font-bold text-[#E75C25] uppercase">${escapeHtml(list.school_name)}</span><h4 class="text-base font-bold text-gray-900">Classe : ${escapeHtml(list.level)}</h4><p class="text-xs text-stone-400 mt-1">${items.length} articles configurés · ${out} rupture</p></div></div><div class="school-list-card-head-actions"><span class="school-list-visibility-label">${active?'Visible':'Masquée'}</span><button type="button" class="school-list-visibility ${active?'is-active':''}" data-id="${list.id}" data-active="${active?'true':'false'}" title="${active?'Masquer du site':'Afficher sur le site'}" aria-label="${active?'Masquer du site':'Afficher sur le site'}"></button><button type="button" class="btn-edit-list text-gray-400 hover:text-[#E75C25]" data-id="${list.id}">✎</button></div></div><div class="flex items-center gap-4 mt-4"><button class="btn-edit-list text-xs font-semibold text-[#E75C25]" data-id="${list.id}">Modifier</button><button class="btn-delete-list text-xs font-semibold text-red-600" data-id="${list.id}">Supprimer</button></div></div>`; }).join('');
+        container.querySelectorAll('.school-list-visibility').forEach(button=>button.onclick=async event=>{event.stopPropagation();const next=button.dataset.active!=='true';button.disabled=true;const {error}=await supabaseClient.from('school_lists').update({is_active:next}).eq('id',button.dataset.id);if(error){button.disabled=false;alert(`Impossible de modifier la visibilité : ${error.message}`);return;}const list=window.schoolListsCache?.find(item=>String(item.id)===String(button.dataset.id));if(list)list.is_active=next;renderFilteredSchoolLists();});
         container.querySelectorAll('.btn-edit-list').forEach(b=>b.onclick=()=>startEditSchoolList(b.dataset.id));
         container.querySelectorAll('.btn-delete-list').forEach(b=>b.onclick=async()=>{if(!confirm('Supprimer ce pack ?'))return;await supabaseClient.from('school_lists').delete().eq('id',b.dataset.id);loadSchoolLists();});
     }
     document.getElementById('filter-school-lists-school')?.addEventListener('change', renderFilteredSchoolLists);
     document.getElementById('filter-school-lists-level')?.addEventListener('change', renderFilteredSchoolLists);
-    document.getElementById('btn-reset-school-list-filters')?.addEventListener('click',()=>{document.getElementById('filter-school-lists-school').value='';document.getElementById('filter-school-lists-level').value='';renderFilteredSchoolLists();});
+    document.getElementById('btn-reset-school-list-filters')?.addEventListener('click',()=>{const button=document.getElementById('btn-reset-school-list-filters');if(button?.disabled)return;document.getElementById('filter-school-lists-school').value='';document.getElementById('filter-school-lists-level').value='';renderFilteredSchoolLists();});
 
     async function loadSchoolLists() {
         const container = document.getElementById('config-lists-container');
@@ -1128,7 +1145,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('supply-item-quality').value = item.quality_price || 0;
             document.getElementById('supply-item-active').checked = item.is_active !== false;
             document.getElementById('cancel-supply-edit')?.classList.remove('hidden');
-            supplyAdminForm?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            openPackDrawer('supply',{editing:true});
         }));
         supplyAdminList.querySelectorAll('.delete-supply').forEach(button => button.addEventListener('click', async () => {
             if (!confirm('Supprimer cette fourniture ?')) return;
@@ -1151,9 +1168,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const request = id ? supabaseClient.from('supply_items').update(payload).eq('id', id) : supabaseClient.from('supply_items').insert([payload]);
         const { error } = await request;
         if (error) return alert(error.message);
-        resetSupplyAdminForm();
+        closePackDrawerNow();resetSupplyAdminForm();
         await loadSupplyAdmin();
     });
+    ['supply-item-standard','supply-item-quality'].forEach(id=>document.getElementById(id)?.addEventListener('input',updatePackDrawerPrice));
     document.getElementById('cancel-supply-edit')?.addEventListener('click', resetSupplyAdminForm);
     loadSupplyAdmin();
 });

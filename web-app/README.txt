@@ -1,6 +1,8 @@
-Ajout de l'étape 03 pour « Ma propre liste » :
-01 choix -> 02 import -> 03 fournitures facultatives -> 04 informations -> Drive -> succès.
+Correctif minimal basé uniquement sur les fichiers admin fournis.
 
-Les fournitures actives proviennent de supply_items. L'utilisateur choisit Standard ou Qualité, voit le sous-total, peut passer l'étape, et les choix sont enregistrés dans orders.items avec item_source=independent_supply.
+Modification unique : ajout de la liste des fournitures indépendantes déjà créées sous « Listes actuellement actives ».
 
-Installation : remplacer index.html, app.js et styles.css puis effectuer Ctrl+F5. Aucun changement de Code.gs n'est requis.
+Aucune modification de la structure ou du style de la right panel existante.
+Chaque fourniture affiche : nom, prix Standard, prix Qualité, état Active/Masquée et un bouton crayon ouvrant la right panel Fourniture en modification.
+
+Installation : remplacer uniquement admin.html et admin.js, puis Ctrl+F5.

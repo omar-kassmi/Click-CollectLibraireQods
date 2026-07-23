@@ -187,8 +187,8 @@
                 <div id="orders-pagination" class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white border border-gray-200 rounded-2xl p-3 shadow-sm"></div>
             </section>
 
-            <section id="pane-config" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm h-fit space-y-5">
+            <section id="pane-config" class="hidden pack-management-page">
+                <div id="pack-editor-source" class="pack-editor-source bg-white p-6 rounded-2xl border border-gray-200 shadow-sm h-fit space-y-5">
                     <div>
                         <h3 id="pack-form-title" class="text-sm font-bold text-gray-900">📦 Créer un pack d'objets officiel</h3>
                         <p class="text-[11px] text-gray-400 mt-0.5">Renseignez l'établissement puis ajoutez vos fournitures avec prix.</p>
@@ -261,14 +261,14 @@
                     </form>
                 </div>
 
-                <div class="lg:col-span-2 space-y-4">
+                <div id="active-school-lists" class="active-school-lists space-y-4">
                     <div class="flex flex-col gap-3">
                         <div class="flex items-center justify-between gap-4">
                             <div>
                                 <h3 class="text-sm font-bold text-gray-900">Listes actuellement actives</h3>
                                 <p id="school-lists-filter-count" class="text-[11px] text-gray-400 mt-0.5">Chargement des packs…</p>
                             </div>
-                            <button id="btn-reset-school-list-filters" type="button" class="hidden shrink-0 px-3 py-2 rounded-xl border border-gray-200 bg-white text-[11px] font-bold text-gray-600 hover:border-[#E75C25] hover:text-[#E75C25] transition">Réinitialiser</button>
+                            <div class="pack-list-actions"><button id="btn-reset-school-list-filters" type="button" disabled>Réinitialiser</button><div class="pack-add-inline"><button id="pack-add-trigger" type="button" aria-haspopup="menu" aria-expanded="false"><span>＋</span> Ajouter <i></i></button><div id="pack-add-dropdown" class="pack-add-dropdown" hidden><button type="button" data-create-kind="school"><b>Liste scolaire</b><small>Créer un pack officiel</small></button><button type="button" data-create-kind="supply"><b>Fourniture</b><small>Ajouter au catalogue</small></button></div></div></div>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-white border border-gray-200 rounded-2xl p-3 shadow-sm">
                             <label class="block"><span class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5">Filtrer par école</span><select id="filter-school-lists-school" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white focus:border-[#E75C25]"><option value="">Toutes les écoles</option></select></label>
@@ -278,7 +278,7 @@
                     <div id="config-lists-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                 </div>
 
-                <div class="lg:col-span-3 border-t border-gray-200 pt-8 mt-2">
+                <div id="supply-editor-source" class="supply-editor-source">
                     <div class="mb-5">
                         <h3 class="text-base font-black text-gray-900">Fournitures indépendantes</h3>
                         <p class="text-xs text-gray-400 mt-1">Gérez la liste de fournitures affichée dans la partie droite de l’étape 3.</p>
@@ -301,6 +301,15 @@
                     </div>
                 </div>
             </section>
+
+            <div id="pack-editor-overlay" class="pack-editor-overlay" aria-hidden="true">
+                <aside id="pack-editor-drawer" class="pack-editor-drawer" role="dialog" aria-modal="true" aria-labelledby="pack-editor-drawer-title">
+                    <header class="pack-drawer-header"><div class="pack-drawer-heading"><h2 id="pack-editor-drawer-title">Liste scolaire</h2><span id="pack-editor-drawer-kicker">NOUVEL ÉLÉMENT</span></div><div class="pack-drawer-header-side"><button id="pack-drawer-close" type="button" aria-label="Fermer">×</button><strong id="pack-drawer-price">Prix : 0.00 DH</strong></div></header>
+                    <nav id="school-drawer-tabs" class="pack-drawer-tabs"><button type="button" class="is-active" data-school-tab="info"><span>01</span> Info Liste</button><button type="button" data-school-tab="items"><span>02</span> Éléments Liste <small id="school-items-tab-count">0</small></button></nav>
+                    <div id="pack-drawer-body" class="pack-drawer-body"><div id="school-form-host"></div><div id="supply-form-host"></div></div>
+                    <footer class="pack-drawer-footer"><button id="pack-drawer-quit" type="button">Quitter</button><button id="pack-drawer-validate" type="button">Valider</button></footer>
+                </aside>
+            </div>
 
             <section id="pane-tabs-config" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm lg:col-span-5 space-y-4">

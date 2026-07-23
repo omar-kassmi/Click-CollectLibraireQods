@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const { data: lists } = await supabaseClient.from('school_lists').select('*');
             if (lists) {
-                allSchoolData = lists;
+                allSchoolData = lists.filter(list => list.is_active !== false);
                 populateSchoolsDropdown();
             }
         } catch (err) {}
