@@ -187,7 +187,11 @@
                 <div id="orders-pagination" class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white border border-gray-200 rounded-2xl p-3 shadow-sm"></div>
             </section>
 
-            <section id="pane-config" class="hidden pack-management-page">
+            <section id="pane-config" class="hidden pack-management-page"><section id="catalog-master-widget" class="catalog-master-widget">
+                    <article class="catalog-master-column"><header><b>Écoles</b><button id="catalog-add-school" type="button" aria-label="Ajouter une école">+</button></header><div id="catalog-schools-list" class="catalog-master-list"><p>Chargement…</p></div></article>
+                    <article class="catalog-master-column"><header><b>Niveaux</b><button id="catalog-add-level" type="button" aria-label="Ajouter un niveau">+</button></header><div id="catalog-levels-list" class="catalog-master-list"><p>Chargement…</p></div></article>
+                    <article class="catalog-master-column"><header><b>Catégories fourniture</b><button id="catalog-add-supply-category" type="button" aria-label="Ajouter une catégorie">+</button></header><div id="catalog-supply-categories-list" class="catalog-master-list"><p>Chargement…</p></div></article>
+                </section>
                 <div id="pack-editor-source" class="pack-editor-source bg-white p-6 rounded-2xl border border-gray-200 shadow-sm h-fit space-y-5">
                     <div>
                         <h3 id="pack-form-title" class="text-sm font-bold text-gray-900">📦 Créer un pack d'objets officiel</h3>
@@ -196,20 +200,14 @@
                     
                     <form id="form-add-list" class="space-y-4">
                         <div>
-                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Nom de l'école</label>
-                            <input type="text" id="cfg-school" required placeholder="Ex: École Al Anouar" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:bg-white">
+                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">École</label>
+                            <select id="cfg-school" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:bg-white"><option value="">Sélectionner une école</option></select>
+                            <div id="cfg-school-logo-preview" class="hidden mt-3 h-20 rounded-xl border border-gray-200 bg-white p-2 items-center justify-center overflow-hidden"><img alt="Aperçu du logo de l'école" class="max-h-full max-w-full object-contain"></div>
                         </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Logo de l'école — URL Google Drive <span class="normal-case font-medium text-gray-300">(facultatif)</span></label>
-                            <input type="url" id="cfg-school-logo-url" placeholder="https://drive.google.com/file/d/.../view" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:bg-white focus:border-[#E75C25]">
-                            <p class="mt-1.5 text-[10px] leading-relaxed text-gray-400">Le fichier Drive doit être accessible aux personnes disposant du lien. Sans URL, l'initiale de l'école reste affichée sur le site.</p>
-                            <div id="cfg-school-logo-preview" class="hidden mt-3 h-20 rounded-xl border border-gray-200 bg-white p-2 items-center justify-center overflow-hidden">
-                                <img alt="Aperçu du logo de l'école" class="max-h-full max-w-full object-contain">
-                            </div>
-                        </div>
+                        <div class="hidden" aria-hidden="true"><input type="hidden" id="cfg-school-logo-url"></div>
                         <div>
                             <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Niveau</label>
-                            <input type="text" id="cfg-level" required placeholder="Ex: CP / CE1" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:bg-white">
+                            <select id="cfg-level" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:bg-white"><option value="">Sélectionner un niveau</option></select>
                         </div>
 
                         <div class="border border-orange-100 bg-orange-50/20 rounded-xl p-4 space-y-3">
@@ -261,23 +259,28 @@
                     </form>
                 </div>
 
-                <div id="active-school-lists" class="active-school-lists space-y-4">
+                <section class="admin-kanban-widget"><div id="active-school-lists" class="active-school-lists space-y-4">
                     <div class="flex flex-col gap-3">
                         <div class="flex items-center justify-between gap-4">
                             <div>
                                 <h3 class="text-sm font-bold text-gray-900">Listes actuellement actives</h3>
                                 <p id="school-lists-filter-count" class="text-[11px] text-gray-400 mt-0.5">Chargement des packs…</p>
                             </div>
-                            <div class="pack-list-actions"><button id="btn-reset-school-list-filters" type="button" disabled>Réinitialiser</button><div class="pack-add-inline"><button id="pack-add-trigger" type="button" aria-haspopup="menu" aria-expanded="false"><span>＋</span> Ajouter <i></i></button><div id="pack-add-dropdown" class="pack-add-dropdown" hidden><button type="button" data-create-kind="school"><b>Liste scolaire</b><small>Créer un pack officiel</small></button><button type="button" data-create-kind="supply"><b>Fourniture</b><small>Ajouter au catalogue</small></button></div></div></div>
+                            <div class="pack-list-actions"><button id="btn-reset-school-list-filters" type="button" disabled>Réinitialiser</button><div class="pack-add-inline"><button id="pack-add-trigger" type="button"><span>＋</span> Ajouter</button></div></div>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-white border border-gray-200 rounded-2xl p-3 shadow-sm">
                             <label class="block"><span class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5">Filtrer par école</span><select id="filter-school-lists-school" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white focus:border-[#E75C25]"><option value="">Toutes les écoles</option></select></label>
                             <label class="block"><span class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5">Filtrer par niveau</span><select id="filter-school-lists-level" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white focus:border-[#E75C25]"><option value="">Tous les niveaux</option></select></label>
                         </div>
                     </div>
-                    <div id="config-lists-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
-                </div>
+                    <div id="config-lists-container" class="school-kanban-board"><p class="text-xs text-gray-400">Chargement des listes…</p></div>
+                </div></section>
 
+                <section id="existing-supplies-section" class="admin-kanban-widget supply-kanban-section">
+                    <div class="supply-widget-heading"><div><h3>Fournitures diverses</h3><p id="existing-supplies-count">Chargement…</p></div><div class="supply-widget-actions"><button id="btn-reset-supply-filters" type="button" disabled>Réinitialiser</button><button id="btn-add-supply-direct" type="button">+ Ajouter</button></div></div>
+                    <div class="supply-kanban-filters grid grid-cols-1 sm:grid-cols-2 gap-3 bg-white border border-gray-200 rounded-2xl p-3 shadow-sm"><label class="block"><span class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5">Filtrer par catégorie</span><select id="filter-supply-category" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white focus:border-[#E75C25]"><option value="">Toutes les catégories</option></select></label><label class="block"><span class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5">Filtrer spécificité et gamme</span><select id="filter-supply-feature" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white focus:border-[#E75C25]"><option value="">Toutes les fournitures</option><option value="specs">Avec spécificités</option><option value="no-specs">Sans spécificité</option><option value="quality-2">Deux gammes</option><option value="quality-1">Une gamme</option></select></label></div>
+                    <div id="existing-supplies-list" class="supply-kanban-board"><p>Chargement…</p></div>
+                </section>
                 <div id="supply-editor-source" class="supply-editor-source">
                     <div class="mb-5">
                         <h3 class="text-base font-black text-gray-900">Fournitures indépendantes</h3>
@@ -286,13 +289,14 @@
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <form id="form-supply-item" class="bg-white border border-gray-200 rounded-2xl p-5 space-y-4 shadow-sm">
                             <input type="hidden" id="supply-item-id">
-                            <div><label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Nom</label><input id="supply-item-name" required class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E75C25]" placeholder="Ex : Ensemble stylo"></div>
-                            <div><label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Catégorie</label><input id="supply-item-category" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E75C25]" value="Fournitures"></div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div><label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Prix standard</label><input id="supply-item-standard" required type="number" min="0" step="0.01" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E75C25]" placeholder="0.00"></div>
-                                <div><label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Prix qualité</label><input id="supply-item-quality" required type="number" min="0" step="0.01" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E75C25]" placeholder="0.00"></div>
+                            <div><label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Nom</label><input id="supply-item-name" required class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E75C25]" placeholder="Ex : Ensemble stylo"></div><div class="supply-category-field"><label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Catégorie</label><select id="supply-item-category-id" required><option value="">Sélectionner une catégorie</option></select></div>
+                            <div class="supply-mode-grid">
+                                <label class="supply-mode-card"><input id="supply-has-quality" type="checkbox" checked><i aria-hidden="true"></i><span><b>Deux qualités</b></span></label>
+                                <label class="supply-mode-card"><input id="supply-has-specs" type="checkbox"><i aria-hidden="true"></i><span><b>Avec spécificités</b></span></label>
                             </div>
-                            <label class="flex items-center gap-2 text-xs font-bold text-gray-700"><input id="supply-item-active" type="checkbox" checked class="accent-[#E75C25]"> Afficher sur le site</label>
+                            <div id="supply-base-prices" class="grid grid-cols-2 gap-3"><div><label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Prix standard</label><input id="supply-item-standard" required type="number" min="0" step="0.01" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none" placeholder="0.00"></div><div id="supply-quality-field"><label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Prix qualité</label><input id="supply-item-quality" type="number" min="0" step="0.01" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none" placeholder="0.00"></div></div>
+                            <label class="supply-mode-card supply-site-toggle"><input id="supply-item-active" type="checkbox" checked><i aria-hidden="true"></i><span><b>Afficher sur le site</b></span></label>
+                            <section id="supply-spec-editor"><div class="supply-spec-toolbar"><div><b>Spécificités</b><small>Configurez les choix proposés au client.</small></div><button id="add-supply-spec" type="button">+ Spécificité</button></div><div id="supply-spec-list"></div></section>
                             <div class="flex gap-2"><button type="submit" class="flex-1 bg-[#E75C25] text-white rounded-xl py-3 text-xs font-black hover:bg-[#CE4E1D]">Enregistrer</button><button id="cancel-supply-edit" type="button" class="hidden px-4 border border-gray-200 rounded-xl text-xs font-black">Annuler</button></div>
                         </form>
                         <div class="lg:col-span-2 bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
@@ -305,9 +309,9 @@
             <div id="pack-editor-overlay" class="pack-editor-overlay" aria-hidden="true">
                 <aside id="pack-editor-drawer" class="pack-editor-drawer" role="dialog" aria-modal="true" aria-labelledby="pack-editor-drawer-title">
                     <header class="pack-drawer-header"><div class="pack-drawer-heading"><h2 id="pack-editor-drawer-title">Liste scolaire</h2><span id="pack-editor-drawer-kicker">NOUVEL ÉLÉMENT</span></div><div class="pack-drawer-header-side"><button id="pack-drawer-close" type="button" aria-label="Fermer">×</button><strong id="pack-drawer-price">Prix : 0.00 DH</strong></div></header>
-                    <nav id="school-drawer-tabs" class="pack-drawer-tabs"><button type="button" class="is-active" data-school-tab="info"><span>01</span> Info Liste</button><button type="button" data-school-tab="items"><span>02</span> Éléments Liste <small id="school-items-tab-count">0</small></button></nav>
+                    <nav id="school-drawer-tabs" class="pack-drawer-tabs"><button type="button" class="is-active" data-school-tab="info"><span>01</span> Info Liste</button><button type="button" data-school-tab="items"><span>02</span> Éléments Liste <small id="school-items-tab-count">0</small></button></nav><nav id="supply-drawer-tabs" class="pack-drawer-tabs is-hidden"><button type="button" class="is-active" data-supply-tab="info"><span>01</span> Informations</button><button id="supply-spec-tab" type="button" data-supply-tab="spec"><span>02</span> Spécificités <small id="supply-spec-count">0</small></button></nav>
                     <div id="pack-drawer-body" class="pack-drawer-body"><div id="school-form-host"></div><div id="supply-form-host"></div></div>
-                    <footer class="pack-drawer-footer"><button id="pack-drawer-quit" type="button">Quitter</button><button id="pack-drawer-validate" type="button">Valider</button></footer>
+                    <footer class="pack-drawer-footer supply-footer"><button id="pack-drawer-quit" type="button">Quitter</button><button id="pack-drawer-delete" type="button" hidden>Supprimer</button><button id="pack-drawer-validate" type="button">Valider</button><p id="pack-drawer-validation-error" class="pack-drawer-validation-error" role="alert" aria-live="polite"></p></footer>
                 </aside>
             </div>
 

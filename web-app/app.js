@@ -154,9 +154,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!container) return;
         container.innerHTML = '<p class="flow-muted">Chargement des fournitures…</p>';
         try {
-            let response = await supabaseClient.from('supply_items').select('*').order('name', { ascending: true });
-            if (response.error) throw response.error;
-            allSupplyItems = (response.data || []).filter(item => item.is_active !== false);
+            const [response,categoriesResponse]=await Promise.all([supabaseClient.from('supply_items').select('*').order('name',{ascending:true}),supabaseClient.from('supply_categories').select('id,is_active')]);
+            if(response.error)throw response.error;if(categoriesResponse.error)throw categoriesResponse.error;
+            const activeCategories=new Set((categoriesResponse.data||[]).filter(c=>c.is_active!==false).map(c=>String(c.id)));
+            allSupplyItems=(response.data||[]).filter(item=>item.is_active!==false&&activeCategories.has(String(item.category_id)));
             renderIndependentSupplyItems();
         } catch (error) {
             console.error('Chargement de la liste fourniture impossible :', error);
