@@ -568,7 +568,49 @@
             opacity:1 !important;
             visibility:visible !important;
         }
-    </style>
+    
+/* FINAL - panneau details strictement 1/3 et arrondi identique */
+@media (min-width:701px){
+ #tracking-details-drawer>.tracking-details-panel,
+ .elqods-success-drawer>.elqods-order-panel{
+   width:33.333333vw!important;
+   max-width:33.333333vw!important;
+   min-width:0!important;
+   border-radius:34px 0 0 34px!important;
+   overflow:hidden!important;
+ }
+}
+#tracking-details-drawer>.tracking-details-panel,
+.elqods-success-drawer>.elqods-order-panel{
+ border-top-left-radius:34px!important;
+ border-bottom-left-radius:34px!important;
+ border-top-right-radius:0!important;
+ border-bottom-right-radius:0!important;
+ background:#fff!important;
+}
+.elqods-order-head{min-height:128px!important;padding:25px 26px 20px!important;grid-template-columns:minmax(0,1fr) 48px!important;gap:16px!important}
+.elqods-order-head h2{font-size:27px!important}.elqods-order-head p{margin-top:11px!important;font-size:9px!important}.elqods-order-close{width:48px!important;height:48px!important;border-radius:15px!important;font-size:24px!important}
+.elqods-order-tabs{height:67px!important;padding:0 18px!important}.elqods-order-tabs button{min-height:67px!important;padding:0 6px!important;font-size:12px!important}.elqods-order-tabs .tab-number{margin-right:6px!important;font-size:11px!important}.elqods-order-tabs .tab-count{min-width:23px!important;height:23px!important;margin-left:5px!important;padding:0 6px!important;font-size:9px!important}
+.elqods-order-body{padding:22px 20px 28px!important}.elqods-order-pane-head{margin-bottom:15px!important}.elqods-order-pane-head h3{font-size:18px!important}.elqods-order-pane-head span{font-size:10px!important}.elqods-order-list{border-radius:16px!important}.elqods-order-row{min-height:76px!important;padding:13px 14px!important;gap:12px!important}.elqods-order-copy b{font-size:13px!important}.elqods-order-copy small{margin-top:6px!important;font-size:9px!important}.elqods-order-price{padding:8px 10px!important;font-size:10px!important}
+@media(max-width:700px){
+ #tracking-details-drawer>.tracking-details-panel,
+ .elqods-success-drawer>.elqods-order-panel{width:100vw!important;max-width:100vw!important;min-width:0!important;border-radius:0!important}
+}
+
+
+/* QODS_ORDER_DRAWER_V1 - isolated shared component */
+html.qd-lock,body.qd-lock{overflow:hidden!important}
+.qd-overlay{position:fixed!important;inset:0!important;z-index:2147483000!important;display:none!important;background:rgba(34,29,26,.44)!important;backdrop-filter:blur(6px)!important;-webkit-backdrop-filter:blur(6px)!important}
+.qd-overlay.qd-open{display:block!important}
+.qd-panel{position:absolute!important;inset:0 0 0 auto!important;width:33.333333vw!important;max-width:33.333333vw!important;min-width:0!important;height:100dvh!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;border-radius:30px 0 0 30px!important;background:#fff!important;box-shadow:-26px 0 72px rgba(28,25,23,.24)!important;animation:qdIn .25s ease-out both!important}
+@keyframes qdIn{from{transform:translateX(100%)}to{transform:none}}
+.qd-head{flex:0 0 auto;min-height:128px;padding:25px 26px 20px;display:grid;grid-template-columns:minmax(0,1fr) 48px;align-items:start;gap:16px;border-bottom:1px solid #eee7e1;background:#fffaf7}
+.qd-head h2{margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#111827;font:950 27px/1.08 'Inter',Arial,sans-serif;letter-spacing:-.04em}.qd-head p{margin:11px 0 0;color:#ef571d;font:900 9px/1 'Inter',Arial,sans-serif;letter-spacing:.18em;text-transform:uppercase}.qd-close{width:48px;height:48px;display:grid;place-items:center;border:0;border-radius:15px;background:#f3f3f3;color:#8b8580;font:400 24px/1 Arial,sans-serif}.qd-close:hover{background:#e9e7e5;color:#292524}
+.qd-tabs{flex:0 0 auto;height:67px;padding:0 18px;display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #e8e2de;background:#fff}.qd-tab{position:relative;min-width:0;min-height:67px;padding:0 6px;border:0;background:transparent;color:#aaa39d;font:850 12px/1 'Inter',Arial,sans-serif;white-space:nowrap}.qd-tab-num{margin-right:6px;color:#c9c2bd;font-size:11px}.qd-badge{display:inline-grid;place-items:center;min-width:23px;height:23px;margin-left:5px;padding:0 6px;border-radius:999px;background:#f6f4f2;color:inherit;font-size:9px}.qd-tab.qd-active{color:#ef571d}.qd-tab.qd-active:after{content:'';position:absolute;left:5%;right:5%;bottom:-1px;height:4px;border-radius:999px 999px 0 0;background:#ef571d}
+.qd-body{flex:1;min-height:0;overflow-y:auto;padding:22px 20px 28px;background:#fff}.qd-pane{display:none}.qd-pane.qd-active{display:block}.qd-pane-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:15px}.qd-pane-head h3{margin:0;color:#111827;font:950 18px/1.2 'Inter',Arial,sans-serif;letter-spacing:-.02em}.qd-pane-head span{color:#a8a19b;font:850 10px/1 'Inter',Arial,sans-serif}.qd-photo{margin-bottom:14px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border:1px solid #fed7c1;border-radius:13px;background:#fff7f1;color:#ef571d;font-size:10px;font-weight:900}.qd-list{overflow:hidden;border:1px solid #eadfd8;border-radius:16px;background:#fff}.qd-row{min-height:76px;padding:13px 14px;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;border-bottom:1px solid #eadfd8;background:#fff}.qd-row:last-child{border-bottom:0}.qd-copy{min-width:0}.qd-copy b,.qd-copy small{display:block}.qd-copy b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#292524;font:900 13px/1.25 'Inter',Arial,sans-serif}.qd-copy small{margin-top:6px;color:#8f8882;font:500 9px/1.35 'Inter',Arial,sans-serif}.qd-price{padding:8px 10px;border-radius:999px;background:#e5f9f1;color:#007e59;font:900 10px/1 'Inter',Arial,sans-serif;white-space:nowrap}.qd-empty{padding:28px;border:1px dashed #d6d3d1;border-radius:15px;background:#fafaf9;color:#78716c;font-size:10px;text-align:center}
+@media(max-width:700px){.qd-panel{width:100vw!important;max-width:100vw!important;border-radius:0!important}.qd-head{min-height:120px;padding:22px 18px 18px}.qd-head h2{font-size:24px}.qd-tabs{padding:0 8px}.qd-tab{font-size:11px}.qd-body{padding:18px 14px 24px}}
+
+</style>
 </head>
 <body class="bg-white text-gray-900 min-h-screen flex flex-col justify-between antialiased">
 
@@ -790,27 +832,52 @@
 
 <!-- VUE 2 : personnalisation + fournitures indépendantes -->
                 <div id="pack-details-view" class="flow-view flow-progressive-step hidden" data-view="3" aria-hidden="true">
-                    <div class="flow-view-head flow-view-head-with-back"><button type="button" id="flow-back-step-3" class="flow-step-back" aria-label="Retour à l’étape précédente" title="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button><span>03</span><div><h3>Je personnalise ma liste et mes fournitures</h3><p>La liste scolaire et la liste de fournitures indépendante sont réunies ici.</p></div></div>
-                    <div class="step-three-widget">
-                        <div class="step-three-pane step-three-list">
-                            <h4>Je personnalise ma liste</h4>
-                            <div id="liste-officielle-items" class="flow-items-list"></div>
-                            <div class="flow-total"><span>Sous-total liste scolaire</span><strong><span id="pack-total-price">0.00</span> DH</strong></div>
-                        </div>
-                        <div id="supply-list-panel" class="step-three-pane step-three-supplies">
-                            <h4>Je choisis mes fournitures</h4>
-                            <p class="flow-card-copy">Cette liste est indépendante de l'établissement et du niveau.</p>
-                            <div class="range-switch">
-                                <label><input type="radio" name="supply-range" value="standard" checked><span>Standard</span></label>
-                                <label><input type="radio" name="supply-range" value="quality"><span>Qualité</span></label>
+                    <div class="flow-view-head flow-view-head-with-back"><button type="button" id="flow-back-step-3" class="flow-step-back" aria-label="Retour à l’étape précédente" title="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button><span>03</span><div><h3>Je personnalise ma liste et mes fournitures</h3><p>Adaptez la liste officielle, puis ajoutez les fournitures de votre choix.</p></div></div>
+                    <div class="step3-editor-grid">
+                        <section class="step3-school-section">
+                            <h4 class="step3-section-title">Je personnalise ma liste scolaire</h4>
+                            <div class="step3-school-card">
+                                <header class="step3-school-header"><div class="step3-school-identity"><span class="step3-school-logo"><img id="display-school-logo" src="" alt="Logo de l’école" hidden><span id="display-school-logo-fallback">E</span></span><strong id="display-school-name">École</strong></div><b id="display-level-name">Niveau</b></header>
+                                <div id="liste-officielle-items" class="step3-school-items"></div>
                             </div>
-                            <div id="independent-supply-items" class="flow-items-list"><p class="flow-muted">Chargement des fournitures…</p></div>
-                            <div class="flow-total"><span>Sous-total fournitures</span><strong id="supply-total-price">0.00 DH</strong></div>
-                        </div>
+                            <div class="step3-subtotal"><span>Sous-total liste scolaire</span><strong><span id="pack-total-price">0.00</span> DH</strong></div>
+                        </section>
+                        <section class="step3-supply-section">
+                            <h4 class="step3-section-title">Je complète ma liste scolaire</h4>
+                            <div class="step3-supply-builder">
+                                <div class="step3-supply-catalog">
+                                    <h5>Je choisis mes<br>fournitures parmi</h5>
+                                    <div class="step3-supply-tools">
+                                        <div id="supply-category-multiselect" class="step3-category-multiselect">
+                                            <button id="supply-category-trigger" type="button" aria-expanded="false"><span>Toutes les catégories</span><i aria-hidden="true"></i></button>
+                                            <div id="supply-category-menu" class="step3-category-menu" hidden></div>
+                                        </div>
+                                        <button id="supply-reset-filter" type="button">Réinitialiser</button>
+                                    </div>
+                                    <div id="independent-supply-items" class="step3-supply-catalog-list"><p class="flow-muted">Chargement des fournitures…</p></div>
+                                </div>
+                                <div class="step3-selected-supplies">
+                                    <h5>Mes fournitures choisies</h5>
+                                    <div id="selected-supply-items" class="step3-selected-list"><p class="step3-empty-selection">Aucune fourniture ajoutée</p></div>
+                                </div>
+                            </div>
+                            <div class="step3-subtotal"><span>Sous-total fournitures</span><strong id="supply-total-price">0.00 DH</strong></div>
+                        </section>
                     </div>
                     <div class="flow-view-actions"><button id="btn-next-to-form" class="flow-primary">Continuer vers mes informations</button></div>
                 </div>
-
+                <div id="supply-config-modal" class="supply-config-modal" aria-hidden="true">
+                    <div class="supply-config-dialog" role="dialog" aria-modal="true" aria-labelledby="supply-config-title">
+                        <button id="supply-config-close" class="supply-config-close" type="button" aria-label="Fermer">×</button>
+                        <span class="supply-config-kicker">Configurer l’article</span>
+                        <h3 id="supply-config-title">Fourniture</h3>
+                        <p id="supply-config-category"></p>
+                        <div id="supply-config-range" class="supply-config-block"></div>
+                        <div id="supply-config-attributes"></div>
+                        <div class="supply-config-total"><span>Prix de l’article</span><strong id="supply-config-price">0.00 DH</strong></div>
+                        <div class="supply-config-actions"><button id="supply-config-cancel" type="button">Annuler</button><button id="supply-config-confirm" type="button">OK</button></div>
+                    </div>
+                </div>
                 <!-- VUE IMPORT : liste personnelle, sans quitter le site -->
                 <div id="personal-upload-view" class="flow-view flow-progressive-step hidden" data-view="2" aria-hidden="true">
                     <div class="flow-view-head flow-view-head-with-back"><button type="button" id="flow-back-upload" class="flow-step-back" aria-label="Retour à l’étape précédente" title="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button><span>02</span><div><h3>J’importe ma liste scolaire</h3><p>Ajoutez une photo claire ou un fichier PDF de votre liste personnelle.</p></div></div>

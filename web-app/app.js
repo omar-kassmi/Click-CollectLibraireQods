@@ -30,6 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
         flag: code.replace(/./g, char => String.fromCodePoint(127397 + char.charCodeAt()))
     }));
     let selectedSupplyRange = 'standard';
+    let selectedConfiguredSupplies = [];
+    let activeSupplyConfiguration = null;
+    let supplyCategoryMap = new Map();
+    let selectedSupplyCategoryIds = new Set();
 
 
     // Masquage progressif de la Splash Page après 5 secondes
@@ -150,71 +154,41 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function loadIndependentSupplyItems() {
-        const container = document.getElementById('independent-supply-items');
-        if (!container) return;
-        container.innerHTML = '<p class="flow-muted">Chargement des fournitures…</p>';
-        try {
-            const [response,categoriesResponse]=await Promise.all([supabaseClient.from('supply_items').select('*').order('name',{ascending:true}),supabaseClient.from('supply_categories').select('id,is_active')]);
-            if(response.error)throw response.error;if(categoriesResponse.error)throw categoriesResponse.error;
-            const activeCategories=new Set((categoriesResponse.data||[]).filter(c=>c.is_active!==false).map(c=>String(c.id)));
-            allSupplyItems=(response.data||[]).filter(item=>item.is_active!==false&&activeCategories.has(String(item.category_id)));
-            renderIndependentSupplyItems();
-        } catch (error) {
-            console.error('Chargement de la liste fourniture impossible :', error);
-            container.innerHTML = '<p class="flow-muted">La liste fourniture est momentanément indisponible.</p>';
-        }
+        const container=document.getElementById('independent-supply-items');if(!container)return;
+        container.innerHTML='<p class="flow-muted">Chargement des fournitures…</p>';
+        try{
+            const [itemsResult,categoriesResult,attributesResult]=await Promise.all([
+                supabaseClient.from('supply_items').select('*').order('name',{ascending:true}),
+                supabaseClient.from('supply_categories').select('*').order('name',{ascending:true}),
+                supabaseClient.from('supply_attributes').select('id,supply_item_id,name,has_supplement,is_active,sort_order,supply_attribute_values(id,label,standard_supplement,quality_supplement,is_active,sort_order)').order('sort_order',{ascending:true})
+            ]);
+            if(itemsResult.error)throw itemsResult.error;if(categoriesResult.error)throw categoriesResult.error;
+            const activeCategories=(categoriesResult.data||[]).filter(c=>c.is_active!==false);supplyCategoryMap=new Map(activeCategories.map(c=>[String(c.id),c]));
+            const attrsByItem=new Map();if(!attributesResult.error)(attributesResult.data||[]).filter(a=>a.is_active!==false).forEach(a=>{const key=String(a.supply_item_id);if(!attrsByItem.has(key))attrsByItem.set(key,[]);attrsByItem.get(key).push({...a,supply_attribute_values:(a.supply_attribute_values||[]).filter(v=>v.is_active!==false).sort((x,y)=>(x.sort_order||0)-(y.sort_order||0))})});
+            allSupplyItems=(itemsResult.data||[]).filter(item=>item.is_active!==false&&supplyCategoryMap.has(String(item.category_id))).map(item=>({...item,attributes:attrsByItem.get(String(item.id))||[]}));
+            renderSupplyCategoryFilter();renderIndependentSupplyItems();renderSelectedSupplyItems();
+        }catch(error){console.error('Chargement fournitures :',error);container.innerHTML='<p class="flow-muted">La liste des fournitures est momentanément indisponible.</p>';}
     }
-
-    function getSupplyUnitPrice(item) {
-        const raw = selectedSupplyRange === 'quality' ? item.quality_price : item.standard_price;
-        return Number.parseFloat(raw) || 0;
+    function renderSupplyCategoryFilter(){
+        const menu=document.getElementById('supply-category-menu'),trigger=document.getElementById('supply-category-trigger');if(!menu||!trigger)return;
+        const valid=new Set([...supplyCategoryMap.keys()]);[...selectedSupplyCategoryIds].forEach(id=>{if(!valid.has(id))selectedSupplyCategoryIds.delete(id)});
+        const wasOpen=!menu.hidden;
+        menu.innerHTML=[...supplyCategoryMap.values()].map(category=>`<label><input type="checkbox" value="${category.id}" ${selectedSupplyCategoryIds.has(String(category.id))?'checked':''}><span>${escapeHtmlAttribute(category.name)}</span></label>`).join('')||'<p>Aucune catégorie active</p>';
+        menu.querySelectorAll('input').forEach(input=>input.onchange=event=>{event.stopPropagation();input.checked?selectedSupplyCategoryIds.add(String(input.value)):selectedSupplyCategoryIds.delete(String(input.value));updateSupplyCategoryTrigger();renderIndependentSupplyItems();menu.hidden=false;trigger.setAttribute('aria-expanded','true')});
+        updateSupplyCategoryTrigger();menu.hidden=!wasOpen;
     }
-
-    function renderIndependentSupplyItems() {
-        const container = document.getElementById('independent-supply-items');
-        if (!container) return;
-        if (!allSupplyItems.length) {
-            container.innerHTML = '<p class="flow-muted">Aucune fourniture active configurée dans l’administration.</p>';
-            updateSupplyTotal();
-            return;
-        }
-        container.innerHTML = allSupplyItems.map(item => {
-            const price = getSupplyUnitPrice(item);
-            return `<label class="supply-item-row">
-                <input type="checkbox" class="supply-item-checkbox" data-id="${item.id}" data-name="${String(item.name || '').replace(/"/g, '&quot;')}">
-                <span class="supply-item-name">${item.name || 'Fourniture'}</span>
-                <span class="item-price-chip">${price.toFixed(2)} DH</span>
-            </label>`;
-        }).join('');
-        container.querySelectorAll('.supply-item-checkbox').forEach(input => input.addEventListener('change', () => {
-            updateSupplyTotal();
-            updateFinalSummary();
-        }));
-        updateSupplyTotal();
-    }
-
-    function updateSupplyTotal() {
-        const totalBox = document.getElementById('supply-total-price');
-        if (!totalBox) return;
-        let total = 0;
-        document.querySelectorAll('.supply-item-checkbox:checked').forEach(input => {
-            const item = allSupplyItems.find(entry => String(entry.id) === String(input.dataset.id));
-            if (item) total += getSupplyUnitPrice(item);
-        });
-        totalBox.innerText = `${total.toFixed(2)} DH`;
-    }
-
-    document.querySelectorAll('input[name="supply-range"]').forEach(input => {
-        input.addEventListener('change', () => {
-            selectedSupplyRange = input.value;
-            const checkedIds = new Set(Array.from(document.querySelectorAll('.supply-item-checkbox:checked')).map(box => String(box.dataset.id)));
-            renderIndependentSupplyItems();
-            document.querySelectorAll('.supply-item-checkbox').forEach(box => box.checked = checkedIds.has(String(box.dataset.id)));
-            updateSupplyTotal();
-            updateFinalSummary();
-        });
-    });
-
+    function updateSupplyCategoryTrigger(){const label=document.querySelector('#supply-category-trigger span');if(!label)return;const count=selectedSupplyCategoryIds.size;label.textContent=count?`${count} catégorie${count>1?'s':''} sélectionnée${count>1?'s':''}`:'Toutes les catégories';}
+    function getSupplyUnitPrice(item,range=selectedSupplyRange){return Number.parseFloat(range==='quality'&&item.has_quality!==false?item.quality_price:item.standard_price)||0;}
+    function renderIndependentSupplyItems(){const container=document.getElementById('independent-supply-items');if(!container)return;const items=allSupplyItems.filter(item=>!selectedSupplyCategoryIds.size||selectedSupplyCategoryIds.has(String(item.category_id)));container.innerHTML=items.length?items.map(item=>`<div class="step3-catalog-item"><span>${escapeHtmlAttribute(item.name||'Fourniture')}</span><button type="button" class="step3-add-supply" data-id="${item.id}" aria-label="Ajouter ${escapeHtmlAttribute(item.name)}">+</button></div>`).join(''):'<p class="flow-muted">Aucune fourniture dans cette catégorie.</p>';container.querySelectorAll('.step3-add-supply').forEach(button=>button.onclick=()=>openSupplyConfiguration(button.dataset.id));}
+    function configurationPrice(config){const item=allSupplyItems.find(x=>String(x.id)===String(config.itemId));if(!item)return 0;let total=getSupplyUnitPrice(item,config.range);(config.attributes||[]).forEach(choice=>{const attribute=item.attributes.find(a=>String(a.id)===String(choice.attributeId)),value=attribute?.supply_attribute_values.find(v=>String(v.id)===String(choice.valueId));if(attribute?.has_supplement&&value)total+=Number(config.range==='quality'?value.quality_supplement:value.standard_supplement)||0});return total;}
+    function openSupplyConfiguration(itemId){const item=allSupplyItems.find(x=>String(x.id)===String(itemId));if(!item)return;activeSupplyConfiguration={itemId:String(item.id),range:item.has_quality===false?'standard':'standard',attributes:item.attributes.map(a=>({attributeId:String(a.id),valueId:String(a.supply_attribute_values[0]?.id||'')}))};document.getElementById('supply-config-title').textContent=item.name||'Fourniture';document.getElementById('supply-config-category').textContent=supplyCategoryMap.get(String(item.category_id))?.name||item.category||'Fournitures';const range=document.getElementById('supply-config-range');range.innerHTML=item.has_quality===false?'':`<h4>Choisissez la gamme</h4><div class="supply-config-options"><label><input type="radio" name="modal-supply-range" value="standard" checked><span>Standard <b>${getSupplyUnitPrice(item,'standard').toFixed(2)} DH</b></span></label><label><input type="radio" name="modal-supply-range" value="quality"><span>Qualité <b>${getSupplyUnitPrice(item,'quality').toFixed(2)} DH</b></span></label></div>`;document.getElementById('supply-config-attributes').innerHTML=item.attributes.map(attribute=>`<div class="supply-config-block"><h4>${escapeHtmlAttribute(attribute.name)}</h4><div class="supply-config-options">${attribute.supply_attribute_values.map((value,index)=>{const standardSupplement=attribute.has_supplement?(Number(value.standard_supplement)||0):0,qualitySupplement=attribute.has_supplement?(Number(value.quality_supplement)||0):0;return `<label><input type="radio" name="supply-attribute-${attribute.id}" value="${value.id}" ${index===0?'checked':''}><span class="supply-config-value-copy">${escapeHtmlAttribute(value.label)}</span>${attribute.has_supplement?`<b class="supply-config-supplement-chip" data-standard-supplement="${standardSupplement}" data-quality-supplement="${qualitySupplement}"></b>`:''}</label>`}).join('')||'<p class="flow-muted">Aucune valeur disponible.</p>'}</div></div>`).join('');const modal=document.getElementById('supply-config-modal');modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');syncSupplyConfigurationPrice();modal.querySelectorAll('input').forEach(input=>input.onchange=syncSupplyConfigurationPrice);}
+    function syncSupplyConfigurationPrice(){if(!activeSupplyConfiguration)return;const item=allSupplyItems.find(x=>String(x.id)===String(activeSupplyConfiguration.itemId));if(!item)return;activeSupplyConfiguration.range=document.querySelector('input[name="modal-supply-range"]:checked')?.value||'standard';activeSupplyConfiguration.attributes=item.attributes.map(attribute=>({attributeId:String(attribute.id),valueId:document.querySelector(`input[name="supply-attribute-${attribute.id}"]:checked`)?.value||''}));document.getElementById('supply-config-price').textContent=`${configurationPrice(activeSupplyConfiguration).toFixed(2)} DH`;document.querySelectorAll('.supply-config-supplement-chip').forEach(chip=>{const supplement=Number(activeSupplyConfiguration.range==='quality'?chip.dataset.qualitySupplement:chip.dataset.standardSupplement)||0;chip.textContent=supplement>0?`+ ${supplement.toFixed(supplement%1?2:0)} DH`:'';chip.hidden=supplement<=0;});}
+    function closeSupplyConfiguration(){const modal=document.getElementById('supply-config-modal');modal?.classList.remove('is-open');modal?.setAttribute('aria-hidden','true');activeSupplyConfiguration=null;}
+    function confirmSupplyConfiguration(){if(!activeSupplyConfiguration)return;syncSupplyConfigurationPrice();const item=allSupplyItems.find(x=>String(x.id)===String(activeSupplyConfiguration.itemId));const key=`${item.id}-${Date.now()}-${Math.random().toString(36).slice(2,6)}`;selectedConfiguredSupplies.push({...activeSupplyConfiguration,key,price:configurationPrice(activeSupplyConfiguration)});renderSelectedSupplyItems();updateSupplyTotal();updateFinalSummary();closeSupplyConfiguration();}
+    function selectedSupplyDescription(config){const item=allSupplyItems.find(x=>String(x.id)===String(config.itemId));const parts=[];if(item?.has_quality!==false)parts.push(config.range==='quality'?'Qualité':'Standard');(config.attributes||[]).forEach(choice=>{const attribute=item?.attributes.find(a=>String(a.id)===String(choice.attributeId)),value=attribute?.supply_attribute_values.find(v=>String(v.id)===String(choice.valueId));if(value)parts.push(value.label)});return parts.join(', ')||'Configuration standard';}
+    function renderSelectedSupplyItems(){const box=document.getElementById('selected-supply-items');if(!box)return;box.innerHTML=selectedConfiguredSupplies.length?selectedConfiguredSupplies.map(config=>{const item=allSupplyItems.find(x=>String(x.id)===String(config.itemId));return `<div class="step3-selected-item"><input type="checkbox" class="supply-item-checkbox" checked hidden data-id="${item.id}" data-key="${config.key}" data-price="${config.price}"><div><b>${escapeHtmlAttribute(item.name)}</b><small>${escapeHtmlAttribute(selectedSupplyDescription(config))}</small></div><span>${Number(config.price).toFixed(2)} DH</span><button type="button" class="step3-remove-supply" data-key="${config.key}" aria-label="Supprimer">−</button></div>`}).join(''):'<p class="step3-empty-selection">Aucune fourniture ajoutée</p>';box.querySelectorAll('.step3-remove-supply').forEach(button=>button.onclick=()=>{selectedConfiguredSupplies=selectedConfiguredSupplies.filter(x=>x.key!==button.dataset.key);renderSelectedSupplyItems();updateSupplyTotal();updateFinalSummary()});}
+    function updateSupplyTotal(){const total=selectedConfiguredSupplies.reduce((sum,item)=>sum+Number(item.price||0),0),box=document.getElementById('supply-total-price');if(box)box.textContent=`${total.toFixed(2)} DH`;}
+    document.getElementById('supply-category-trigger')?.addEventListener('click',event=>{event.stopPropagation();const menu=document.getElementById('supply-category-menu'),trigger=event.currentTarget,opening=menu.hidden;menu.hidden=!opening;trigger.setAttribute('aria-expanded',opening?'true':'false')});document.getElementById('supply-category-menu')?.addEventListener('click',event=>event.stopPropagation());document.addEventListener('click',()=>{const menu=document.getElementById('supply-category-menu'),trigger=document.getElementById('supply-category-trigger');if(menu)menu.hidden=true;trigger?.setAttribute('aria-expanded','false')});document.getElementById('supply-reset-filter')?.addEventListener('click',()=>{selectedSupplyCategoryIds.clear();renderSupplyCategoryFilter();renderIndependentSupplyItems()});document.getElementById('supply-config-close')?.addEventListener('click',closeSupplyConfiguration);document.getElementById('supply-config-cancel')?.addEventListener('click',closeSupplyConfiguration);document.getElementById('supply-config-confirm')?.addEventListener('click',confirmSupplyConfiguration);document.getElementById('supply-config-modal')?.addEventListener('click',event=>{if(event.target.id==='supply-config-modal')closeSupplyConfiguration()});
     function getPersonalSupplyUnitPrice(item) {
         const range=document.querySelector('input[name="personal-supply-range"]:checked')?.value || 'standard';
         return Number.parseFloat(range==='quality' ? item.quality_price : item.standard_price) || 0;
@@ -547,10 +521,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const selectedPack = allSchoolData.find(item => String(item.id) === String(packId));
             if (!selectedPack) return;
 
-            const schoolDisplay = document.getElementById('display-school-name');
-            const levelDisplay = document.getElementById('display-level-name');
-            if (schoolDisplay) schoolDisplay.innerText = selectedPack.school_name;
-            if (levelDisplay) levelDisplay.innerText = selectedPack.level;
+            const schoolDisplay=document.getElementById('display-school-name'),levelDisplay=document.getElementById('display-level-name'),schoolLogo=document.getElementById('display-school-logo'),schoolLogoFallback=document.getElementById('display-school-logo-fallback');
+            if(schoolDisplay)schoolDisplay.innerText=selectedPack.school_name;
+            if(levelDisplay)levelDisplay.innerText=selectedPack.level;
+            const selectedSchoolLogo=normalizeSchoolLogoUrl(selectedPack.school_logo_url||'');
+            if(schoolLogo&&schoolLogoFallback){if(selectedSchoolLogo){schoolLogo.src=selectedSchoolLogo;schoolLogo.hidden=false;schoolLogoFallback.hidden=true;schoolLogo.onerror=()=>{schoolLogo.hidden=true;schoolLogoFallback.hidden=false;schoolLogoFallback.textContent=String(selectedPack.school_name||'E').charAt(0).toUpperCase()};}else{schoolLogo.hidden=true;schoolLogoFallback.hidden=false;schoolLogoFallback.textContent=String(selectedPack.school_name||'E').charAt(0).toUpperCase();}}
 
             isPhotoOrder = false; 
             let parsedItems = [];
@@ -638,6 +613,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isOutOfStock = item.availability === 'out_of_stock';
                 const isAlmostOut = item.availability === 'almost_out';
                 const availabilityText = isOutOfStock ? 'Out of stock' : isAlmostOut ? 'Almost out' : '';
+                row.dataset.category=item.category||'Fourniture';
                 row.innerHTML = `
                     <div class="flex items-center gap-3 flex-grow min-w-0">
                         <input type="checkbox" data-id="${item.id}" data-name="${item.name}" data-category="${item.category || 'Liste scolaire'}" data-price="${item.price}" ${isOutOfStock ? 'disabled' : 'checked'} class="pack-item-checkbox w-4 h-4 rounded text-[#E75C25] accent-[#E75C25] focus:ring-0 cursor-pointer flex-shrink-0">
@@ -872,17 +848,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         school_list_unselected_items: unselectedSchoolItems,
                         item_source: 'school_list'
                     }));
-                    const selectedSupplies = Array.from(document.querySelectorAll('.supply-item-checkbox:checked')).map(cb => {
-                        const item = allSupplyItems.find(entry => String(entry.id) === String(cb.dataset.id));
-                        return item ? {
-                            id: item.id,
-                            name: item.name,
-                            category: item.category || 'Fournitures',
-                            price: getSupplyUnitPrice(item),
-                            supply_range: selectedSupplyRange,
-                            item_source: 'independent_supply'
-                        } : null;
-                    }).filter(Boolean);
+                    const selectedSupplies=selectedConfiguredSupplies.map(config=>{const item=allSupplyItems.find(entry=>String(entry.id)===String(config.itemId));if(!item)return null;return {id:item.id,name:item.name,category:supplyCategoryMap.get(String(item.category_id))?.name||item.category||'Fournitures',price:Number(config.price)||0,supply_range:config.range,supply_configuration:config.attributes.map(choice=>{const attribute=item.attributes.find(a=>String(a.id)===String(choice.attributeId)),value=attribute?.supply_attribute_values.find(v=>String(v.id)===String(choice.valueId));return {attribute_id:choice.attributeId,attribute_name:attribute?.name||'',value_id:choice.valueId,value_label:value?.label||''}}),item_source:'independent_supply'}}).filter(Boolean);
                     payloadItems.push(...selectedSupplies);
 
                     if (payloadItems.length === 0) {
@@ -1030,23 +996,61 @@ document.addEventListener('DOMContentLoaded', () => {
         const fmt=v=>new Date(v).toLocaleDateString('fr-FR');
         const short=(v,n)=>{const t=String(v||'-');return t.length>n?t.slice(0,n-1)+'…':t};
         const write=(v,x,y,o={})=>{doc.setFont('Aptos',o.bold?'bold':'normal');doc.setFontSize(10);doc.setTextColor(...(o.color||[20,20,20]));doc.text(String(v??''),x*PT,y*PT,{align:o.align||'left',baseline:'alphabetic'})};
-        const chunks=[]; if(!documentItems.length) chunks.push([]); else { chunks.push(documentItems.slice(0,12)); for(let i=12;i<documentItems.length;i+=15) chunks.push(documentItems.slice(i,i+15)); }
+        const itemConfigurationText=item=>{const parts=[];if(item?.supply_range)parts.push(String(item.supply_range).toLowerCase()==='quality'?'Qualité':'Standard');const configuration=Array.isArray(item?.supply_configuration)?item.supply_configuration:[];configuration.forEach(choice=>{const value=choice?.value_label||choice?.value||choice?.label;if(value)parts.push(String(value))});return [...new Set(parts.filter(Boolean))].join(', ')};
+        const itemDisplayName=item=>{const details=itemConfigurationText(item);return `${item?.name||'Article'}${details?` (${details})`:''}`};
+        const sourceRank=item=>item?.item_source==='independent_supply'||item?.supply_range?1:0;
+        const orderedDocumentItems=documentItems.slice().sort((a,b)=>sourceRank(a)-sourceRank(b));
+        const itemOrigin=item=>sourceRank(item)===1?'Fourniture indépendante':photo&&item?.type==='photo_price'?'Liste personnelle':'Liste scolaire';
+        const chunks=[];
+        if(!orderedDocumentItems.length)chunks.push([]);
+        else{
+            chunks.push(orderedDocumentItems.slice(0,12));
+            for(let i=12;i<orderedDocumentItems.length;i+=23)chunks.push(orderedDocumentItems.slice(i,i+23));
+        }
         for(let pi=0;pi<chunks.length;pi++){
-            if(pi)doc.addPage(); doc.addImage(template,'PNG',0,0,210,297,undefined,'FAST'); const pageItems=chunks[pi];
+            const continuation=pi>0;
+            if(continuation)doc.addPage();
+            doc.addImage(template,'PNG',0,0,210,297,undefined,'FAST');
+            if(continuation){
+                doc.setFillColor(255,255,255);
+                doc.rect(0,230*PT,210,297-230*PT,'F');
+            }
+            const pageItems=chunks[pi];
             write('Téléphone : +212 5 36 23 02 59',38,197,{bold:true});
-            write(order.numero_commande||'-',565,181,{bold:true,align:'right',color:[191,78,20]}); write(fmt(created),565,202,{align:'right'}); write(fmt(deadline),565,216,{align:'right'});
-            write(short(order.client_name,30),330,280); write(short(order.client_email,42),330,294); write(short(order.client_phone,25),330,307);
-            const details=[photo?'Liste personnalisée':'Rentrée scolaire 2026/2027',String(order.fulfillment_method||order.delivery_method||'').toLowerCase().includes('delivery')?'Livraison':'Retrait au magasin',photo?'Ma propre liste':supplies?'Liste officielle du site + fournitures personnalisées':'Liste officielle du site',photo?'Liste importée':[meta.school_name,meta.school_level].filter(Boolean).join(', niveau ')||'-',(order.payment_status||'unpaid')==='paid'?'Payé':'Non payé'];
-            [380,394,407,421,434].forEach((y,i)=>write(details[i],145,y));
-            const left=38,right=559,xa=42,xu=420,xq=486,xt=559,top=458,rh=pi?16:17;
-            write('Article',xa,top,{bold:true}); write('Coût unitaire',xu,top,{bold:true,align:'right'}); write('Quantité',xq,top,{bold:true,align:'right'}); write('Total',xt,top,{bold:true,align:'right'});
+            write(order.numero_commande||'-',565,181,{bold:true,align:'right',color:[191,78,20]});
+            write(fmt(created),565,202,{align:'right'});
+            write(fmt(deadline),565,216,{align:'right'});
+            if(!continuation){
+                write(short(order.client_name,30),330,280);
+                write(short(order.client_email,42),330,294);
+                write(short(order.client_phone,25),330,307);
+                const details=[photo?'Liste personnalisée':'Rentrée scolaire 2026/2027',String(order.fulfillment_method||order.delivery_method||'').toLowerCase().includes('delivery')?'Livraison':'Retrait au magasin',photo?'Ma propre liste':supplies?'Liste officielle du site + fournitures personnalisées':'Liste officielle du site',photo?'Liste importée':[meta.school_name,meta.school_level].filter(Boolean).join(', niveau ')||'-',(order.payment_status||'unpaid')==='paid'?'Payé':'Non payé'];
+                [380,394,407,421,434].forEach((y,i)=>write(details[i],145,y));
+            }
+            const left=38,right=559,xa=42,xu=420,xq=486,xt=559,top=continuation?250:458,rh=continuation?22:22;
+            write('Article',xa,top,{bold:true});
+            write('Coût unitaire',xu,top,{bold:true,align:'right'});
+            write('Quantité',xq,top,{bold:true,align:'right'});
+            write('Total',xt,top,{bold:true,align:'right'});
             doc.setDrawColor(75);doc.setLineWidth(.45);doc.line(left*PT,(top+7)*PT,right*PT,(top+7)*PT);
-            const rows=pageItems.length?pageItems:(photo?[{name:'Commande par photo',price:photoPrice,quantity:1}]:[]);
-            rows.forEach((item,n)=>{const rule=top+7+(n+1)*rh,base=rule-5,q=Number(item.quantity)||1,u=Number(item.price)||0;write(short(item.name||'Article',62),xa,base);write(u.toFixed(2),xu,base,{align:'right'});write(q,xq,base,{align:'right'});write((u*q).toFixed(2),xt,base,{align:'right'});doc.setDrawColor(205);doc.setLineWidth(.22);doc.line(left*PT,rule*PT,right*PT,rule*PT)});
-            const ty=top+7+(Math.max(rows.length,1)+1)*rh;doc.setFillColor(231,92,37);doc.roundedRect(left*PT,ty*PT,(right-left)*PT,24*PT,2,2,'F');
-            write('TOTAL DE COMMANDE À RÉGLER',left+6,ty+16,{bold:true,color:[255,255,255]});
-            const pageTotal=chunks.length===1?total:rows.reduce((sum,i)=>sum+(Number(i.price)||0)*(Number(i.quantity)||1),0);
-            write(pageTotal>0?`${pageTotal.toFixed(2)} MAD`:'SUR DEVIS',right-6,ty+16,{bold:true,align:'right',color:[255,255,255]});
+            const rows=pageItems.length?pageItems:(photo?[{name:'Commande par photo',price:photoPrice,quantity:1,type:'photo_price'}]:[]);
+            rows.forEach((item,n)=>{
+                const rule=top+7+(n+1)*rh,nameY=rule-10,originY=rule-3,q=Number(item.quantity)||1,u=Number(item.price)||0;
+                const articleName=short(item.name||'Article',48),configurationText=itemConfigurationText(item),articleX=xa*PT,articleY=nameY*PT;
+                doc.setFont('Aptos','normal');doc.setFontSize(10);doc.setTextColor(20,20,20);doc.text(articleName,articleX,articleY,{baseline:'alphabetic'});
+                if(configurationText){const nameWidth=doc.getTextWidth(articleName);doc.setFont('helvetica','italic');doc.setFontSize(8.2);doc.setTextColor(70,70,70);doc.text(` (${short(configurationText,38)})`,articleX+nameWidth+1.6,articleY,{baseline:'alphabetic'});}
+                doc.setFont('helvetica','italic');doc.setFontSize(7.5);doc.setTextColor(105,105,105);doc.text(itemOrigin(item),xa*PT,originY*PT,{baseline:'alphabetic'});
+                write(u.toFixed(2),xu,nameY+3,{align:'right'});
+                write(q,xq,nameY+3,{align:'right'});
+                write((u*q).toFixed(2),xt,nameY+3,{align:'right'});
+                doc.setDrawColor(205);doc.setLineWidth(.22);doc.line(left*PT,rule*PT,right*PT,rule*PT);
+            });
+            if(pi===chunks.length-1){
+                const ty=top+7+(Math.max(rows.length,1)+1)*rh;
+                doc.setFillColor(231,92,37);doc.roundedRect(left*PT,ty*PT,(right-left)*PT,24*PT,2,2,'F');
+                write('TOTAL DE COMMANDE À RÉGLER',left+6,ty+16,{bold:true,color:[255,255,255]});
+                write(total>0?`${total.toFixed(2)} MAD`:'SUR DEVIS',right-6,ty+16,{bold:true,align:'right',color:[255,255,255]});
+            }
         }
         doc.save(`commande-${order.numero_commande||order.qr_code||'elqods'}.pdf`);
     }
@@ -1172,37 +1176,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     window.openTrackingModal = openTrackingModal;
 
-    function closeTrackingDrawer() {
-        const drawer = document.getElementById('tracking-details-drawer');
-        if (drawer) drawer.classList.remove('is-open');
-        document.documentElement.classList.remove('tracking-drawer-open');
-        document.body.classList.remove('tracking-drawer-open');
-    }
-    window.closeTrackingDrawer = closeTrackingDrawer;
-
-    function openTrackingDrawer(html) {
-        let drawer = document.getElementById('tracking-details-drawer');
-        if (!drawer) {
-            drawer = document.createElement('div');
-            drawer.id = 'tracking-details-drawer';
-            drawer.className = 'tracking-details-drawer';
-            drawer.setAttribute('role', 'dialog');
-            drawer.setAttribute('aria-modal', 'true');
-            drawer.innerHTML = `<aside class="tracking-details-panel"><div id="tracking-details-content"></div></aside>`;
-            document.body.appendChild(drawer);
-            drawer.addEventListener('click', event => {
-                if (event.target === drawer) closeTrackingDrawer();
-            });
-        } else if (drawer.parentElement !== document.body) {
-            document.body.appendChild(drawer);
-        }
-        const content = drawer.querySelector('#tracking-details-content');
-        if (content) content.innerHTML = html;
-        document.documentElement.classList.add('tracking-drawer-open');
-        document.body.classList.add('tracking-drawer-open');
-        drawer.classList.add('is-open');
-    }
-    window.openTrackingDrawer = openTrackingDrawer;
+    function closeTrackingDrawer(){const drawer=document.getElementById('tracking-details-drawer');drawer?.classList.remove('qd-open');document.documentElement.classList.remove('qd-lock');document.body.classList.remove('qd-lock');}
+    window.closeTrackingDrawer=closeTrackingDrawer;
+    function openTrackingDrawer(html){let drawer=document.getElementById('tracking-details-drawer');if(!drawer){drawer=document.createElement('div');drawer.id='tracking-details-drawer';drawer.className='qd-overlay';drawer.innerHTML='<aside class="qd-panel" role="dialog" aria-modal="true"><div id="tracking-details-content"></div></aside>';document.body.appendChild(drawer);drawer.addEventListener('click',event=>{if(event.target===drawer)closeTrackingDrawer()});}const content=drawer.querySelector('#tracking-details-content');content.innerHTML=html;content.style.height='100%';content.style.display='flex';content.style.flexDirection='column';drawer.classList.add('qd-open');document.documentElement.classList.add('qd-lock');document.body.classList.add('qd-lock');}
+    window.openTrackingDrawer=openTrackingDrawer;
 
     document.addEventListener('keydown', event => {
         if (event.key === 'Escape') closeTrackingDrawer();
@@ -1235,16 +1212,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     window.cancelTrackedOrder = cancelTrackedOrder;
 
-    function openOrderDetails(order, items, history, qrPayload, schoolInfo = { school: '', level: '' }) {
-        const photoUrl = getPhotoUrl(order, items);
-        const photoOrder = items.some(i => i.type === 'photo_upload' || i.url || i.photo_url) || !!photoUrl;
-        const rows = !photoOrder && items.length
-            ? items.map(item => `<div class="tracking-details-row"><span>${item.name || '-'}</span><b>${(Number(item.price) || 0).toFixed(2)} DH</b></div>`).join('')
-            : `<div class="p-4 rounded-2xl bg-orange-50 border border-orange-100 text-orange-700 text-sm">Cette commande est passée à partir d’une liste personnalisée importée.${photoUrl ? ` <a href="${photoUrl}" target="_blank" class="font-black underline">Voir l’image</a>` : ''}</div>`;
-        const trackedTotal = Number(order.total_amount ?? items.reduce((sum, item) => sum + (Number(item.price) || 0), 0));
-        const trackedTotalText = trackedTotal > 0 ? `${trackedTotal.toFixed(2)} DH` : 'En attente de validation';
-        openTrackingDrawer(`<div class="flex items-start justify-between gap-4 mb-6"><div><h3 class="text-2xl font-black text-[#E75C25]">Détails de ma commande</h3><p class="text-sm text-stone-500 mt-1">${order.numero_commande || '-'}</p></div><button onclick="closeTrackingDrawer()" class="text-stone-400 hover:text-stone-900 text-2xl leading-none">×</button></div><div class="grid gap-3 text-sm"><div class="tracking-details-row"><span>Type de commande</span><b>${photoOrder ? 'Liste personnalisée importée' : 'Liste officielle'}</b></div>${!photoOrder ? `<div class="tracking-details-row"><span>École / niveau</span><b>${[schoolInfo.school, schoolInfo.level].filter(Boolean).join(' · ') || '-'}</b></div>` : ''}${photoUrl ? `<div class="tracking-details-row"><span>Image importée</span><b><a href="${photoUrl}" target="_blank" class="text-[#E75C25] hover:underline">Ouvrir l’image</a></b></div>` : ''}${photoOrder ? `<div class="tracking-details-row"><span>Prix à payer</span><b class="text-[#16883a]">${trackedTotalText}</b></div>` : ''}<div class="grid gap-2 mt-2">${rows}</div></div>`);
-    }
+    function qdEscape(value){return String(value??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');}
+    function qdSupplyDetail(item){const parts=[];if(item?.supply_range)parts.push(String(item.supply_range).toLowerCase()==='quality'?'Qualité':'Standard');(Array.isArray(item?.supply_configuration)?item.supply_configuration:[]).forEach(choice=>{const value=choice?.value_label||choice?.value||choice?.label;if(value)parts.push(String(value))});return [...new Set(parts.filter(Boolean))].join(', ');}
+    function qdMarkup(order,items,photoUrl=''){const safe=Array.isArray(items)?items:[],school=safe.filter(item=>item.type!=='photo_upload'&&item.item_source!=='independent_supply'&&!item.supply_range),supplies=safe.filter(item=>item.type!=='photo_upload'&&(item.item_source==='independent_supply'||Boolean(item.supply_range)));const rows=(list,type)=>list.length?list.map((item,index)=>`<div class="qd-row"><div class="qd-copy"><b>${index+1}. ${qdEscape(item.name||'Article')}</b><small>${qdEscape(type==='supply'?(qdSupplyDetail(item)||'Standard'):(item.category||'Liste scolaire'))}</small></div><strong class="qd-price">${(Number(item.price)||0).toFixed(2)} DH</strong></div>`).join(''):'<div class="qd-empty">Aucun article dans cette rubrique.</div>';const photo=photoUrl?`<a class="qd-photo" href="${qdEscape(photoUrl)}" target="_blank" rel="noopener"><span>Ouvrir l’image de la liste</span><span>↗</span></a>`:'';return `<header class="qd-head"><div><h2>#${qdEscape(order?.numero_commande||order?.id||'-')}</h2><p>Détails de la commande</p></div><button type="button" class="qd-close" aria-label="Fermer">×</button></header><nav class="qd-tabs"><button type="button" class="qd-tab qd-active" data-qd-tab="school"><span class="qd-tab-num">01</span> Liste scolaire <span class="qd-badge">${school.length}</span></button><button type="button" class="qd-tab" data-qd-tab="supply"><span class="qd-tab-num">02</span> Fourniture <span class="qd-badge">${supplies.length}</span></button></nav><main class="qd-body"><section class="qd-pane qd-active" data-qd-pane="school"><div class="qd-pane-head"><h3>Liste scolaire</h3><span>${school.length} article(s)</span></div>${photo}<div class="qd-list">${rows(school,'school')}</div></section><section class="qd-pane" data-qd-pane="supply"><div class="qd-pane-head"><h3>Fourniture</h3><span>${supplies.length} article(s)</span></div><div class="qd-list">${rows(supplies,'supply')}</div></section></main>`;}
+    function qdBind(root,close){root?.querySelector('.qd-close')?.addEventListener('click',close);root?.querySelectorAll('[data-qd-tab]').forEach(button=>button.addEventListener('click',()=>{const tab=button.dataset.qdTab;root.querySelectorAll('[data-qd-tab]').forEach(node=>node.classList.toggle('qd-active',node===button));root.querySelectorAll('[data-qd-pane]').forEach(pane=>pane.classList.toggle('qd-active',pane.dataset.qdPane===tab));}));}
+    function openOrderDetails(order,items,history,qrPayload,schoolInfo={school:'',level:''}){const safe=Array.isArray(items)?items:[];openTrackingDrawer(qdMarkup(order,safe,getPhotoUrl(order,safe)));qdBind(document.getElementById('tracking-details-drawer'),closeTrackingDrawer);}
     window.openOrderDetails = openOrderDetails;
 
 
