@@ -31,9 +31,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }));
     let selectedSupplyRange = 'standard';
     let selectedConfiguredSupplies = [];
+    let selectedPersonalConfiguredSupplies = [];
     let activeSupplyConfiguration = null;
+    let activeSupplyContext = 'official';
     let supplyCategoryMap = new Map();
     let selectedSupplyCategoryIds = new Set();
+    let selectedPersonalSupplyCategoryIds = new Set();
 
 
     // Masquage progressif de la Splash Page après 5 secondes
@@ -146,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const { data: lists } = await supabaseClient.from('school_lists').select('*');
             if (lists) {
-                allSchoolData = lists.filter(list => list.is_active !== false);
+                allSchoolData = lists.filter(list => list.is_active !== false && list.school_is_active !== false);
                 populateSchoolsDropdown();
             }
         } catch (err) {}
@@ -166,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const activeCategories=(categoriesResult.data||[]).filter(c=>c.is_active!==false);supplyCategoryMap=new Map(activeCategories.map(c=>[String(c.id),c]));
             const attrsByItem=new Map();if(!attributesResult.error)(attributesResult.data||[]).filter(a=>a.is_active!==false).forEach(a=>{const key=String(a.supply_item_id);if(!attrsByItem.has(key))attrsByItem.set(key,[]);attrsByItem.get(key).push({...a,supply_attribute_values:(a.supply_attribute_values||[]).filter(v=>v.is_active!==false).sort((x,y)=>(x.sort_order||0)-(y.sort_order||0))})});
             allSupplyItems=(itemsResult.data||[]).filter(item=>item.is_active!==false&&supplyCategoryMap.has(String(item.category_id))).map(item=>({...item,attributes:attrsByItem.get(String(item.id))||[]}));
-            renderSupplyCategoryFilter();renderIndependentSupplyItems();renderSelectedSupplyItems();
+            renderSupplyCategoryFilter();renderIndependentSupplyItems();renderSelectedSupplyItems();renderPersonalSupplyCategoryFilter();renderPersonalSupplyItems();renderPersonalSelectedSupplyItems();
         }catch(error){console.error('Chargement fournitures :',error);container.innerHTML='<p class="flow-muted">La liste des fournitures est momentanément indisponible.</p>';}
     }
     function renderSupplyCategoryFilter(){
@@ -179,33 +182,97 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function updateSupplyCategoryTrigger(){const label=document.querySelector('#supply-category-trigger span');if(!label)return;const count=selectedSupplyCategoryIds.size;label.textContent=count?`${count} catégorie${count>1?'s':''} sélectionnée${count>1?'s':''}`:'Toutes les catégories';}
     function getSupplyUnitPrice(item,range=selectedSupplyRange){return Number.parseFloat(range==='quality'&&item.has_quality!==false?item.quality_price:item.standard_price)||0;}
-    function renderIndependentSupplyItems(){const container=document.getElementById('independent-supply-items');if(!container)return;const items=allSupplyItems.filter(item=>!selectedSupplyCategoryIds.size||selectedSupplyCategoryIds.has(String(item.category_id)));container.innerHTML=items.length?items.map(item=>`<div class="step3-catalog-item"><span>${escapeHtmlAttribute(item.name||'Fourniture')}</span><button type="button" class="step3-add-supply" data-id="${item.id}" aria-label="Ajouter ${escapeHtmlAttribute(item.name)}">+</button></div>`).join(''):'<p class="flow-muted">Aucune fourniture dans cette catégorie.</p>';container.querySelectorAll('.step3-add-supply').forEach(button=>button.onclick=()=>openSupplyConfiguration(button.dataset.id));}
+    function renderIndependentSupplyItems(){const container=document.getElementById('independent-supply-items');if(!container)return;const items=allSupplyItems.filter(item=>!selectedSupplyCategoryIds.size||selectedSupplyCategoryIds.has(String(item.category_id)));container.innerHTML=items.length?items.map(item=>`<div class="step3-catalog-item"><span>${escapeHtmlAttribute(item.name||'Fourniture')}</span><button type="button" class="step3-add-supply" data-id="${item.id}" aria-label="Ajouter ${escapeHtmlAttribute(item.name)}">+</button></div>`).join(''):'<p class="flow-muted">Aucune fourniture dans cette catégorie.</p>';container.querySelectorAll('.step3-add-supply').forEach(button=>button.onclick=()=>openSupplyConfiguration(button.dataset.id,'official'));}
     function configurationPrice(config){const item=allSupplyItems.find(x=>String(x.id)===String(config.itemId));if(!item)return 0;let total=getSupplyUnitPrice(item,config.range);(config.attributes||[]).forEach(choice=>{const attribute=item.attributes.find(a=>String(a.id)===String(choice.attributeId)),value=attribute?.supply_attribute_values.find(v=>String(v.id)===String(choice.valueId));if(attribute?.has_supplement&&value)total+=Number(config.range==='quality'?value.quality_supplement:value.standard_supplement)||0});return total;}
-    function openSupplyConfiguration(itemId){const item=allSupplyItems.find(x=>String(x.id)===String(itemId));if(!item)return;activeSupplyConfiguration={itemId:String(item.id),range:item.has_quality===false?'standard':'standard',attributes:item.attributes.map(a=>({attributeId:String(a.id),valueId:String(a.supply_attribute_values[0]?.id||'')}))};document.getElementById('supply-config-title').textContent=item.name||'Fourniture';document.getElementById('supply-config-category').textContent=supplyCategoryMap.get(String(item.category_id))?.name||item.category||'Fournitures';const range=document.getElementById('supply-config-range');range.innerHTML=item.has_quality===false?'':`<h4>Choisissez la gamme</h4><div class="supply-config-options"><label><input type="radio" name="modal-supply-range" value="standard" checked><span>Standard <b>${getSupplyUnitPrice(item,'standard').toFixed(2)} DH</b></span></label><label><input type="radio" name="modal-supply-range" value="quality"><span>Qualité <b>${getSupplyUnitPrice(item,'quality').toFixed(2)} DH</b></span></label></div>`;document.getElementById('supply-config-attributes').innerHTML=item.attributes.map(attribute=>`<div class="supply-config-block"><h4>${escapeHtmlAttribute(attribute.name)}</h4><div class="supply-config-options">${attribute.supply_attribute_values.map((value,index)=>{const standardSupplement=attribute.has_supplement?(Number(value.standard_supplement)||0):0,qualitySupplement=attribute.has_supplement?(Number(value.quality_supplement)||0):0;return `<label><input type="radio" name="supply-attribute-${attribute.id}" value="${value.id}" ${index===0?'checked':''}><span class="supply-config-value-copy">${escapeHtmlAttribute(value.label)}</span>${attribute.has_supplement?`<b class="supply-config-supplement-chip" data-standard-supplement="${standardSupplement}" data-quality-supplement="${qualitySupplement}"></b>`:''}</label>`}).join('')||'<p class="flow-muted">Aucune valeur disponible.</p>'}</div></div>`).join('');const modal=document.getElementById('supply-config-modal');modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');syncSupplyConfigurationPrice();modal.querySelectorAll('input').forEach(input=>input.onchange=syncSupplyConfigurationPrice);}
+    function openSupplyConfiguration(itemId,context='official'){activeSupplyContext=context;const item=allSupplyItems.find(x=>String(x.id)===String(itemId));if(!item)return;activeSupplyConfiguration={itemId:String(item.id),range:item.has_quality===false?'standard':'standard',attributes:item.attributes.map(a=>({attributeId:String(a.id),valueId:String(a.supply_attribute_values[0]?.id||'')}))};document.getElementById('supply-config-title').textContent=item.name||'Fourniture';document.getElementById('supply-config-category').textContent=supplyCategoryMap.get(String(item.category_id))?.name||item.category||'Fournitures';const range=document.getElementById('supply-config-range');range.innerHTML=item.has_quality===false?'':`<h4>Choisissez la gamme</h4><div class="supply-config-options"><label><input type="radio" name="modal-supply-range" value="standard" checked><span>Standard <b>${getSupplyUnitPrice(item,'standard').toFixed(2)} DH</b></span></label><label><input type="radio" name="modal-supply-range" value="quality"><span>Qualité <b>${getSupplyUnitPrice(item,'quality').toFixed(2)} DH</b></span></label></div>`;document.getElementById('supply-config-attributes').innerHTML=item.attributes.map(attribute=>`<div class="supply-config-block"><h4>${escapeHtmlAttribute(attribute.name)}</h4><div class="supply-config-options">${attribute.supply_attribute_values.map((value,index)=>{const standardSupplement=attribute.has_supplement?(Number(value.standard_supplement)||0):0,qualitySupplement=attribute.has_supplement?(Number(value.quality_supplement)||0):0;return `<label><input type="radio" name="supply-attribute-${attribute.id}" value="${value.id}" ${index===0?'checked':''}><span class="supply-config-value-copy">${escapeHtmlAttribute(value.label)}</span>${attribute.has_supplement?`<b class="supply-config-supplement-chip" data-standard-supplement="${standardSupplement}" data-quality-supplement="${qualitySupplement}"></b>`:''}</label>`}).join('')||'<p class="flow-muted">Aucune valeur disponible.</p>'}</div></div>`).join('');const modal=document.getElementById('supply-config-modal');modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');syncSupplyConfigurationPrice();modal.querySelectorAll('input').forEach(input=>input.onchange=syncSupplyConfigurationPrice);}
     function syncSupplyConfigurationPrice(){if(!activeSupplyConfiguration)return;const item=allSupplyItems.find(x=>String(x.id)===String(activeSupplyConfiguration.itemId));if(!item)return;activeSupplyConfiguration.range=document.querySelector('input[name="modal-supply-range"]:checked')?.value||'standard';activeSupplyConfiguration.attributes=item.attributes.map(attribute=>({attributeId:String(attribute.id),valueId:document.querySelector(`input[name="supply-attribute-${attribute.id}"]:checked`)?.value||''}));document.getElementById('supply-config-price').textContent=`${configurationPrice(activeSupplyConfiguration).toFixed(2)} DH`;document.querySelectorAll('.supply-config-supplement-chip').forEach(chip=>{const supplement=Number(activeSupplyConfiguration.range==='quality'?chip.dataset.qualitySupplement:chip.dataset.standardSupplement)||0;chip.textContent=supplement>0?`+ ${supplement.toFixed(supplement%1?2:0)} DH`:'';chip.hidden=supplement<=0;});}
     function closeSupplyConfiguration(){const modal=document.getElementById('supply-config-modal');modal?.classList.remove('is-open');modal?.setAttribute('aria-hidden','true');activeSupplyConfiguration=null;}
-    function confirmSupplyConfiguration(){if(!activeSupplyConfiguration)return;syncSupplyConfigurationPrice();const item=allSupplyItems.find(x=>String(x.id)===String(activeSupplyConfiguration.itemId));const key=`${item.id}-${Date.now()}-${Math.random().toString(36).slice(2,6)}`;selectedConfiguredSupplies.push({...activeSupplyConfiguration,key,price:configurationPrice(activeSupplyConfiguration)});renderSelectedSupplyItems();updateSupplyTotal();updateFinalSummary();closeSupplyConfiguration();}
+    function confirmSupplyConfiguration(){
+        if(!activeSupplyConfiguration)return;
+        syncSupplyConfigurationPrice();
+        const item=allSupplyItems.find(x=>String(x.id)===String(activeSupplyConfiguration.itemId));
+        if(!item)return;
+        const key=`${item.id}-${Date.now()}-${Math.random().toString(36).slice(2,6)}`;
+        const configured={...activeSupplyConfiguration,key,price:configurationPrice(activeSupplyConfiguration)};
+        if(activeSupplyContext==='personal'){
+            selectedPersonalConfiguredSupplies.push(configured);
+            renderPersonalSelectedSupplyItems();
+            updatePersonalSupplyTotal();
+        }else{
+            selectedConfiguredSupplies.push(configured);
+            renderSelectedSupplyItems();
+            updateSupplyTotal();
+        }
+        updateFinalSummary();
+        closeSupplyConfiguration();
+    }
     function selectedSupplyDescription(config){const item=allSupplyItems.find(x=>String(x.id)===String(config.itemId));const parts=[];if(item?.has_quality!==false)parts.push(config.range==='quality'?'Qualité':'Standard');(config.attributes||[]).forEach(choice=>{const attribute=item?.attributes.find(a=>String(a.id)===String(choice.attributeId)),value=attribute?.supply_attribute_values.find(v=>String(v.id)===String(choice.valueId));if(value)parts.push(value.label)});return parts.join(', ')||'Configuration standard';}
     function renderSelectedSupplyItems(){const box=document.getElementById('selected-supply-items');if(!box)return;box.innerHTML=selectedConfiguredSupplies.length?selectedConfiguredSupplies.map(config=>{const item=allSupplyItems.find(x=>String(x.id)===String(config.itemId));return `<div class="step3-selected-item"><input type="checkbox" class="supply-item-checkbox" checked hidden data-id="${item.id}" data-key="${config.key}" data-price="${config.price}"><div><b>${escapeHtmlAttribute(item.name)}</b><small>${escapeHtmlAttribute(selectedSupplyDescription(config))}</small></div><span>${Number(config.price).toFixed(2)} DH</span><button type="button" class="step3-remove-supply" data-key="${config.key}" aria-label="Supprimer">−</button></div>`}).join(''):'<p class="step3-empty-selection">Aucune fourniture ajoutée</p>';box.querySelectorAll('.step3-remove-supply').forEach(button=>button.onclick=()=>{selectedConfiguredSupplies=selectedConfiguredSupplies.filter(x=>x.key!==button.dataset.key);renderSelectedSupplyItems();updateSupplyTotal();updateFinalSummary()});}
     function updateSupplyTotal(){const total=selectedConfiguredSupplies.reduce((sum,item)=>sum+Number(item.price||0),0),box=document.getElementById('supply-total-price');if(box)box.textContent=`${total.toFixed(2)} DH`;}
-    document.getElementById('supply-category-trigger')?.addEventListener('click',event=>{event.stopPropagation();const menu=document.getElementById('supply-category-menu'),trigger=event.currentTarget,opening=menu.hidden;menu.hidden=!opening;trigger.setAttribute('aria-expanded',opening?'true':'false')});document.getElementById('supply-category-menu')?.addEventListener('click',event=>event.stopPropagation());document.addEventListener('click',()=>{const menu=document.getElementById('supply-category-menu'),trigger=document.getElementById('supply-category-trigger');if(menu)menu.hidden=true;trigger?.setAttribute('aria-expanded','false')});document.getElementById('supply-reset-filter')?.addEventListener('click',()=>{selectedSupplyCategoryIds.clear();renderSupplyCategoryFilter();renderIndependentSupplyItems()});document.getElementById('supply-config-close')?.addEventListener('click',closeSupplyConfiguration);document.getElementById('supply-config-cancel')?.addEventListener('click',closeSupplyConfiguration);document.getElementById('supply-config-confirm')?.addEventListener('click',confirmSupplyConfiguration);document.getElementById('supply-config-modal')?.addEventListener('click',event=>{if(event.target.id==='supply-config-modal')closeSupplyConfiguration()});
-    function getPersonalSupplyUnitPrice(item) {
-        const range=document.querySelector('input[name="personal-supply-range"]:checked')?.value || 'standard';
-        return Number.parseFloat(range==='quality' ? item.quality_price : item.standard_price) || 0;
+    document.getElementById('supply-category-trigger')?.addEventListener('click',event=>{event.stopPropagation();const menu=document.getElementById('supply-category-menu'),trigger=event.currentTarget,opening=menu.hidden;menu.hidden=!opening;trigger.setAttribute('aria-expanded',opening?'true':'false')});document.getElementById('supply-category-menu')?.addEventListener('click',event=>event.stopPropagation());document.addEventListener('click',()=>{const menu=document.getElementById('supply-category-menu'),trigger=document.getElementById('supply-category-trigger');if(menu)menu.hidden=true;trigger?.setAttribute('aria-expanded','false');const personalMenu=document.getElementById('personal-supply-category-menu'),personalTrigger=document.getElementById('personal-supply-category-trigger');if(personalMenu)personalMenu.hidden=true;personalTrigger?.setAttribute('aria-expanded','false')});document.getElementById('supply-reset-filter')?.addEventListener('click',()=>{selectedSupplyCategoryIds.clear();renderSupplyCategoryFilter();renderIndependentSupplyItems()});document.getElementById('supply-config-close')?.addEventListener('click',closeSupplyConfiguration);document.getElementById('supply-config-cancel')?.addEventListener('click',closeSupplyConfiguration);document.getElementById('supply-config-confirm')?.addEventListener('click',confirmSupplyConfiguration);document.getElementById('supply-config-modal')?.addEventListener('click',event=>{if(event.target.id==='supply-config-modal')closeSupplyConfiguration()});
+    function renderPersonalSupplyCategoryFilter(){
+        const menu=document.getElementById('personal-supply-category-menu');
+        const trigger=document.getElementById('personal-supply-category-trigger');
+        if(!menu||!trigger)return;
+        const valid=new Set([...supplyCategoryMap.keys()]);
+        [...selectedPersonalSupplyCategoryIds].forEach(id=>{if(!valid.has(id))selectedPersonalSupplyCategoryIds.delete(id)});
+        const wasOpen=!menu.hidden;
+        menu.innerHTML=[...supplyCategoryMap.values()].map(category=>`<label><input type="checkbox" value="${category.id}" ${selectedPersonalSupplyCategoryIds.has(String(category.id))?'checked':''}><span>${escapeHtmlAttribute(category.name)}</span></label>`).join('')||'<p>Aucune catégorie active</p>';
+        menu.querySelectorAll('input').forEach(input=>input.onchange=event=>{
+            event.stopPropagation();
+            input.checked?selectedPersonalSupplyCategoryIds.add(String(input.value)):selectedPersonalSupplyCategoryIds.delete(String(input.value));
+            updatePersonalSupplyCategoryTrigger();
+            renderPersonalSupplyItems();
+            menu.hidden=false;
+            trigger.setAttribute('aria-expanded','true');
+        });
+        updatePersonalSupplyCategoryTrigger();
+        menu.hidden=!wasOpen;
     }
-    function renderPersonalSupplyItems() {
-        const container=document.getElementById('personal-independent-supply-items'); if(!container)return;
-        if(!allSupplyItems.length){container.innerHTML='<p class="flow-muted">Aucune fourniture active configurée dans l’administration.</p>';updatePersonalSupplyTotal();return;}
-        const selected=new Set(Array.from(container.querySelectorAll('.personal-supply-checkbox:checked')).map(x=>String(x.dataset.id)));
-        container.innerHTML=allSupplyItems.map(item=>`<label class="supply-item-row"><input type="checkbox" class="personal-supply-checkbox" data-id="${item.id}" ${selected.has(String(item.id))?'checked':''}><span class="supply-item-name">${item.name||'Fourniture'}</span><span class="item-price-chip">${getPersonalSupplyUnitPrice(item).toFixed(2)} DH</span></label>`).join('');
-        container.querySelectorAll('.personal-supply-checkbox').forEach(input=>input.addEventListener('change',()=>{updatePersonalSupplyTotal();updateFinalSummary();}));updatePersonalSupplyTotal();
+    function updatePersonalSupplyCategoryTrigger(){
+        const label=document.querySelector('#personal-supply-category-trigger span');if(!label)return;
+        const count=selectedPersonalSupplyCategoryIds.size;
+        label.textContent=count?`${count} catégorie${count>1?'s':''} sélectionnée${count>1?'s':''}`:'Toutes les catégories';
+    }
+    function renderPersonalSupplyItems(){
+        const container=document.getElementById('personal-independent-supply-items');if(!container)return;
+        const items=allSupplyItems.filter(item=>!selectedPersonalSupplyCategoryIds.size||selectedPersonalSupplyCategoryIds.has(String(item.category_id)));
+        container.innerHTML=items.length?items.map(item=>`<div class="step3-catalog-item"><span>${escapeHtmlAttribute(item.name||'Fourniture')}</span><button type="button" class="step3-add-supply" data-id="${item.id}" aria-label="Ajouter ${escapeHtmlAttribute(item.name)}">+</button></div>`).join(''):'<p class="flow-muted">Aucune fourniture dans cette catégorie.</p>';
+        container.querySelectorAll('.step3-add-supply').forEach(button=>button.onclick=()=>openSupplyConfiguration(button.dataset.id,'personal'));
+    }
+    function renderPersonalSelectedSupplyItems(){
+        const box=document.getElementById('personal-selected-supply-items');if(!box)return;
+        box.innerHTML=selectedPersonalConfiguredSupplies.length?selectedPersonalConfiguredSupplies.map(config=>{
+            const item=allSupplyItems.find(x=>String(x.id)===String(config.itemId));
+            if(!item)return '';
+            return `<div class="step3-selected-item"><div><b>${escapeHtmlAttribute(item.name)}</b><small>${escapeHtmlAttribute(selectedSupplyDescription(config))}</small></div><span>${Number(config.price).toFixed(2)} DH</span><button type="button" class="step3-remove-supply" data-key="${config.key}" aria-label="Supprimer">−</button></div>`;
+        }).join(''):'<p class="step3-empty-selection">Aucune fourniture ajoutée</p>';
+        box.querySelectorAll('.step3-remove-supply').forEach(button=>button.onclick=()=>{
+            selectedPersonalConfiguredSupplies=selectedPersonalConfiguredSupplies.filter(x=>x.key!==button.dataset.key);
+            renderPersonalSelectedSupplyItems();
+            updatePersonalSupplyTotal();
+            updateFinalSummary();
+        });
     }
     function getSelectedPersonalSupplies(){
-        return Array.from(document.querySelectorAll('.personal-supply-checkbox:checked')).map(cb=>{const item=allSupplyItems.find(entry=>String(entry.id)===String(cb.dataset.id));return item?{id:item.id,name:item.name,category:item.category||'Fournitures',price:getPersonalSupplyUnitPrice(item),supply_range:document.querySelector('input[name="personal-supply-range"]:checked')?.value||'standard',item_source:'independent_supply'}:null;}).filter(Boolean);
+        return selectedPersonalConfiguredSupplies.map(config=>{
+            const item=allSupplyItems.find(entry=>String(entry.id)===String(config.itemId));if(!item)return null;
+            return {id:item.id,name:item.name,category:supplyCategoryMap.get(String(item.category_id))?.name||item.category||'Fournitures',price:Number(config.price)||0,supply_range:config.range,supply_configuration:config.attributes.map(choice=>{const attribute=item.attributes.find(a=>String(a.id)===String(choice.attributeId)),value=attribute?.supply_attribute_values.find(v=>String(v.id)===String(choice.valueId));return {attribute_id:choice.attributeId,attribute_name:attribute?.name||'',value_id:choice.valueId,value_label:value?.label||''}}),item_source:'independent_supply'};
+        }).filter(Boolean);
     }
-    function updatePersonalSupplyTotal(){const total=getSelectedPersonalSupplies().reduce((sum,item)=>sum+item.price,0);const box=document.getElementById('personal-supply-total-price');if(box)box.innerText=`${total.toFixed(2)} DH`;}
-    document.querySelectorAll('input[name="personal-supply-range"]').forEach(input=>input.addEventListener('change',()=>{renderPersonalSupplyItems();updateFinalSummary();}));
-
+    function updatePersonalSupplyTotal(){
+        const total=getSelectedPersonalSupplies().reduce((sum,item)=>sum+Number(item.price||0),0);
+        const box=document.getElementById('personal-supply-total-price');if(box)box.textContent=`${total.toFixed(2)} DH`;
+    }
+    document.getElementById('personal-supply-category-trigger')?.addEventListener('click',event=>{
+        event.stopPropagation();
+        const menu=document.getElementById('personal-supply-category-menu'),opening=menu.hidden;
+        menu.hidden=!opening;event.currentTarget.setAttribute('aria-expanded',opening?'true':'false');
+    });
+    document.getElementById('personal-supply-category-menu')?.addEventListener('click',event=>event.stopPropagation());
+    document.getElementById('personal-supply-reset-filter')?.addEventListener('click',()=>{
+        selectedPersonalSupplyCategoryIds.clear();renderPersonalSupplyCategoryFilter();renderPersonalSupplyItems();
+    });
     function normalizeSchoolLogoUrl(url) {
         const value = String(url || '').trim();
         if (!value) return '';
@@ -507,7 +574,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const continuePersonalSupplies=()=>{updatePersonalSupplyTotal();updateFinalSummary();showOrderFlowPage('checkout-form-container',4);};
     document.getElementById('personal-supplies-continue')?.addEventListener('click',continuePersonalSupplies);
-    document.getElementById('personal-supplies-skip')?.addEventListener('click',()=>{document.querySelectorAll('.personal-supply-checkbox').forEach(box=>box.checked=false);continuePersonalSupplies();});
+    document.getElementById('personal-supplies-skip')?.addEventListener('click',()=>{selectedPersonalConfiguredSupplies=[];renderPersonalSelectedSupplyItems();updatePersonalSupplyTotal();updateFinalSummary();continuePersonalSupplies();});
 
     // ==========================================
     // 5. CLIC SUR "SUIVANT"

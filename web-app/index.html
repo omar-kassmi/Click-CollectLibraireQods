@@ -610,6 +610,32 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
 .qd-body{flex:1;min-height:0;overflow-y:auto;padding:22px 20px 28px;background:#fff}.qd-pane{display:none}.qd-pane.qd-active{display:block}.qd-pane-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:15px}.qd-pane-head h3{margin:0;color:#111827;font:950 18px/1.2 'Inter',Arial,sans-serif;letter-spacing:-.02em}.qd-pane-head span{color:#a8a19b;font:850 10px/1 'Inter',Arial,sans-serif}.qd-photo{margin-bottom:14px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border:1px solid #fed7c1;border-radius:13px;background:#fff7f1;color:#ef571d;font-size:10px;font-weight:900}.qd-list{overflow:hidden;border:1px solid #eadfd8;border-radius:16px;background:#fff}.qd-row{min-height:76px;padding:13px 14px;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;border-bottom:1px solid #eadfd8;background:#fff}.qd-row:last-child{border-bottom:0}.qd-copy{min-width:0}.qd-copy b,.qd-copy small{display:block}.qd-copy b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#292524;font:900 13px/1.25 'Inter',Arial,sans-serif}.qd-copy small{margin-top:6px;color:#8f8882;font:500 9px/1.35 'Inter',Arial,sans-serif}.qd-price{padding:8px 10px;border-radius:999px;background:#e5f9f1;color:#007e59;font:900 10px/1 'Inter',Arial,sans-serif;white-space:nowrap}.qd-empty{padding:28px;border:1px dashed #d6d3d1;border-radius:15px;background:#fafaf9;color:#78716c;font-size:10px;text-align:center}
 @media(max-width:700px){.qd-panel{width:100vw!important;max-width:100vw!important;border-radius:0!important}.qd-head{min-height:120px;padding:22px 18px 18px}.qd-head h2{font-size:24px}.qd-tabs{padding:0 8px}.qd-tab{font-size:11px}.qd-body{padding:18px 14px 24px}}
 
+
+/* PERSONAL_SUPPLIES_OFFICIAL_UI_V1 */
+#personal-supplies-view .personal-supplies-head{grid-template-columns:42px minmax(0,1fr) auto!important}
+#personal-supplies-view .personal-supplies-head>span{grid-column:1!important}
+#personal-supplies-view .personal-supplies-head>div{grid-column:2!important}
+#personal-supplies-view .personal-supplies-skip-top{grid-column:3!important;align-self:center;height:38px;padding:0 14px;border:1px solid #e7e5e4;border-radius:11px;background:#fff;color:#78716c;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;white-space:nowrap;transition:.18s}
+#personal-supplies-view .personal-supplies-skip-top:hover{border-color:#E75C25;color:#E75C25;background:#fff8f3}
+#personal-supplies-view .personal-supply-section{width:min(100%,590px);margin:0 auto}
+#personal-supplies-view .step3-supply-builder{height:450px}
+#personal-supplies-view .step3-selected-list{height:376px;margin-top:0}
+#personal-supplies-view .personal-supplies-actions{width:min(100%,590px);margin:17px auto 0;justify-content:flex-end!important}
+@media(max-width:700px){#personal-supplies-view .personal-supplies-head{grid-template-columns:36px minmax(0,1fr)!important}#personal-supplies-view .personal-supplies-skip-top{grid-column:2!important;justify-self:start;margin-top:10px}#personal-supplies-view .personal-supply-section,#personal-supplies-view .personal-supplies-actions{width:100%}#personal-supplies-view .step3-supply-builder{height:auto}#personal-supplies-view .step3-selected-list{height:328px}}
+
+
+/* PERSONAL_SUPPLIES_FINAL_ALIGNMENTS_V2 */
+#personal-supplies-view .personal-supplies-actions{display:flex!important;justify-content:flex-end!important;align-items:center!important}
+#personal-supplies-view #personal-supplies-continue{margin-left:auto!important}
+#personal-supplies-view .step3-supply-tools{align-items:stretch!important}
+#personal-supplies-view .step3-category-multiselect>button,
+#personal-supplies-view .step3-supply-tools>#personal-supply-reset-filter{height:36px!important;min-height:36px!important;box-sizing:border-box!important;border-radius:9px!important;font-family:'Plus Jakarta Sans',sans-serif!important;font-size:8.5px!important;font-weight:750!important;line-height:1!important}
+#personal-supplies-view .step3-supply-tools>#personal-supply-reset-filter{display:inline-flex!important;align-items:center!important;justify-content:center!important;margin:0!important;padding:0 10px!important;border:1px solid #f0ddd1!important;background:#fff8f3!important;color:#d75a24!important}
+#personal-supplies-view .step3-supply-catalog h5{white-space:nowrap!important;margin-bottom:12px!important;font-size:13px!important}
+#personal-supplies-view .step3-selected-supplies h5{margin-bottom:2px!important}
+#personal-supplies-view .step3-selected-list{margin-top:0!important;height:386px!important}
+@media(max-width:700px){#personal-supplies-view .step3-supply-catalog h5{white-space:normal!important}#personal-supplies-view .step3-selected-list{height:328px!important}}
+
 </style>
 </head>
 <body class="bg-white text-gray-900 min-h-screen flex flex-col justify-between antialiased">
@@ -901,9 +927,33 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
                 </div>
                 <!-- VUE 03 : fournitures complémentaires pour une liste personnelle -->
                 <div id="personal-supplies-view" class="flow-view flow-progressive-step hidden" data-view="3" aria-hidden="true">
-                    <div class="flow-view-head flow-view-head-with-back"><button type="button" id="flow-back-personal-supplies" class="flow-step-back" aria-label="Retour à l’import" title="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button><span>03</span><div><h3>Je choisis mes fournitures</h3><p>Ajoutez, si vous le souhaitez, des fournitures complémentaires à votre liste personnelle.</p></div></div>
-                    <div class="step-three-widget personal-supplies-widget"><div class="step-three-pane step-three-supplies personal-supplies-pane"><h4>Je choisis mes fournitures</h4><p class="flow-card-copy">Cette étape est facultative. Les articles choisis seront ajoutés à votre commande.</p><div class="range-switch"><label><input type="radio" name="personal-supply-range" value="standard" checked><span>Standard</span></label><label><input type="radio" name="personal-supply-range" value="quality"><span>Qualité</span></label></div><div id="personal-independent-supply-items" class="flow-items-list"><p class="flow-muted">Chargement des fournitures…</p></div><div class="flow-total"><span>Sous-total fournitures</span><strong id="personal-supply-total-price">0.00 DH</strong></div></div></div>
-                    <div class="flow-view-actions personal-supplies-actions"><button id="personal-supplies-skip" type="button" class="flow-secondary">Passer cette étape</button><button id="personal-supplies-continue" type="button" class="flow-primary">Continuer vers mes informations</button></div>
+                    <div class="flow-view-head flow-view-head-with-back personal-supplies-head">
+                        <button type="button" id="flow-back-personal-supplies" class="flow-step-back" aria-label="Retour à l’import" title="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
+                        <span>03</span>
+                        <div><h3>Je complète ma liste scolaire</h3><p>Ajoutez les fournitures de votre choix à votre liste personnelle.</p></div>
+                        <button id="personal-supplies-skip" type="button" class="personal-supplies-skip-top">Passer cette étape</button>
+                    </div>
+                    <section class="step3-supply-section personal-supply-section">
+                        <div class="step3-supply-builder">
+                            <div class="step3-supply-catalog">
+                                <h5>Je choisis mes fournitures parmi</h5>
+                                <div class="step3-supply-tools">
+                                    <div id="personal-supply-category-multiselect" class="step3-category-multiselect">
+                                        <button id="personal-supply-category-trigger" type="button" aria-expanded="false"><span>Toutes les catégories</span><i aria-hidden="true"></i></button>
+                                        <div id="personal-supply-category-menu" class="step3-category-menu" hidden></div>
+                                    </div>
+                                    <button id="personal-supply-reset-filter" type="button">Réinitialiser</button>
+                                </div>
+                                <div id="personal-independent-supply-items" class="step3-supply-catalog-list"><p class="flow-muted">Chargement des fournitures…</p></div>
+                            </div>
+                            <div class="step3-selected-supplies">
+                                <h5>Mes fournitures choisies</h5>
+                                <div id="personal-selected-supply-items" class="step3-selected-list"><p class="step3-empty-selection">Aucune fourniture ajoutée</p></div>
+                            </div>
+                        </div>
+                        <div class="step3-subtotal"><span>Sous-total fournitures</span><strong id="personal-supply-total-price">0.00 DH</strong></div>
+                    </section>
+                    <div class="flow-view-actions personal-supplies-actions"><button id="personal-supplies-continue" type="button" class="flow-primary">Continuer vers mes informations</button></div>
                 </div>
                 <!-- VUE 3 : informations + récapitulatif -->
                 <div id="checkout-form-container" class="flow-view flow-progressive-step hidden" data-view="4" aria-hidden="true">
