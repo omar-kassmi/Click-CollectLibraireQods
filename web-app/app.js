@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const RESERVATION_DAYS = 5;
     // Déployez le fichier Apps Script Web App puis collez ici son URL /exec.
-    const APP_SCRIPT_UPLOAD_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbw9-tf1vAPawKsO1DtsxpCMMRbIMpDjG-kZZy1HJu7XQl61qQlKX6zS7PzYDsa6na3a/exec";
+    const APP_SCRIPT_UPLOAD_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwNXzpRF85HdPV2mTPHDiXGJvdMHnatpbDZljkOhotSg-7OVTS4Hx2ngf7CmEdPJ-bG/exec";
 
     let allSchoolData = []; 
     let selectedPackItems = []; 
@@ -684,7 +684,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 row.innerHTML = `
                     <div class="flex items-center gap-3 flex-grow min-w-0">
                         <input type="checkbox" data-id="${item.id}" data-name="${item.name}" data-category="${item.category || 'Liste scolaire'}" data-price="${item.price}" ${isOutOfStock ? 'disabled' : 'checked'} class="pack-item-checkbox w-4 h-4 rounded text-[#E75C25] accent-[#E75C25] focus:ring-0 cursor-pointer flex-shrink-0">
-                        <span class="text-xs font-bold text-stone-800 tracking-tight truncate">${item.name}</span>
+                        <bdi class="text-xs text-stone-800 tracking-tight truncate school-list-item-title ${/[\u0600-\u06FF]/.test(item.name || '') ? 'is-arabic' : ''}" lang="${/[\u0600-\u06FF]/.test(item.name || '') ? 'ar' : 'fr'}" dir="${/[\u0600-\u06FF]/.test(item.name || '') ? 'rtl' : 'ltr'}">${item.name}</bdi>
                     </div>
                     <span class="item-price-chip ${isOutOfStock ? 'text-red-700 bg-red-50 border-red-100' : 'text-emerald-700 bg-emerald-50 border-emerald-200/50'}">${availabilityText || item.price.toFixed(2) + ' DH'}</span>
                 `;

@@ -1,1 +1,1 @@
-Correctifs : suppressions en cascade vers les Kanbans, filtres dropdown multisélection, libellés Niveaux/Catégories déplacés à gauche, toggles Fourniture remplacés par de belles checkbox orange.
+Base exacte: elqods_RESTAURATION_V4_DATA.zip. Aucun SQL. Les requêtes initiales de chargement des écoles, niveaux, listes et catégories sont inchangées. Corrections ciblées: RTL, niveau nom/ordre, préférence langue, minutes archivage.

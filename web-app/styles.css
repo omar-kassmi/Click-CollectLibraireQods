@@ -830,3 +830,624 @@ body.school-order-active #section-rentree #school-flow-progress-fill {
 .step3-selected-supplies h5{margin-bottom:12px!important}
 .step3-selected-list{margin-top:0!important;height:376px!important}
 @media(max-width:700px){.step3-selected-list{height:328px!important}}
+
+
+/* Gestion d'archivage des commandes */
+.archive-manager-overlay{position:fixed;inset:0;z-index:2147483644;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(20,17,15,.52);backdrop-filter:blur(7px)}
+.archive-manager-overlay.is-open{display:flex}.archive-manager-dialog{width:min(690px,calc(100vw - 28px));max-height:calc(100vh - 28px);display:flex;flex-direction:column;overflow:hidden;border:1px solid #eee4dc;border-radius:24px;background:#fff;box-shadow:0 32px 90px rgba(0,0,0,.28)}
+.archive-manager-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;padding:21px 23px 17px;border-bottom:1px solid #eee7e1;background:linear-gradient(135deg,#fffaf7,#fff)}.archive-manager-head h3{margin:0;color:#111827;font-size:20px;font-weight:950;letter-spacing:-.025em}.archive-manager-head p{margin:6px 0 0;color:#8f8781;font-size:10px;line-height:1.5}.archive-manager-close{width:38px;height:38px;flex:0 0 auto;display:grid;place-items:center;border:0;border-radius:12px;background:#f4f4f3;color:#78716c;font-size:22px}.archive-manager-body{min-height:0;overflow-y:auto;padding:19px 23px 22px}.archive-manager-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.archive-field{display:block;min-width:0}.archive-field.is-wide{grid-column:1/-1}.archive-field>span{display:block;margin-bottom:6px;color:#78716c;font-size:9px;font-weight:950;text-transform:uppercase;letter-spacing:.065em}.archive-field input,.archive-field select{width:100%;height:43px;padding:0 12px;border:1px solid #e7e5e4;border-radius:12px;background:#fafaf9;color:#292524;font-size:11px;outline:0}.archive-field input:focus,.archive-field select:focus{border-color:#E75C25;background:#fff;box-shadow:0 0 0 4px rgba(231,92,37,.08)}.archive-inline-fields{display:grid;grid-template-columns:110px minmax(0,1fr);gap:9px}.archive-check{grid-column:1/-1;min-height:50px;padding:0 13px;display:flex;align-items:center;gap:10px;border:1px solid #eee7e1;border-radius:13px;background:#fffaf7;color:#403a36;font-size:11px;font-weight:850}.archive-check input{width:18px;height:18px;accent-color:#E75C25}.archive-manager-note{margin-top:14px;padding:12px 13px;border:1px solid #fed7c1;border-radius:13px;background:#fff8f3;color:#795548;font-size:10px;line-height:1.55}.archive-manager-status{display:none;margin-top:13px;padding:12px 13px;border-radius:13px;font-size:10px;font-weight:800;line-height:1.5}.archive-manager-status.is-visible{display:block}.archive-manager-status.is-info{border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8}.archive-manager-status.is-success{border:1px solid #a7f3d0;background:#ecfdf5;color:#047857}.archive-manager-status.is-error{border:1px solid #fecaca;background:#fef2f2;color:#b91c1c}.archive-manager-last{margin-top:14px;padding:12px 13px;border:1px solid #eee7e1;border-radius:13px;background:#fafaf9;color:#6b625c;font-size:10px;line-height:1.55}.archive-manager-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}.archive-manager-actions button{min-height:42px;padding:0 16px;border-radius:12px;font-size:11px;font-weight:950}.archive-save{border:1px solid #E75C25;background:#fff;color:#E75C25}.archive-run{border:0;background:#E75C25;color:#fff}.archive-manager-actions button:disabled{opacity:.55;cursor:wait}@media(max-width:650px){.archive-manager-grid{grid-template-columns:1fr}.archive-field.is-wide,.archive-check{grid-column:auto}.archive-manager-actions{display:grid;grid-template-columns:1fr}.archive-manager-actions button{width:100%}}
+
+/* RESPONSIVE_FULLHD_HOME_V1
+   Accueil fluide sur portable, Full HD et écrans larges. */
+html,
+body {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+body,
+main,
+#section-accueil {
+    width: 100%;
+    max-width: none;
+}
+
+/* Le hero remplit réellement la hauteur visible, header compris. */
+#section-accueil .home-hero {
+    width: 100%;
+    min-height: 100vh !important;
+    min-height: 100svh !important;
+}
+
+#section-accueil .home-hero > .absolute.inset-0,
+#section-accueil .home-hero > .absolute.inset-0 img {
+    width: 100%;
+    height: 100%;
+}
+
+#section-accueil .home-hero > .absolute.inset-0 img {
+    object-fit: cover;
+    object-position: center center;
+}
+
+/* Largeur fluide : pas de petit bloc 1280 px perdu au milieu d'un écran Full HD. */
+#main-header .site-header-shell,
+#section-accueil .home-hero-shell {
+    width: min(100% - 48px, 1600px) !important;
+    max-width: none !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+#section-accueil .home-hero-shell {
+    padding-left: clamp(24px, 3.5vw, 72px) !important;
+    padding-right: clamp(24px, 3.5vw, 72px) !important;
+}
+
+/* Typographie proportionnelle aux grands écrans, sans grossissement excessif. */
+#section-accueil .home-hero h2 {
+    font-size: clamp(3rem, 4.15vw, 5.25rem) !important;
+    line-height: .98 !important;
+    letter-spacing: -.045em;
+}
+
+#section-accueil .home-hero h2 + p {
+    max-width: 680px !important;
+    font-size: clamp(.95rem, 1vw, 1.15rem) !important;
+    line-height: 1.55 !important;
+}
+
+#section-accueil .home-hero button {
+    min-height: 50px;
+    padding-left: clamp(24px, 1.8vw, 34px) !important;
+    padding-right: clamp(24px, 1.8vw, 34px) !important;
+}
+
+@media (min-width: 1440px) {
+    #main-header {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    #main-header nav {
+        gap: clamp(24px, 2vw, 38px) !important;
+        font-size: clamp(14px, .82vw, 16px) !important;
+    }
+
+    #main-header .site-header-shell > div:first-child img {
+        height: clamp(44px, 2.7vw, 56px) !important;
+    }
+
+    #section-accueil .home-hero-shell > div {
+        max-width: min(760px, 48vw) !important;
+    }
+}
+
+@media (min-width: 1920px) {
+    #main-header .site-header-shell,
+    #section-accueil .home-hero-shell {
+        width: min(100% - 96px, 1760px) !important;
+    }
+}
+
+@media (max-width: 767px) {
+    #main-header .site-header-shell,
+    #section-accueil .home-hero-shell {
+        width: 100% !important;
+    }
+
+    #section-accueil .home-hero-shell {
+        padding-left: 24px !important;
+        padding-right: 24px !important;
+    }
+
+    #section-accueil .home-hero h2 {
+        font-size: clamp(2.5rem, 12vw, 4rem) !important;
+    }
+}
+
+/* CLIENT_LARGE_SCREEN_FLUID_V2
+   Mise en page réellement fluide pour Full HD, QHD et écrans larges. */
+:root {
+    --client-page-width: min(92vw, 1760px);
+    --client-reading-width: min(92vw, 1680px);
+    --client-gutter: clamp(24px, 3vw, 64px);
+}
+
+/* Tous les conteneurs principaux du site client utilisent l'espace disponible. */
+#main-header .site-header-shell,
+#section-accueil > div:not(.home-hero),
+#section-accueil .home-hero-shell,
+#section-accueil .partners-inner,
+#section-accueil footer > div,
+#section-autres,
+#section-plan-magasin,
+#section-suivi .tracking-shell,
+#section-suivi footer > div,
+#section-rentree .school-flow-shell {
+    width: var(--client-page-width) !important;
+    max-width: none !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Les sections de contenu ne restent plus dans un bloc étroit de 1280 px. */
+#section-accueil > div:not(.home-hero),
+#section-autres,
+#section-plan-magasin {
+    padding-left: var(--client-gutter) !important;
+    padding-right: var(--client-gutter) !important;
+}
+
+#section-accueil .partners-inner,
+#section-accueil footer,
+#section-suivi footer {
+    padding-left: var(--client-gutter) !important;
+    padding-right: var(--client-gutter) !important;
+}
+
+/* Accueil : catégories plus grandes et réparties sur toute la largeur. */
+#section-accueil .hide-scrollbar {
+    width: 100%;
+    display: grid !important;
+    grid-template-columns: repeat(7, minmax(130px, 1fr));
+    gap: clamp(24px, 2.2vw, 48px) !important;
+    overflow: visible !important;
+}
+
+#section-accueil .hide-scrollbar > div {
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+#section-accueil .hide-scrollbar > div > div {
+    width: clamp(150px, 9.2vw, 190px) !important;
+    height: clamp(150px, 9.2vw, 190px) !important;
+}
+
+#section-accueil .hide-scrollbar > div > span {
+    font-size: clamp(.9rem, .82vw, 1.05rem) !important;
+}
+
+#section-accueil > div:nth-of-type(2) h3 {
+    font-size: clamp(2rem, 1.9vw, 2.7rem) !important;
+}
+
+#section-accueil > div:nth-of-type(2) h3 + p {
+    font-size: clamp(1rem, 1vw, 1.25rem) !important;
+}
+
+/* Bande d'appel à l'action plus haute et plus lisible. */
+#section-accueil > div:nth-of-type(3) > div {
+    min-height: clamp(130px, 8vw, 170px);
+    padding: clamp(28px, 2.4vw, 48px) !important;
+}
+
+#section-accueil > div:nth-of-type(3) h3 {
+    font-size: clamp(1.6rem, 1.75vw, 2.25rem) !important;
+}
+
+#section-accueil > div:nth-of-type(3) p {
+    font-size: clamp(.9rem, .9vw, 1.1rem) !important;
+}
+
+/* Autres produits et plan magasin : cartes et textes grandissent avec l'écran. */
+#section-autres > div:first-child,
+#section-plan-magasin > div:first-child {
+    max-width: min(900px, 60vw) !important;
+}
+
+#section-autres h2,
+#section-plan-magasin h2 {
+    font-size: clamp(2.25rem, 2.5vw, 3.5rem) !important;
+}
+
+#section-autres .grid > div {
+    min-height: 180px;
+    padding: clamp(28px, 2.2vw, 44px) !important;
+    font-size: clamp(1rem, 1vw, 1.2rem) !important;
+}
+
+#section-plan-magasin > .grid {
+    gap: clamp(28px, 2.3vw, 48px) !important;
+}
+
+#section-plan-magasin .min-h-\[360px\] {
+    min-height: clamp(460px, 34vw, 650px) !important;
+}
+
+/* Suivi commande : largeur et lisibilité adaptées au grand écran. */
+#section-suivi .tracking-shell {
+    padding-left: var(--client-gutter) !important;
+    padding-right: var(--client-gutter) !important;
+}
+
+#section-suivi .tracking-search-heading {
+    max-width: 920px !important;
+}
+
+#section-suivi .tracking-search-heading h2 {
+    font-size: clamp(2.6rem, 3.1vw, 4.2rem) !important;
+}
+
+#section-suivi .tracking-search-form {
+    max-width: 1100px !important;
+    gap: clamp(12px, 1vw, 20px) !important;
+    padding: clamp(16px, 1.2vw, 24px) !important;
+}
+
+#section-suivi .tracking-view {
+    grid-template-columns: minmax(0, 1fr) clamp(280px, 20vw, 360px) !important;
+}
+
+/* Parcours rentrée : suppression de la largeur fixe trop petite. */
+#section-rentree .school-flow-shell {
+    padding-left: var(--client-gutter);
+    padding-right: var(--client-gutter);
+}
+
+#section-rentree .flow-view-head h3 {
+    font-size: clamp(1.35rem, 1.45vw, 2rem) !important;
+}
+
+#section-rentree .flow-view-head p,
+#section-rentree .flow-card-copy {
+    font-size: clamp(.78rem, .75vw, 1rem) !important;
+}
+
+#section-rentree .flow-card {
+    padding: clamp(24px, 2vw, 38px) !important;
+}
+
+#section-rentree .flow-card h4 {
+    font-size: clamp(1rem, 1.05vw, 1.35rem) !important;
+}
+
+#section-rentree .flow-radio-card span,
+#section-rentree .flow-type-card {
+    min-height: clamp(105px, 7vw, 140px) !important;
+    padding: clamp(20px, 1.6vw, 30px) !important;
+}
+
+#section-rentree .flow-radio-card b,
+#section-rentree .flow-type-card b {
+    font-size: clamp(.9rem, .9vw, 1.1rem) !important;
+}
+
+#section-rentree .flow-radio-card small,
+#section-rentree .flow-type-card small {
+    font-size: clamp(.72rem, .68vw, .9rem) !important;
+}
+
+/* Pieds de page plus larges et mieux espacés. */
+#section-accueil footer > div:first-child,
+#section-suivi footer > div:first-child {
+    gap: clamp(32px, 3vw, 64px) !important;
+}
+
+@media (min-width: 2000px) {
+    :root {
+        --client-page-width: min(94vw, 2100px);
+        --client-reading-width: min(94vw, 1980px);
+    }
+
+    html {
+        font-size: 17px;
+    }
+}
+
+@media (min-width: 2560px) {
+    html {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 1350px) {
+    #section-accueil .hide-scrollbar {
+        display: flex !important;
+        overflow-x: auto !important;
+    }
+
+    #section-accueil .hide-scrollbar > div {
+        width: 10rem !important;
+        min-width: 10rem !important;
+    }
+}
+
+@media (max-width: 767px) {
+    :root {
+        --client-page-width: 100%;
+        --client-gutter: 24px;
+    }
+
+    #section-accueil > div:not(.home-hero),
+    #section-autres,
+    #section-plan-magasin,
+    #section-suivi .tracking-shell,
+    #section-rentree .school-flow-shell {
+        width: 100% !important;
+    }
+
+    #section-rentree .school-flow-shell {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+}
+
+/* ==========================================================
+   ETAPE 3 - GABARIT ALIGNE SUR L'ETAPE 4 - V3
+   Desktop large uniquement. Les mesures reprennent le rythme,
+   les marges et la hauteur visuelle de la vue récapitulative.
+   ========================================================== */
+@media (min-width: 1366px) and (min-height: 720px) {
+  #section-rentree #pack-details-view {
+    width: min(1645px, calc(100vw - 190px)) !important;
+    max-width: none !important;
+    margin: 0 auto !important;
+    transform: none !important;
+  }
+
+  #pack-details-view .flow-view-head {
+    min-height: 54px !important;
+    margin: 0 0 22px !important;
+  }
+
+  #pack-details-view .flow-view-head h3 {
+    font-size: 30px !important;
+    line-height: 1.12 !important;
+    letter-spacing: -.035em !important;
+  }
+
+  #pack-details-view .flow-view-head p {
+    margin-top: 5px !important;
+    font-size: 13px !important;
+  }
+
+  #pack-details-view .step3-editor-grid {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr) !important;
+    gap: 24px !important;
+    align-items: stretch !important;
+  }
+
+  #pack-details-view .step3-school-section,
+  #pack-details-view .step3-supply-section {
+    display: grid !important;
+    grid-template-rows: 28px 530px 58px !important;
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  #pack-details-view .step3-section-title {
+    align-self: start !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding-left: 14px !important;
+    border-left: 3px solid #E75C25 !important;
+    color: #6f6863 !important;
+    font-size: 14px !important;
+    line-height: 20px !important;
+    letter-spacing: .055em !important;
+  }
+
+  #pack-details-view .step3-school-card,
+  #pack-details-view .step3-supply-builder {
+    width: 100% !important;
+    height: 530px !important;
+    min-height: 530px !important;
+    margin: 0 !important;
+    border: 1px solid #e4ddd8 !important;
+    border-radius: 24px !important;
+    background: #fff !important;
+    box-shadow: 0 18px 44px rgba(67,42,27,.07) !important;
+    overflow: hidden !important;
+  }
+
+  #pack-details-view .step3-school-header {
+    height: 72px !important;
+    padding: 0 22px !important;
+    border-bottom: 1px solid #eee4de !important;
+    background: #fff8f4 !important;
+    color: #292524 !important;
+  }
+
+  #pack-details-view .step3-school-logo {
+    width: 44px !important;
+    height: 44px !important;
+    border: 1px solid #f0d8ca !important;
+    border-radius: 12px !important;
+    background: #fff !important;
+  }
+
+  #pack-details-view .step3-school-header strong {
+    font-size: 17px !important;
+  }
+
+  #pack-details-view .step3-school-header > b {
+    padding: 8px 13px !important;
+    border: 1px solid #f1b99d !important;
+    border-radius: 999px !important;
+    background: #fff !important;
+    color: #E75C25 !important;
+    font-size: 10px !important;
+  }
+
+  #pack-details-view .step3-school-items {
+    height: 458px !important;
+    padding: 24px 20px !important;
+  }
+
+  #pack-details-view .step3-school-items > div {
+    gap: 11px !important;
+  }
+
+  #pack-details-view .step3-school-items label {
+    grid-template-columns: 104px minmax(0,1fr) auto 34px !important;
+    min-height: 60px !important;
+    height: 60px !important;
+    padding-right: 14px !important;
+    border: 1px solid #e7e1dc !important;
+    border-radius: 13px !important;
+  }
+
+  #pack-details-view .step3-school-items label::before {
+    font-size: 10px !important;
+  }
+
+  #pack-details-view .step3-school-items label span.text-xs {
+    padding: 0 15px !important;
+    font-size: 11px !important;
+  }
+
+  #pack-details-view .step3-supply-builder {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  }
+
+  #pack-details-view .step3-supply-catalog,
+  #pack-details-view .step3-selected-supplies {
+    width: auto !important;
+    min-width: 0 !important;
+    height: 100% !important;
+    padding: 24px 18px 18px !important;
+    box-sizing: border-box !important;
+  }
+
+  #pack-details-view .step3-supply-catalog {
+    border-right: 1px solid #e8e1dc !important;
+    background: #fcfbfa !important;
+  }
+
+  #pack-details-view .step3-selected-supplies {
+    background: #fff !important;
+  }
+
+  #pack-details-view .step3-supply-catalog h5,
+  #pack-details-view .step3-selected-supplies h5 {
+    min-height: 42px !important;
+    margin: 0 0 13px !important;
+    font-size: 16px !important;
+    line-height: 1.3 !important;
+  }
+
+  #pack-details-view .step3-supply-catalog h5 br {
+    display: none !important;
+  }
+
+  #pack-details-view .step3-supply-tools {
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) auto !important;
+    gap: 9px !important;
+    margin-bottom: 13px !important;
+  }
+
+  #pack-details-view .step3-category-multiselect > button,
+  #pack-details-view .step3-supply-tools > #supply-reset-filter {
+    height: 42px !important;
+    min-height: 42px !important;
+    border-radius: 11px !important;
+    font-size: 9px !important;
+  }
+
+  #pack-details-view .step3-supply-catalog-list,
+  #pack-details-view .step3-selected-list {
+    height: 388px !important;
+    gap: 9px !important;
+    padding-right: 5px !important;
+  }
+
+  #pack-details-view .step3-catalog-item,
+  #pack-details-view .step3-selected-item {
+    min-height: 52px !important;
+    border-radius: 12px !important;
+  }
+
+  #pack-details-view .step3-catalog-item {
+    padding: 0 12px !important;
+    font-size: 10px !important;
+  }
+
+  #pack-details-view .step3-add-supply {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 18px !important;
+  }
+
+  #pack-details-view .step3-selected-item {
+    grid-template-columns: minmax(0,1fr) auto 23px !important;
+    gap: 8px !important;
+    padding: 8px 10px 8px 12px !important;
+  }
+
+  #pack-details-view .step3-subtotal {
+    align-self: end !important;
+    width: 100% !important;
+    height: 58px !important;
+    margin: 0 !important;
+    padding: 0 18px !important;
+    border: 1px solid #e4ddd8 !important;
+    border-radius: 15px !important;
+    background: #fff !important;
+    box-shadow: 0 10px 28px rgba(67,42,27,.045) !important;
+    font-size: 10px !important;
+  }
+
+  #pack-details-view .step3-subtotal strong {
+    font-size: 10px !important;
+  }
+
+  #pack-details-view .flow-view-actions {
+    width: 100% !important;
+    margin-top: 22px !important;
+  }
+
+  #pack-details-view #btn-next-to-form {
+    min-width: 280px !important;
+    min-height: 48px !important;
+    margin: 0 !important;
+    padding: 0 24px !important;
+    border-radius: 13px !important;
+    font-size: 11px !important;
+  }
+}
+
+@media (min-width: 1900px) and (min-height: 900px) {
+  #section-rentree #pack-details-view {
+    width: min(1680px, calc(100vw - 190px)) !important;
+  }
+}
+
+/* FINAL V3 - ARABE SANS GRAS */
+#pack-details-view .step3-school-items label span.text-xs,#pack-details-view .step3-catalog-item,#pack-details-view .step3-selected-item b{font-size:11px!important;line-height:1.45!important}
+#pack-details-view [lang="ar"],#pack-details-view [dir="rtl"],#admin-item-name[lang="ar"],#admin-item-name[dir="rtl"]{font-family:"Noto Naskh Arabic",Tahoma,Arial,sans-serif!important;font-weight:400!important;letter-spacing:0!important;line-height:1.6!important;direction:rtl!important;text-align:right!important}
+
+/* ETAPE 3 - TITRES ARABES ALIGNES DEPUIS LA DROITE */
+#pack-details-view .step3-school-items label span.text-xs[dir="rtl"],#pack-details-view .step3-school-items label .item-title-ar{direction:rtl!important;text-align:right!important;justify-self:stretch!important;unicode-bidi:plaintext!important;padding-right:14px!important;padding-left:8px!important;font-weight:400!important}
+
+/* CORRECTIF ISOLE - ALIGNEMENT RTL DES LIBELLES ARABES A L'ETAPE 3 */
+#pack-details-view .step3-school-items label .school-list-item-title {
+  grid-column:2;
+  grid-row:1;
+  display:block;
+  width:100%;
+  min-width:0;
+  padding:0 12px;
+  box-sizing:border-box;
+  color:#211f1e!important;
+  font-size:11px!important;
+  line-height:1.55!important;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#pack-details-view .step3-school-items label .school-list-item-title.is-arabic {
+  direction:rtl!important;
+  text-align:right!important;
+  unicode-bidi:isolate!important;
+  font-family:"Noto Naskh Arabic",Tahoma,Arial,sans-serif!important;
+  font-weight:400!important;
+  letter-spacing:0!important;
+}

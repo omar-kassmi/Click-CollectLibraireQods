@@ -6,7 +6,7 @@
     <title>Librairie & Papeterie El Qods — Panneau d'Administration</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com.rproxy.goskope.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com.rproxy.goskope.com/css2?family=Noto+Naskh+Arabic:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <style>
         body { font-family: 'Inter', sans-serif; }
@@ -132,7 +132,8 @@
                     </div>
                     <div class="flex items-center gap-2">
                         <button id="btn-export-orders" class="bg-white border text-xs font-semibold px-4 py-2 rounded-xl hover:bg-gray-50 shadow-sm transition">Exporter CSV</button>
-                        <button id="btn-refresh-orders" class="bg-white border text-xs font-semibold px-4 py-2 rounded-xl hover:bg-gray-50 shadow-sm transition">Actualiser</button>
+                        <button id="btn-archive-management" type="button" class="bg-white border border-orange-200 text-[#E75C25] text-xs font-semibold px-4 py-2 rounded-xl hover:bg-orange-50 shadow-sm transition">Gestion des données</button>
+                        <button id="btn-print-period" type="button" class="bg-[#E75C25] text-white border border-[#E75C25] text-xs font-semibold px-4 py-2 rounded-xl hover:bg-[#CE4E1D] shadow-sm transition inline-flex items-center gap-2">Imprimer</button>
                     </div>
                 </div>
 
@@ -221,9 +222,15 @@
                                         <option value="Fournitures">✏️ Fournitures</option>
                                     </select>
                                 </div>
-                                <div class="col-span-5">
-                                    <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Libellé</label>
-                                    <input type="text" id="admin-item-name" placeholder="Ex: Cahier 96p" class="w-full px-2 py-2 bg-white border border-gray-200 rounded-lg text-xs outline-none">
+                                <div class="col-span-5 pack-item-label-field">
+                                    <div class="pack-item-label-head">
+                                        <label for="admin-item-name">Libellé</label>
+                                        <div id="admin-item-language" class="pack-item-language" role="group" aria-label="Langue du libellé">
+                                            <button type="button" class="is-active" data-item-language="fr" aria-pressed="true">FR</button>
+                                            <button type="button" data-item-language="ar" aria-pressed="false">عربي</button>
+                                        </div>
+                                    </div>
+                                    <input type="text" id="admin-item-name" lang="fr" dir="ltr" placeholder="Ex : Cahier 96 pages" class="w-full px-2 py-2 bg-white border border-gray-200 rounded-lg text-xs outline-none">
                                 </div>
                                 <div class="col-span-3">
                                     <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Prix (DH)</label>
@@ -394,6 +401,6 @@
     </div>
     </div>
     </div>
-    <script src="admin.js"></script>
+    <script src="admin.js?v=preference-langue-minutes-v1"></script>
 </body>
 </html>
