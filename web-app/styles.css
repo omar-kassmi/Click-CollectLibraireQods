@@ -1603,62 +1603,89 @@ main,
 #tracking-details-drawer .qd-list{margin-bottom:0!important}
 
 
-/* SUIVI COMMANDE - PANNEAU STRICTEMENT IDENTIQUE A SUCCESS.HTML */
-#tracking-details-drawer .qd-panel{
-  display:flex!important;
-  flex-direction:column!important;
-  height:100dvh!important;
-  max-height:100dvh!important;
-  min-height:0!important;
-  overflow:hidden!important;
+/* HOME FRONT V1 - HERO SCROLL, MARQUES PLEINE LARGEUR */
+#section-accueil .home-hero{position:relative!important}
+#section-accueil .home-mouse-scroll{
+    position:absolute!important;
+    left:50%!important;
+    bottom:28px!important;
+    z-index:30!important;
+    width:52px!important;
+    height:62px!important;
+    display:grid!important;
+    place-items:center!important;
+    padding:0!important;
+    border:0!important;
+    background:transparent!important;
+    color:#fff!important;
+    transform:translateX(-50%)!important;
+    cursor:pointer!important;
 }
-#tracking-details-drawer .qd-head,
-#tracking-details-drawer .qd-tabs{
-  position:relative!important;
-  top:auto!important;
-  flex:0 0 auto!important;
+#section-accueil .home-mouse-scroll-shell{
+    width:44px!important;
+    height:56px!important;
+    display:grid!important;
+    place-items:center!important;
+    border:1px solid rgba(255,255,255,.48)!important;
+    border-radius:999px!important;
+    background:rgba(18,18,18,.24)!important;
+    box-shadow:0 12px 32px rgba(0,0,0,.22)!important;
+    backdrop-filter:blur(8px)!important;
+    animation:homeMouseFloat 1.8s ease-in-out infinite!important;
 }
-#tracking-details-drawer .qd-body{
-  display:block!important;
-  flex:1 1 auto!important;
-  width:100%!important;
-  height:auto!important;
-  min-height:0!important;
-  max-height:none!important;
-  overflow-x:hidden!important;
-  overflow-y:auto!important;
-  -webkit-overflow-scrolling:touch!important;
-  overscroll-behavior:contain!important;
-  scrollbar-gutter:stable!important;
-  padding:22px 20px 140px!important;
-  background:#fff!important;
+#section-accueil .home-mouse-scroll svg{
+    width:25px!important;
+    height:37px!important;
+    fill:none!important;
+    stroke:currentColor!important;
+    stroke-width:1.7!important;
+    stroke-linecap:round!important;
+    stroke-linejoin:round!important;
 }
-#tracking-details-drawer .qd-pane.qd-active{
-  display:block!important;
-  height:auto!important;
-  min-height:0!important;
+#section-accueil .home-mouse-scroll svg line{
+    animation:homeMouseWheel 1.8s ease-in-out infinite!important;
 }
-#tracking-details-drawer .qd-pane.qd-active::after{
-  content:""!important;
-  display:block!important;
-  width:100%!important;
-  height:120px!important;
-  min-height:120px!important;
+#section-accueil .home-mouse-scroll:hover .home-mouse-scroll-shell{
+    border-color:rgba(255,132,75,.9)!important;
+    color:#FF844B!important;
+    background:rgba(18,18,18,.38)!important;
 }
-#tracking-details-drawer .qd-copy b,
-#tracking-details-drawer .qd-copy small{
-  white-space:normal!important;
-  overflow:visible!important;
-  text-overflow:clip!important;
-  overflow-wrap:anywhere!important;
-  word-break:break-word!important;
+@keyframes homeMouseFloat{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(9px)}
 }
-#tracking-details-drawer .qd-copy.is-rtl,
-#tracking-details-drawer .qd-copy b[dir="rtl"]{
-  direction:rtl!important;
-  text-align:right!important;
-  unicode-bidi:plaintext!important;
+@keyframes homeMouseWheel{
+    0%{transform:translateY(0);opacity:1}
+    65%{transform:translateY(6px);opacity:.25}
+    100%{transform:translateY(0);opacity:1}
 }
-@media(max-width:700px){
-  #tracking-details-drawer .qd-body{padding:18px 14px 140px!important}
+@media(prefers-reduced-motion:reduce){
+    #section-accueil .home-mouse-scroll-shell,
+    #section-accueil .home-mouse-scroll svg line{animation:none!important}
+}
+
+/* La section et le rail des marques occupent toute la largeur utile de l'écran. */
+#section-accueil #section-partenaires{
+    width:100vw!important;
+    max-width:none!important;
+    margin-left:calc(50% - 50vw)!important;
+    margin-right:calc(50% - 50vw)!important;
+}
+#section-accueil #section-partenaires .partners-inner{
+    width:100%!important;
+    max-width:none!important;
+    margin:0!important;
+    padding-left:clamp(24px,3vw,64px)!important;
+    padding-right:clamp(24px,3vw,64px)!important;
+}
+#section-accueil #section-partenaires .partners-marquee-wrapper{
+    width:100%!important;
+    max-width:none!important;
+}
+#section-accueil #section-partenaires .partners-marquee-track{
+    min-width:max-content!important;
+}
+@media(max-width:767px){
+    #section-accueil .home-mouse-scroll{bottom:18px!important}
+    #section-accueil .home-mouse-scroll-shell{width:40px!important;height:50px!important}
 }
