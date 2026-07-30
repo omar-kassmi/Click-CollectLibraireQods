@@ -89,7 +89,7 @@
                     <svg class="w-[19px] h-[19px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span class="sidebar-label whitespace-nowrap">Configuration</span>
                 </button>
             </nav>
-            <div class="p-2.5 border-t border-gray-100">
+            <div class="p-2.5">
                 <button id="btn-sidebar-toggle" type="button" class="w-full min-h-10 px-3 rounded-xl flex items-center gap-3 text-white hover:bg-white/15 transition" title="Réduire ou développer le menu" aria-expanded="true">
                     <svg id="sidebar-toggle-icon" class="w-[19px] h-[19px] shrink-0 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg><span class="sidebar-label whitespace-nowrap text-[11px] font-black">Réduire</span>
                 </button>
@@ -131,7 +131,12 @@
                         <p class="text-xs text-gray-500 mt-0.5">Consultez les fichiers et préparez les messages de validation.</p>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button id="btn-export-orders" class="bg-white border text-xs font-semibold px-4 py-2 rounded-xl hover:bg-gray-50 shadow-sm transition">Exporter CSV</button>
+                        <div id="orders-bulk-tools" class="orders-bulk-tools" aria-label="Sélection multiple des commandes">
+                            <button id="btn-bulk-edit" type="button" class="orders-bulk-icon hidden" title="Modifier la sélection" aria-label="Modifier la sélection"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4ZM13.5 6.5l4 4"/></svg><span id="orders-bulk-count">0</span></button>
+                            <button id="btn-bulk-delete" type="button" class="orders-bulk-icon orders-bulk-delete hidden" title="Supprimer la sélection" aria-label="Supprimer la sélection"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V3h8v3M19 6l-1 15H6L5 6M10 11v6M14 11v6"/></svg></button>
+                            <button id="btn-bulk-all" type="button" class="orders-bulk-icon hidden" title="Tout sélectionner" aria-label="Tout sélectionner"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></button>
+                            <button id="btn-bulk-toggle" type="button" class="orders-bulk-toggle">Sélection multiple</button>
+                        </div>
                         <button id="btn-archive-management" type="button" class="bg-white border border-orange-200 text-[#E75C25] text-xs font-semibold px-4 py-2 rounded-xl hover:bg-orange-50 shadow-sm transition">Gestion des données</button>
                         <button id="btn-print-period" type="button" class="bg-[#E75C25] text-white border border-[#E75C25] text-xs font-semibold px-4 py-2 rounded-xl hover:bg-[#CE4E1D] shadow-sm transition inline-flex items-center gap-2">Imprimer</button>
                     </div>
@@ -401,6 +406,6 @@
     </div>
     </div>
     </div>
-    <script src="admin.js?v=preference-langue-minutes-v1"></script>
+    <script src="admin.js?v=rtl-items-exact-v2"></script>
 </body>
 </html>

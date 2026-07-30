@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const RESERVATION_DAYS = 5;
-    const ARCHIVE_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwNXzpRF85HdPV2mTPHDiXGJvdMHnatpbDZljkOhotSg-7OVTS4Hx2ngf7CmEdPJ-bG/exec";
+    const ARCHIVE_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxxpcC4DLvjtgGqkB4T-GvX7by6QpttUuU7XL7_88niWK-HtjfVpVqKzVgp1Kul-AkV/exec";
 
     const COLLECTED_STATUSES = ['collected'];
     const CLOSED_STATUSES = ['collected', 'cancelled', 'expired'];
@@ -69,6 +69,29 @@ document.addEventListener('DOMContentLoaded', () => {
     .school-master-row{grid-template-columns:34px minmax(0,1fr) auto!important}.catalog-row-actions{display:flex;gap:4px}.catalog-school-edit{color:#E75C25!important}.catalog-school-edit svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9}.school-edit-logo-preview{min-height:76px;display:flex;align-items:center;justify-content:center;gap:10px;border:1px dashed #d6d3d1;border-radius:12px;background:#fafaf9}.school-edit-logo-preview img{max-width:120px;max-height:56px}.print-period-card{width:min(540px,calc(100vw - 24px))!important}.print-mode{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:5px;background:#f5f5f4;border-radius:12px}.print-mode button{height:40px;border:0;border-radius:9px;background:transparent;font-size:10px;font-weight:900}.print-mode button.is-active{background:#fff;color:#E75C25}.print-dates{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.print-dates.hidden{display:none!important}.print-dates span{display:block;margin-bottom:5px;font-size:9px;font-weight:900}.print-dates input{width:100%;height:44px;padding:0 12px;border:1px solid #ddd;border-radius:11px}.print-count{margin-top:14px;padding:11px;background:#fff7ed;color:#9a3412;border-radius:11px;font-weight:850}.admin-action-primary:disabled{opacity:.45}@media(max-width:520px){.print-mode,.print-dates{grid-template-columns:1fr}}
     /* ARCHIVE SUMMARY CHIPS */
     .archive-auto-chips{margin-left:auto;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px}.archive-auto-chips.hidden{display:none!important}.archive-auto-chips span{padding:6px 9px;border:1px solid #f3c8b5;border-radius:999px;background:#fff;color:#b9471d;font-size:8px;font-weight:900;white-space:nowrap}.data-toggle:has(#archive-enabled:not(:checked)) .archive-auto-chips{display:none!important}@media(max-width:650px){.archive-auto-chips{width:100%;margin:8px 0 0;justify-content:flex-start}}
+    /* PAGINATION COMMANDES */
+    #pane-orders{padding-bottom:24px!important;height:auto!important;min-height:0!important}
+    #pane-orders .orders-table-card,#pane-orders .admin-orders-v2-wrap{height:auto!important;min-height:0!important}
+    #orders-pagination{position:relative!important;z-index:80!important;margin:14px 0 24px!important;padding:14px 16px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:16px!important;background:#fff!important;border:1px solid #eee7df!important;border-radius:15px!important;box-shadow:0 12px 30px #1c191714!important}
+    .orders-pagination-left{display:flex;align-items:center;gap:18px;color:#6b7280;font-size:11px;font-weight:800}.orders-page-size{display:flex;align-items:center;gap:7px;white-space:nowrap}.orders-page-size select{height:36px;padding:0 30px 0 11px;border:1px solid #ded9d4;border-radius:10px;background:#fff;color:#292524;font-size:11px;font-weight:900;outline:none}.orders-page-size select:focus{border-color:#E75C25;box-shadow:0 0 0 3px rgba(231,92,37,.1)}
+    .orders-pagination-nav,.orders-page-numbers{display:flex;align-items:center;gap:7px}.orders-page-direction,.orders-page-number{height:38px;min-width:38px;padding:0 12px;border:1px solid #e4e0dc;border-radius:11px;background:#fff;color:#374151;font-size:11px;font-weight:950;transition:.15s}.orders-page-number{padding:0}.orders-page-direction:hover:not(:disabled),.orders-page-number:hover:not(.is-active){border-color:#E75C25;color:#E75C25;background:#fff8f3}.orders-page-number.is-active{border-color:#E75C25;background:#E75C25;color:#fff;box-shadow:0 8px 18px rgba(231,92,37,.22)}.orders-page-direction:disabled{color:#cbd0d8;background:#fafafa;cursor:not-allowed}.orders-page-ellipsis{min-width:20px;text-align:center;color:#9ca3af;font-weight:900}
+    @media(max-width:820px){#orders-pagination{align-items:stretch!important;flex-direction:column!important}.orders-pagination-left{justify-content:space-between;flex-wrap:wrap}.orders-pagination-nav{justify-content:space-between}.orders-page-numbers{max-width:55vw;overflow-x:auto;padding:2px}.orders-page-direction{padding:0 9px}}
+    /* IMPRESSION PAR STATUT ET SELECTION MULTIPLE */
+    .print-status-field,.bulk-dialog-field{display:flex;flex-direction:column;gap:6px;margin-top:14px}.print-status-field>span,.bulk-dialog-field>span{color:#78716c;font-size:9px;font-weight:950;letter-spacing:.06em;text-transform:uppercase}.print-status-field select,.bulk-dialog-field select{width:100%;height:44px;padding:0 12px;border:1px solid #ddd6d1;border-radius:11px;background:#fff;color:#292524;font-size:11px;font-weight:850;outline:none}.print-status-field select:focus,.bulk-dialog-field select:focus{border-color:#E75C25;box-shadow:0 0 0 3px rgba(231,92,37,.1)}
+    .orders-bulk-tools{display:flex;align-items:center;gap:7px}.orders-bulk-toggle,.orders-bulk-icon{height:38px;border:1px solid #e7e1dc;border-radius:11px;background:#fff;color:#44403c;font-size:10px;font-weight:900}.orders-bulk-toggle{padding:0 14px}.orders-bulk-toggle.is-active{border-color:#E75C25;background:#fff7ed;color:#E75C25}.orders-bulk-icon{position:relative;width:38px;display:grid;place-items:center;padding:0}.orders-bulk-icon svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.orders-bulk-icon:hover:not(:disabled){border-color:#E75C25;color:#E75C25}.orders-bulk-delete{color:#dc2626}.orders-bulk-delete:hover:not(:disabled){border-color:#dc2626!important;background:#fff5f5!important;color:#dc2626!important}.orders-bulk-icon:disabled{opacity:.4}.orders-bulk-icon span{position:absolute;right:-5px;top:-6px;min-width:17px;height:17px;display:grid;place-items:center;padding:0 4px;border-radius:9px;background:#E75C25;color:#fff;font-size:8px}.orders-bulk-icon.hidden{display:none!important}
+    .order-v2.is-bulk-mode{cursor:pointer}.order-v2.is-selected td{background:#fff7ed!important;border-color:#fdba90!important}.order-select-box{display:inline-grid;place-items:center;margin-right:9px;vertical-align:middle;cursor:pointer}.order-select-box input{position:absolute;opacity:0;pointer-events:none}.order-select-box i{width:18px;height:18px;display:block;border:2px solid #d6d3d1;border-radius:6px;background:#fff}.order-select-box input:checked+i{border-color:#E75C25;background:#E75C25;box-shadow:inset 0 0 0 4px #fff}.bulk-edit-card{width:min(500px,calc(100vw - 28px))}.bulk-dialog-field.hidden,#bulk-delete-warning.hidden{display:none!important}
+
+    .bulk-direct-actions{display:grid;gap:16px}.bulk-field-action{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;align-items:center}.bulk-field-action .admin-action-button{height:44px;min-width:90px}.bulk-delete-zone{margin-top:4px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:14px;border:1px solid #fecaca;border-radius:13px;background:#fff7f7}.bulk-delete-zone b{display:block;color:#b91c1c;font-size:11px}.bulk-delete-zone small{display:block;margin-top:4px;color:#8c6d6d;font-size:9px}.admin-action-danger{border:0!important;background:#dc2626!important;color:#fff!important}@media(max-width:560px){.bulk-field-action{grid-template-columns:1fr}.bulk-field-action .admin-action-button{width:100%}.bulk-delete-zone{align-items:stretch;flex-direction:column}.bulk-delete-zone button{width:100%}}
+    /* RETOUR A LA LIGNE DES NOMS D ARTICLES */
+    .ord-body .item,.ord-body .item>div,.ord-body .item b,.ord-body .item span{min-width:0!important;max-width:100%!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere!important;word-break:break-word!important}
+    /* ALIGNEMENT RTL EXACT DES ITEMS ARABES DANS LE PANNEAU COMMANDE */
+    #ord-modal .drawer-item-text{display:block!important;min-width:0!important;width:100%!important;max-width:100%!important;overflow-wrap:anywhere!important;word-break:break-word!important}
+    #ord-modal .drawer-item-text b,#ord-modal .drawer-item-text small{display:block!important;max-width:100%!important;white-space:normal!important}
+    #ord-modal .drawer-item-rtl .drawer-item-text{direction:rtl!important;text-align:right!important;unicode-bidi:plaintext!important;justify-self:stretch!important}
+    #ord-modal .drawer-item-rtl .drawer-item-text b,#ord-modal .drawer-item-rtl .drawer-item-text small{direction:rtl!important;text-align:right!important;unicode-bidi:plaintext!important}
+    #ord-modal .drawer-item-rtl .drawer-item-text bdi{unicode-bidi:isolate!important}
+    #ord-modal .drawer-item-rtl{direction:ltr!important}
+    #ord-modal .drawer-item-rtl .drawer-item-price,#ord-modal .drawer-item-rtl .drawer-item-actions{direction:ltr!important}
     /* ADMIN ACTION DIALOGS */
     .admin-action-dialog{position:fixed;inset:0;z-index:2147483646;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(12,10,9,.58);backdrop-filter:blur(7px)}
     .admin-action-dialog.is-open{display:flex}
@@ -209,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .brand{display:flex;gap:3mm;align-items:center}.brand img{width:17mm;height:17mm;object-fit:contain}.brand h1{margin:0;color:#e75c25;font-size:15pt;line-height:1}.brand p{margin:1.5mm 0 0;color:#78716c;font-size:7.8pt}
             .ref{text-align:right}.ref small{display:block;color:#a8a29e;font-weight:700;text-transform:uppercase;font-size:6.8pt;letter-spacing:.08em}.ref strong{display:block;color:#e75c25;font-size:13pt;white-space:nowrap}.ref time{display:block;margin-top:1mm;color:#57534e;font-size:7.5pt}
             .info{display:grid;grid-template-columns:1fr 1fr;gap:1.7mm 5mm;padding:3mm;border:1px solid #e7e5e4;border-radius:3mm;background:#fffdfb}.field{display:grid;grid-template-columns:29mm 1fr;gap:2mm}.field b{font-size:7.4pt;color:#78716c}.field span{font-weight:700;overflow-wrap:anywhere}.wide{grid-column:1/-1}
-            table{width:100%;border-collapse:collapse;table-layout:fixed;margin-top:3mm;break-inside:auto}thead{display:table-header-group}tr{break-inside:avoid;page-break-inside:avoid}th{padding:1.7mm 1mm;border-top:1.2px solid #57534e;border-bottom:1.2px solid #57534e;text-align:left;font-size:7.2pt;color:#57534e}td{padding:1.65mm 1mm;border-bottom:.5px solid #d6d3d1;vertical-align:middle;font-size:8pt}.check{width:7mm}.check span{display:block;width:3.6mm;height:3.6mm;border:1px solid #57534e}.num{width:7mm;text-align:center;color:#78716c}.article{width:auto;font-weight:400}.article span{font-weight:400}.article em{font-weight:400;font-style:italic;color:#57534e}.qty{width:12mm;text-align:center;font-weight:800}.price,.line-total{width:18mm;text-align:right;font-variant-numeric:tabular-nums}.line-total{font-weight:800}
+            table{width:100%;border-collapse:collapse;table-layout:fixed;margin-top:3mm;break-inside:auto}thead{display:table-header-group}tr{break-inside:avoid;page-break-inside:avoid}th{padding:1.7mm 1mm;border-top:1.2px solid #57534e;border-bottom:1.2px solid #57534e;text-align:left;font-size:7.2pt;color:#57534e}td{padding:1.65mm 1mm;border-bottom:.5px solid #d6d3d1;vertical-align:middle;font-size:8pt}.check{width:7mm}.check span{display:block;width:3.6mm;height:3.6mm;border:1px solid #57534e}.num{width:7mm;text-align:center;color:#78716c}.article{width:auto;font-weight:400;white-space:normal;overflow-wrap:anywhere;word-break:break-word;line-height:1.3}.article span,.article em{white-space:normal;overflow-wrap:anywhere;word-break:break-word}.article span{font-weight:400}.article em{font-weight:400;font-style:italic;color:#57534e}.qty{width:12mm;text-align:center;font-weight:800}.price,.line-total{width:18mm;text-align:right;font-variant-numeric:tabular-nums}.line-total{font-weight:800}
             .total{margin-top:3mm;display:flex;justify-content:space-between;align-items:center;padding:3mm 3.5mm;border-radius:2.5mm;background:#e75c25;color:#fff;break-inside:avoid}.total span{font-weight:800}.total strong{font-size:12pt}
             .control{display:grid;grid-template-columns:1fr 30mm;gap:4mm;margin-top:3mm;align-items:end;break-inside:avoid}.control-lines{display:grid;grid-template-columns:1fr;gap:3mm}.sign{height:12mm;border-bottom:1px solid #78716c;color:#78716c;font-size:7pt;padding-top:1mm}.qr{display:flex;justify-content:flex-end}.qr img{width:24mm;height:24mm;object-fit:contain}
             @media screen{body{background:#eee;padding:12px}.sheet{width:148mm;min-height:210mm;margin:auto;padding:7mm;background:#fff;box-shadow:0 8px 30px rgba(0,0,0,.14)}}
@@ -262,6 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>`);
         dialog.querySelector('.photo-price-warning-confirm')?.focus();
     }
+    function drawerItemArabic_(value){return /[\u0600-\u06FF]/.test(String(value||''));}
     function openOrder(id){
         const o=currentOrders.find(x=>String(x.id)===String(id));if(!o)return;
         const items=parseItems(o.items),status=normalizeStatus(o.status),deadline=getDeadline(o),photoOrder=isPhotoListOrder(o,items),qrValue=String(o.qr_payload||o.qr_code||o.numero_commande||o.id||''),qrSrc=`https://api.qrserver.com/v1/create-qr-code/?size=230x230&margin=8&data=${encodeURIComponent(qrValue)}`,amount=Number(o.total_amount??items.reduce((sum,item)=>sum+(Number(item.price)||0),0));
@@ -283,10 +307,11 @@ document.addEventListener('DOMContentLoaded', () => {
             : `${unselectedListCount} article${unselectedListCount>1?'s':''} non sélectionné${unselectedListCount>1?'s':''}`;
         let drawer=document.getElementById('ord-modal');if(!drawer){drawer=document.createElement('div');drawer.id='ord-modal';drawer.className='ord-modal';drawer.addEventListener('click',e=>{if(e.target===drawer)closeOrder()});document.body.appendChild(drawer)}drawer.dataset.orderId=String(o.id);
         const priceAttrs=photoOrder?' contenteditable="true" role="textbox" aria-label="Modifier le prix final" class="ord-price is-editable"':' class="ord-price"';
-        const selectedSchoolRows=schoolItems.map((item,i)=>`<div class="drawer-item"><span><b>${i+1}. ${escapeHtml(item.name||item.label||'Article')}</b><small>${escapeHtml(item.category||'Liste scolaire')}</small></span><span class="drawer-item-price">${money(item.price)}</span></div>`).join('');
-        const unselectedSchoolRows=unselectedSchoolItems.map((item,i)=>`<div class="drawer-item drawer-item-unselected"><span><b>${schoolItems.length+i+1}. ${escapeHtml(item.name||item.label||'Article')}</b><small>${escapeHtml(item.category||'Liste scolaire')}</small></span><span class="drawer-item-actions"><span class="drawer-unselected-chip">Non sélectionné</span><span class="drawer-item-price">${money(item.price)}</span></span></div>`).join('');
+        const drawerItemRow_=(item,number,options={})=>{const name=item.name||item.label||options.fallback||'Article',rtl=drawerItemArabic_(name),subtitle=options.subtitle||item.category||'Liste scolaire';return `<div class="drawer-item${options.unselected?' drawer-item-unselected':''}${rtl?' drawer-item-rtl':''}"><span class="drawer-item-text" dir="${rtl?'rtl':'ltr'}"><b>${rtl?`<bdi>${escapeHtml(name)}</bdi> <bdi>${number}.</bdi>`:`${number}. ${escapeHtml(name)}`}</b><small>${escapeHtml(subtitle)}</small></span>${options.unselected?`<span class="drawer-item-actions"><span class="drawer-unselected-chip">Non sélectionné</span><span class="drawer-item-price">${money(item.price)}</span></span>`:`<span class="drawer-item-price">${money(item.price)}</span>`}</div>`};
+        const selectedSchoolRows=schoolItems.map((item,i)=>drawerItemRow_(item,i+1)).join('');
+        const unselectedSchoolRows=unselectedSchoolItems.map((item,i)=>drawerItemRow_(item,schoolItems.length+i+1,{unselected:true})).join('');
         const schoolRows=(selectedSchoolRows+unselectedSchoolRows)||'<div class="drawer-empty">Aucun article de liste officielle.</div>';
-        const supplyRows=supplyItems.length?supplyItems.map((item,i)=>`<div class="drawer-item"><span><b>${i+1}. ${escapeHtml(item.name||'Fourniture')}</b><small>${escapeHtml(orderSupplyConfigurationText(item)||'Standard')}</small></span><span class="drawer-item-price">${money(item.price)}</span></div>`).join(''):'<div class="drawer-empty">Aucune fourniture complémentaire sélectionnée.</div>';
+        const supplyRows=supplyItems.length?supplyItems.map((item,i)=>drawerItemRow_(item,i+1,{fallback:'Fourniture',subtitle:orderSupplyConfigurationText(item)||'Standard'})).join(''):'<div class="drawer-empty">Aucune fourniture complémentaire sélectionnée.</div>';
         drawer.innerHTML=`<aside class="ord-card" role="dialog" aria-modal="true">
           <header class="ord-head"><div class="ord-head-top"><div class="ord-reference-line"><h2 class="ord-title" title="#${escapeHtml(o.numero_commande||o.id)}">#${escapeHtml(o.numero_commande||o.id)}</h2><button type="button" class="copy-order-reference" title="Copier la référence"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="8" y="8" width="11" height="13" rx="2"/><rect x="4" y="3" width="11" height="13" rx="2"/></svg></button></div>
           <div class="ord-head-actions"><button class="act wa drawer-wa" title="WhatsApp"><svg class="wa-icon" viewBox="0 0 24 24"><path d="M12.04 2a9.84 9.84 0 0 0-8.43 14.9L2 22l5.23-1.55A9.98 9.98 0 1 0 12.04 2Zm0 17.98a8.08 8.08 0 0 1-4.12-1.13l-.3-.18-3.1.92.93-3.02-.2-.31A7.86 7.86 0 0 1 4 12.02a8.03 8.03 0 1 1 8.04 7.96Zm4.43-6.03c-.24-.12-1.44-.7-1.66-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.02-.37-1.94-1.2-.72-.63-1.2-1.42-1.34-1.66-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.29-.74-1.77-.2-.47-.4-.4-.54-.41h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.69 2.57 4.1 3.6.57.24 1.02.39 1.37.5.58.18 1.1.16 1.51.1.46-.07 1.44-.59 1.64-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28Z"/></svg></button><button class="act pr drawer-print"><svg viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg></button><button class="act del drawer-delete"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V3h8v3M19 6l-1 15H6L5 6M10 11v6M14 11v6"/></svg></button><button class="close" type="button">×</button></div></div><div class="ord-head-bottom"><div class="ord-head-chips">${chip(o.id,'status',status)}${chip(o.id,'payment',o.payment_status||'unpaid')}</div><div class="ord-price-wrap"><div id="modal-order-price"${priceAttrs}>Prix : ${money(amount)}</div>${photoOrder?'<div id="ord-price-save-state" class="ord-price-save-state"></div>':''}</div></div></header>
@@ -304,7 +329,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentOrders = [];
     let currentOrdersPage = 1;
-    const ORDERS_PER_PAGE = 10;
+    let ordersPerPage = 10;
+    let bulkSelectionMode = false;
+    const selectedOrderIds = new Set();
     let currentFormItems = [];
     let editingListId = null;
     let editingItemId = null;
@@ -757,24 +784,57 @@ document.addEventListener('DOMContentLoaded', () => {
         ].map(([label, value]) => `<div class="bg-gray-50 rounded-xl p-3"><b>${label}</b><div>${value}</div></div>`).join('');
     }
 
+    function getOrderPageItems(totalPages){
+        if(totalPages<=7)return Array.from({length:totalPages},(_,i)=>i+1);
+        const items=[1];
+        const from=Math.max(2,currentOrdersPage-1);
+        const to=Math.min(totalPages-1,currentOrdersPage+1);
+        if(from>2)items.push('ellipsis-left');
+        for(let page=from;page<=to;page++)items.push(page);
+        if(to<totalPages-1)items.push('ellipsis-right');
+        items.push(totalPages);
+        return items;
+    }
+
+    function goToOrdersPage(page){
+        const filteredCount=getFilteredOrders().length;
+        const totalPages=Math.max(1,Math.ceil(filteredCount/ordersPerPage));
+        currentOrdersPage=Math.min(totalPages,Math.max(1,Number(page)||1));
+        renderOrdersTable();
+        document.getElementById('table-orders-body')?.closest('.orders-table-card,table')?.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+
     function renderOrdersPagination(totalOrders, totalPages) {
         const container = document.getElementById('orders-pagination');
         if (!container) return;
         if (!totalOrders) {
-            container.innerHTML = `<div class="text-xs text-gray-400 font-semibold">Aucune commande à paginer</div>`;
+            container.innerHTML = `<div class="orders-pagination-left"><label class="orders-page-size">Afficher <select id="orders-page-size"><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="50">50</option></select> commandes</label><span>Aucune commande à paginer</span></div>`;
+            document.getElementById('orders-page-size').value=String(ordersPerPage);
+            document.getElementById('orders-page-size').onchange=e=>{ordersPerPage=Number(e.target.value)||10;currentOrdersPage=1;renderOrdersTable()};
             return;
         }
-        const start = (currentOrdersPage - 1) * ORDERS_PER_PAGE + 1;
-        const end = Math.min(currentOrdersPage * ORDERS_PER_PAGE, totalOrders);
+        const start = (currentOrdersPage - 1) * ordersPerPage + 1;
+        const end = Math.min(currentOrdersPage * ordersPerPage, totalOrders);
+        const pageButtons=getOrderPageItems(totalPages).map(item=>{
+            if(typeof item!=='number')return '<span class="orders-page-ellipsis" aria-hidden="true">…</span>';
+            const active=item===currentOrdersPage;
+            return `<button type="button" class="orders-page-number${active?' is-active':''}" data-orders-page="${item}" ${active?'aria-current="page"':''}>${item}</button>`;
+        }).join('');
         container.innerHTML = `
-            <div class="text-xs text-gray-500 font-semibold">Affichage ${start}-${end} sur ${totalOrders} commandes</div>
-            <div class="flex items-center gap-2">
-                <button id="btn-orders-prev" class="px-3 py-2 rounded-xl border border-gray-200 text-xs font-bold ${currentOrdersPage <= 1 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-50'}" ${currentOrdersPage <= 1 ? 'disabled' : ''}>Précédent</button>
-                <span class="px-3 py-2 rounded-xl bg-[#E75C25] text-white text-xs font-black">${currentOrdersPage} / ${totalPages}</span>
-                <button id="btn-orders-next" class="px-3 py-2 rounded-xl border border-gray-200 text-xs font-bold ${currentOrdersPage >= totalPages ? 'text-gray-300 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-50'}" ${currentOrdersPage >= totalPages ? 'disabled' : ''}>Suivant</button>
+            <div class="orders-pagination-left">
+                <label class="orders-page-size">Afficher <select id="orders-page-size" aria-label="Nombre de commandes par page"><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="50">50</option></select> commandes</label>
+                <span>Affichage ${start}-${end} sur ${totalOrders} commandes</span>
+            </div>
+            <div class="orders-pagination-nav">
+                <button id="btn-orders-prev" class="orders-page-direction" ${currentOrdersPage <= 1 ? 'disabled' : ''}>Précédent</button>
+                <div class="orders-page-numbers" aria-label="Pages des commandes">${pageButtons}</div>
+                <button id="btn-orders-next" class="orders-page-direction" ${currentOrdersPage >= totalPages ? 'disabled' : ''}>Suivant</button>
             </div>`;
-        document.getElementById('btn-orders-prev')?.addEventListener('click', () => { if (currentOrdersPage > 1) { currentOrdersPage -= 1; renderOrdersTable(); document.getElementById('table-orders-body')?.closest('table')?.scrollIntoView({behavior:'smooth'}); } });
-        document.getElementById('btn-orders-next')?.addEventListener('click', () => { if (currentOrdersPage < totalPages) { currentOrdersPage += 1; renderOrdersTable(); document.getElementById('table-orders-body')?.closest('table')?.scrollIntoView({behavior:'smooth'}); } });
+        const size=document.getElementById('orders-page-size');
+        if(size){size.value=String(ordersPerPage);size.onchange=e=>{ordersPerPage=Number(e.target.value)||10;currentOrdersPage=1;renderOrdersTable()}}
+        container.querySelectorAll('[data-orders-page]').forEach(button=>button.onclick=()=>goToOrdersPage(button.dataset.ordersPage));
+        document.getElementById('btn-orders-prev')?.addEventListener('click',()=>goToOrdersPage(currentOrdersPage-1));
+        document.getElementById('btn-orders-next')?.addEventListener('click',()=>goToOrdersPage(currentOrdersPage+1));
     }
 
     function getImportedListUrl(order, items) {
@@ -820,7 +880,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.closeImportedListPreview=closeImportedListPreview;
     window.openImportedListPreview=openImportedListPreview;
 
-    function renderOrdersTable(){const tb=document.getElementById('table-orders-body'),f=getFilteredOrders(),pages=Math.max(1,Math.ceil(f.length/ORDERS_PER_PAGE));if(currentOrdersPage>pages)currentOrdersPage=pages;const os=f.slice((currentOrdersPage-1)*ORDERS_PER_PAGE,currentOrdersPage*ORDERS_PER_PAGE);if(!tb)return;const table=tb.closest('table');table?.classList.add('admin-orders-v2');const tableCard=table?.parentElement;tableCard?.classList.add('orders-table-card','admin-orders-v2-wrap');const hr=table?.querySelector('thead tr');if(hr)hr.innerHTML='<th>Commande</th><th>Client</th><th>Téléphone</th><th>Contenu</th><th>Statut</th><th>Paiement</th><th>Échéance</th><th class="text-right">Actions</th>';renderOrdersPagination(f.length,pages);if(!os.length){tb.innerHTML='<tr><td colspan="8" class="p-6 text-center text-gray-400">Aucune commande.</td></tr>';return}tb.innerHTML=os.map(o=>{const st=normalizeStatus(o.status),it=parseItems(o.items),d=getDeadline(o),photo=it.find(a=>a.type==='photo_upload'||a.url||a.photo_url)||o.google_drive_url,content=photo?`<button type="button" class="imported-list-link" data-id="${o.id}" title="Afficher l’image importée"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></svg>Liste importée</button>`:`${it.length} articles`;return `<tr class="order-v2" data-id="${o.id}" tabindex="0"><td><b class="text-[#E75C25]">#${escapeHtml(o.numero_commande||o.id)}</b></td><td><b>${escapeHtml(o.client_name||'-')}</b><span class="sub">${escapeHtml(o.client_email||'-')}</span></td><td>${escapeHtml(o.client_phone||'-')}</td><td><b>${content}</b><span class="sub">${money(orderTotal(o))}</span></td><td>${chip(o.id,'status',st)}</td><td>${chip(o.id,'payment',o.payment_status||'unpaid')}</td><td class="text-xs text-stone-500">${d.toLocaleDateString('fr-FR')} (${daysUntil(d)}j)</td><td><div class="acts"><button class="act wa notify" data-id="${o.id}" title="Envoyer un message WhatsApp" aria-label="Envoyer un message WhatsApp"><svg class="wa-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2a9.84 9.84 0 0 0-8.43 14.9L2 22l5.23-1.55A9.98 9.98 0 1 0 12.04 2Zm0 17.98a8.08 8.08 0 0 1-4.12-1.13l-.3-.18-3.1.92.93-3.02-.2-.31A7.86 7.86 0 0 1 4 12.02a8.03 8.03 0 1 1 8.04 7.96Zm4.43-6.03c-.24-.12-1.44-.7-1.66-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.02-.37-1.94-1.2-.72-.63-1.2-1.42-1.34-1.66-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.29-.74-1.77-.2-.47-.4-.4-.54-.41h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.69 2.57 4.1 3.6.57.24 1.02.39 1.37.5.58.18 1.1.16 1.51.1.46-.07 1.44-.59 1.64-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28Z"/></svg></button><button class="act pr print" data-id="${o.id}" title="Imprimer"><svg viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg></button><button class="act del delete" data-id="${o.id}" title="Supprimer"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V3h8v3M19 6l-1 15H6L5 6M10 11v6M14 11v6"/></svg></button></div></td></tr>`}).join('');tb.querySelectorAll('.order-v2').forEach(r=>r.onclick=e=>{if(!e.target.closest('button'))openOrder(r.dataset.id)});tb.querySelectorAll('.imported-list-link').forEach(button=>button.onclick=event=>{event.stopPropagation();openImportedListPreview(button.dataset.id)});bindChips(tb);tb.querySelectorAll('.notify').forEach(x=>x.onclick=e=>{e.stopPropagation();openWhatsappDialog(x.dataset.id)});tb.querySelectorAll('.print').forEach(x=>x.onclick=e=>{e.stopPropagation();printOrder(x.dataset.id)});tb.querySelectorAll('.delete').forEach(x=>x.onclick=e=>{e.stopPropagation();openDeleteOrderDialog(x.dataset.id)})}
+    function renderOrdersTable(){const tb=document.getElementById('table-orders-body'),f=getFilteredOrders(),pages=Math.max(1,Math.ceil(f.length/ordersPerPage));if(currentOrdersPage>pages)currentOrdersPage=pages;const os=f.slice((currentOrdersPage-1)*ordersPerPage,currentOrdersPage*ordersPerPage);if(!tb)return;const table=tb.closest('table');table?.classList.add('admin-orders-v2');const tableCard=table?.parentElement;tableCard?.classList.add('orders-table-card','admin-orders-v2-wrap');const hr=table?.querySelector('thead tr');if(hr)hr.innerHTML='<th>Commande</th><th>Client</th><th>Téléphone</th><th>Contenu</th><th>Statut</th><th>Paiement</th><th>Échéance</th><th class="text-right">Actions</th>';renderOrdersPagination(f.length,pages);if(!os.length){tb.innerHTML='<tr><td colspan="8" class="p-6 text-center text-gray-400">Aucune commande.</td></tr>';return}tb.innerHTML=os.map(o=>{const st=normalizeStatus(o.status),it=parseItems(o.items),d=getDeadline(o),photo=it.find(a=>a.type==='photo_upload'||a.url||a.photo_url)||o.google_drive_url,content=photo?`<button type="button" class="imported-list-link" data-id="${o.id}" title="Afficher l’image importée"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></svg>Liste importée</button>`:`${it.length} articles`;return `<tr class="order-v2${bulkSelectionMode?' is-bulk-mode':''}${selectedOrderIds.has(String(o.id))?' is-selected':''}" data-id="${o.id}" tabindex="0"><td>${bulkSelectionMode?`<label class="order-select-box" title="Sélectionner cette commande"><input type="checkbox" class="order-bulk-check" data-id="${o.id}" ${selectedOrderIds.has(String(o.id))?'checked':''}><i></i></label>`:''}<b class="text-[#E75C25]">#${escapeHtml(o.numero_commande||o.id)}</b></td><td><b>${escapeHtml(o.client_name||'-')}</b><span class="sub">${escapeHtml(o.client_email||'-')}</span></td><td>${escapeHtml(o.client_phone||'-')}</td><td><b>${content}</b><span class="sub">${money(orderTotal(o))}</span></td><td>${chip(o.id,'status',st)}</td><td>${chip(o.id,'payment',o.payment_status||'unpaid')}</td><td class="text-xs text-stone-500">${d.toLocaleDateString('fr-FR')} (${daysUntil(d)}j)</td><td><div class="acts"><button class="act wa notify" data-id="${o.id}" title="Envoyer un message WhatsApp" aria-label="Envoyer un message WhatsApp"><svg class="wa-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2a9.84 9.84 0 0 0-8.43 14.9L2 22l5.23-1.55A9.98 9.98 0 1 0 12.04 2Zm0 17.98a8.08 8.08 0 0 1-4.12-1.13l-.3-.18-3.1.92.93-3.02-.2-.31A7.86 7.86 0 0 1 4 12.02a8.03 8.03 0 1 1 8.04 7.96Zm4.43-6.03c-.24-.12-1.44-.7-1.66-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.02-.37-1.94-1.2-.72-.63-1.2-1.42-1.34-1.66-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.29-.74-1.77-.2-.47-.4-.4-.54-.41h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.69 2.57 4.1 3.6.57.24 1.02.39 1.37.5.58.18 1.1.16 1.51.1.46-.07 1.44-.59 1.64-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28Z"/></svg></button><button class="act pr print" data-id="${o.id}" title="Imprimer"><svg viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg></button><button class="act del delete" data-id="${o.id}" title="Supprimer"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V3h8v3M19 6l-1 15H6L5 6M10 11v6M14 11v6"/></svg></button></div></td></tr>`}).join('');tb.querySelectorAll('.order-v2').forEach(r=>r.onclick=e=>{if(e.target.closest('.order-select-box'))return;if(bulkSelectionMode){const id=String(r.dataset.id);selectedOrderIds.has(id)?selectedOrderIds.delete(id):selectedOrderIds.add(id);syncBulkToolbar();renderOrdersTable();return}if(!e.target.closest('button'))openOrder(r.dataset.id)});tb.querySelectorAll('.order-bulk-check').forEach(input=>input.onchange=e=>{e.stopPropagation();const id=String(input.dataset.id);input.checked?selectedOrderIds.add(id):selectedOrderIds.delete(id);syncBulkToolbar();renderOrdersTable()});tb.querySelectorAll('.imported-list-link').forEach(button=>button.onclick=event=>{event.stopPropagation();openImportedListPreview(button.dataset.id)});bindChips(tb);tb.querySelectorAll('.notify').forEach(x=>x.onclick=e=>{e.stopPropagation();openWhatsappDialog(x.dataset.id)});tb.querySelectorAll('.print').forEach(x=>x.onclick=e=>{e.stopPropagation();printOrder(x.dataset.id)});tb.querySelectorAll('.delete').forEach(x=>x.onclick=e=>{e.stopPropagation();openDeleteOrderDialog(x.dataset.id)})}
 
     async function updateOrderStatus(orderId, status) {
         const payload = { status };
@@ -987,10 +1047,70 @@ o.querySelector('#cleanup-save').onclick=async()=>{try{const c=readCleanup();if(
 o.classList.add('is-open');dataTab('archive');archiveStatus('Chargement…');const r=await Promise.allSettled([archiveRequest('archiveGetConfig').then(x=>{archiveRenderConfig(x.config);toggleAuto('archive-auto-fields',x.config.enabled===true)}),cleanupRpc('admin_get_cleanup_config').then(fillCleanup)]),errs=r.filter(x=>x.status==='rejected');archiveStatus(errs.length?errs.map(x=>x.reason.message).join(' · '):'',errs.length?'error':'info');}
     document.getElementById('btn-archive-management')?.addEventListener('click',openArchiveManager);
 
+    function currentPageOrders(){
+        const filtered=getFilteredOrders();
+        return filtered.slice((currentOrdersPage-1)*ordersPerPage,currentOrdersPage*ordersPerPage);
+    }
+    function syncBulkToolbar(){
+        const toggle=document.getElementById('btn-bulk-toggle'),edit=document.getElementById('btn-bulk-edit'),remove=document.getElementById('btn-bulk-delete'),all=document.getElementById('btn-bulk-all'),count=document.getElementById('orders-bulk-count');
+        toggle?.classList.toggle('is-active',bulkSelectionMode);
+        toggle?.setAttribute('aria-pressed',String(bulkSelectionMode));
+        [edit,remove,all].forEach(button=>button?.classList.toggle('hidden',!bulkSelectionMode));
+        if(count)count.textContent=String(selectedOrderIds.size);
+        if(edit)edit.disabled=!selectedOrderIds.size;if(remove)remove.disabled=!selectedOrderIds.size;
+    }
+    function toggleBulkSelectionMode(){
+        bulkSelectionMode=!bulkSelectionMode;
+        if(!bulkSelectionMode)selectedOrderIds.clear();
+        syncBulkToolbar();
+        renderOrdersTable();
+    }
+    function toggleAllFilteredOrders(){
+        const ids=getFilteredOrders().map(order=>String(order.id));
+        const allSelected=ids.length&&ids.every(id=>selectedOrderIds.has(id));
+        ids.forEach(id=>allSelected?selectedOrderIds.delete(id):selectedOrderIds.add(id));
+        syncBulkToolbar();renderOrdersTable();
+    }
+    function openBulkEditDialog(){
+        const ids=[...selectedOrderIds];if(!ids.length)return;
+        const statusOptions=Object.entries(STATUS_META).map(([value,meta])=>`<option value="${value}">${meta[0]}</option>`).join('');
+        const d=openAdminActionDialog(`<div class="admin-action-card bulk-edit-card"><div class="admin-action-head"><div><h3>Modifier la sélection</h3><p>${ids.length} commande${ids.length>1?'s':''} sélectionnée${ids.length>1?'s':''}.</p></div><button class="admin-action-close" data-dialog-close>×</button></div><div class="admin-action-body"><div class="bulk-direct-actions"><label class="bulk-dialog-field"><span>Nouveau statut</span><select id="bulk-status"><option value="">Ne pas modifier le statut</option>${statusOptions}</select></label><label class="bulk-dialog-field"><span>État du paiement</span><select id="bulk-payment"><option value="">Ne pas modifier le paiement</option><option value="unpaid">Non payé</option><option value="paid">Payé</option></select></label></div><div class="admin-action-buttons"><button class="admin-action-button admin-action-cancel" data-dialog-close>Annuler</button><button id="bulk-apply" class="admin-action-button admin-action-primary">Appliquer</button></div></div></div>`);
+        const apply=d.querySelector('#bulk-apply');
+        apply.onclick=async()=>{const status=d.querySelector('#bulk-status').value,payment=d.querySelector('#bulk-payment').value;if(!status&&!payment)return alert('Choisissez au moins une modification.');apply.disabled=true;apply.textContent='Traitement…';try{if(status){const {error}=await supabaseClient.from('orders').update({status}).in('id',ids);if(error)throw error}if(payment){const {error}=await supabaseClient.from('orders').update({payment_status:payment}).in('id',ids);if(error)throw error}closeAdminActionDialog();await loadOrders();selectedOrderIds.clear();syncBulkToolbar()}catch(error){apply.disabled=false;apply.textContent='Appliquer';alert(error.message)}};
+    }
+    function deleteBulkSelection(){
+        const ids=[...selectedOrderIds];if(!ids.length)return;
+        const references=ids.map(id=>currentOrders.find(order=>String(order.id)===String(id))).filter(Boolean).slice(0,4).map(order=>`#${escapeHtml(order.numero_commande||order.id)}`);
+        const preview=references.join(', ')+(ids.length>4?` et ${ids.length-4} autre${ids.length-4>1?'s':''}`:'');
+        const dialog=openAdminActionDialog(`<div class="admin-action-card"><div class="admin-action-head"><div><h3>Supprimer les commandes sélectionnées ?</h3><p>Cette action est définitive.</p></div><button class="admin-action-close" data-dialog-close>×</button></div><div class="admin-action-body"><div class="admin-action-alert"><strong>${ids.length} commande${ids.length>1?'s':''}</strong> ${ids.length>1?'seront supprimées':'sera supprimée'} définitivement de Supabase${preview?` : <span class="admin-action-ref">${preview}</span>`:''}. Cette action ne peut pas être annulée.</div><div class="admin-action-buttons"><button class="admin-action-button admin-action-cancel" data-dialog-close>Conserver</button><button id="admin-bulk-delete-confirm" class="admin-action-button admin-action-danger">Supprimer définitivement</button></div></div></div>`);
+        dialog.querySelector('#admin-bulk-delete-confirm').onclick=async()=>{
+            const button=dialog.querySelector('#admin-bulk-delete-confirm');button.disabled=true;button.textContent='Suppression…';
+            try{const history=await supabaseClient.from('order_history').delete().in('order_id',ids);if(history.error&&history.error.code!=='42P01')throw history.error;const {error}=await supabaseClient.from('orders').delete().in('id',ids);if(error)throw error;selectedOrderIds.clear();closeAdminActionDialog();await loadOrders();syncBulkToolbar()}catch(error){button.disabled=false;button.textContent='Supprimer définitivement';alert(error.message)}
+        };
+    }
+    document.getElementById('btn-bulk-toggle')?.addEventListener('click',toggleBulkSelectionMode);
+    document.getElementById('btn-bulk-all')?.addEventListener('click',toggleAllFilteredOrders);
+    document.getElementById('btn-bulk-edit')?.addEventListener('click',openBulkEditDialog);
+    document.getElementById('btn-bulk-delete')?.addEventListener('click',deleteBulkSelection);
+    syncBulkToolbar();
+
     function printDateKey(v){const d=new Date(v);return Number.isNaN(d.getTime())?'':`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
     function exactA5BodyForOrder(order){const html=printOrder(order.id,{returnHtml:true})||'';const style=(html.match(/<style>([\s\S]*?)<\/style>/i)||[])[1]||'';const body=(html.match(/<body>([\s\S]*?)<script>/i)||[])[1]||'';return {style,body};}
-    function printPeriod(from,to){const list=currentOrders.filter(o=>{const k=printDateKey(o.created_at||o.inserted_at);return k&&k>=from&&k<=to}).sort((x,y)=>new Date(x.created_at||x.inserted_at)-new Date(y.created_at||y.inserted_at));if(!list.length)return alert('Aucune commande dans cette période.');const pages=list.map(exactA5BodyForOrder),style=pages[0]?.style||'';const w=open('','_blank','width=900,height=950');if(!w)return alert('Autorisez les popups.');w.document.write(`<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Commandes A5</title><style>${style}\n@page{size:A5 portrait;margin:7mm}.sheet{page-break-after:always;break-after:page}.sheet:last-child{page-break-after:auto;break-after:auto}</style></head><body>${pages.map(page=>page.body).join('')}<script>window.addEventListener('load',()=>setTimeout(()=>window.print(),500));<\/script></body></html>`);w.document.close();}
-    function openPrintPeriodDialog(){const today=printDateKey(new Date()),d=openAdminActionDialog(`<div class="admin-action-card print-period-card"><div class="admin-action-head"><div><h3>Imprimer les commandes</h3><p>Une page A5 par commande.</p></div><button class="admin-action-close" data-dialog-close>×</button></div><div class="admin-action-body"><div class="print-mode"><button class="is-active" data-pmode="today">Aujourd’hui</button><button data-pmode="range">Intervalle</button></div><div id="print-dates" class="print-dates hidden"><label><span>Du</span><input id="pfrom" type="date" value="${today}"></label><label><span>Au</span><input id="pto" type="date" value="${today}"></label></div><div id="pcount" class="print-count"></div><div class="admin-action-buttons"><button class="admin-action-button admin-action-cancel" data-dialog-close>Annuler</button><button id="pgo" class="admin-action-button admin-action-primary">Imprimer</button></div></div></div>`);let mode='today';const dates=d.querySelector('#print-dates'),from=d.querySelector('#pfrom'),to=d.querySelector('#pto'),count=d.querySelector('#pcount'),go=d.querySelector('#pgo');const range=()=>mode==='today'?[today,today]:[from.value,to.value];const update=()=>{const[a,z]=range(),n=currentOrders.filter(o=>{const k=printDateKey(o.created_at);return k>=a&&k<=z}).length;count.textContent=`${n} commande${n>1?'s':''}`;go.disabled=!n};d.querySelectorAll('[data-pmode]').forEach(x=>x.onclick=()=>{mode=x.dataset.pmode;d.querySelectorAll('[data-pmode]').forEach(y=>y.classList.toggle('is-active',y===x));dates.classList.toggle('hidden',mode==='today');update()});from.onchange=()=>{if(from.value>to.value)to.value=from.value;update()};to.onchange=update;go.onclick=()=>{const[a,z]=range();closeAdminActionDialog();printPeriod(a,z)};update();}
+    function printPeriod(from,to,status='all'){const list=currentOrders.filter(o=>{const k=printDateKey(o.created_at||o.inserted_at);return k&&k>=from&&k<=to&&(status==='all'||normalizeStatus(o.status)===status)}).sort((x,y)=>new Date(x.created_at||x.inserted_at)-new Date(y.created_at||y.inserted_at));if(!list.length)return alert('Aucune commande dans cette période.');const pages=list.map(exactA5BodyForOrder),style=pages[0]?.style||'';const w=open('','_blank','width=900,height=950');if(!w)return alert('Autorisez les popups.');w.document.write(`<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Commandes A5</title><style>${style}\n@page{size:A5 portrait;margin:7mm}.sheet{page-break-after:always;break-after:page}.sheet:last-child{page-break-after:auto;break-after:auto}</style></head><body>${pages.map(page=>page.body).join('')}<script>window.addEventListener('load',()=>setTimeout(()=>window.print(),500));<\/script></body></html>`);w.document.close();}
+    function openPrintPeriodDialog(){
+        const today=printDateKey(new Date());
+        const statusOptions=Object.entries(STATUS_META).map(([value,meta])=>`<option value="${value}">${meta[0]}</option>`).join('');
+        const d=openAdminActionDialog(`<div class="admin-action-card print-period-card"><div class="admin-action-head"><div><h3>Imprimer les commandes</h3><p>Une page A5 par commande.</p></div><button class="admin-action-close" data-dialog-close>×</button></div><div class="admin-action-body"><div class="print-mode"><button class="is-active" data-pmode="today">Aujourd’hui</button><button data-pmode="range">Intervalle</button></div><div id="print-dates" class="print-dates hidden"><label><span>Du</span><input id="pfrom" type="date" value="${today}"></label><label><span>Au</span><input id="pto" type="date" value="${today}"></label></div><label class="print-status-field"><span>Statut des commandes</span><select id="pstatus"><option value="all">Tous les statuts</option>${statusOptions}</select></label><div id="pcount" class="print-count"></div><div class="admin-action-buttons"><button class="admin-action-button admin-action-cancel" data-dialog-close>Annuler</button><button id="pgo" class="admin-action-button admin-action-primary">Imprimer</button></div></div></div>`);
+        let mode='today';
+        const dates=d.querySelector('#print-dates'),from=d.querySelector('#pfrom'),to=d.querySelector('#pto'),status=d.querySelector('#pstatus'),count=d.querySelector('#pcount'),go=d.querySelector('#pgo');
+        const range=()=>mode==='today'?[today,today]:[from.value,to.value];
+        const update=()=>{const[a,z]=range(),n=currentOrders.filter(o=>{const k=printDateKey(o.created_at||o.inserted_at);return k>=a&&k<=z&&(status.value==='all'||normalizeStatus(o.status)===status.value)}).length;count.textContent=`${n} commande${n>1?'s':''}`;go.disabled=!n};
+        d.querySelectorAll('[data-pmode]').forEach(x=>x.onclick=()=>{mode=x.dataset.pmode;d.querySelectorAll('[data-pmode]').forEach(y=>y.classList.toggle('is-active',y===x));dates.classList.toggle('hidden',mode==='today');update()});
+        from.onchange=()=>{if(from.value>to.value)to.value=from.value;update()};to.onchange=update;status.onchange=update;
+        go.onclick=()=>{const[a,z]=range();const selectedStatus=status.value;closeAdminActionDialog();printPeriod(a,z,selectedStatus)};
+        update();
+    }
+
     document.getElementById('btn-print-period')?.addEventListener('click',openPrintPeriodDialog);
     document.getElementById('orders-search')?.addEventListener('input', () => { currentOrdersPage = 1; renderOrdersTable(); });
     const orderFilterRoot=document.getElementById('orders-multifilter'),orderFilterMenu=document.getElementById('orders-multifilter-menu');
@@ -1001,22 +1121,7 @@ o.classList.add('is-open');dataTab('archive');archiveStatus('Chargement…');con
     document.addEventListener('pointerdown',event=>{if(!event.target.closest('#orders-multifilter'))closeOrderMultiFilter()});window.addEventListener('scroll',closeOrderMultiFilter,true);window.addEventListener('resize',closeOrderMultiFilter);document.addEventListener('keydown',event=>{if(event.key==='Escape')closeOrderMultiFilter()});syncOrderMultiFilter();
     document.getElementById('orders-date-filter')?.addEventListener('change', () => { currentOrdersPage = 1; renderOrdersTable(); });
     
-    document.getElementById('btn-export-orders')?.addEventListener('click', () => {
-        const rows = [['id', 'numero_commande', 'client', 'phone', 'email', 'status', 'payment_status', 'qr_code', 'deadline', 'total']];
-        getFilteredOrders().forEach(order => rows.push([
-            order.id,
-            order.numero_commande || '',
-            order.client_name,
-            order.client_phone,
-            order.client_email,
-            normalizeStatus(order.status),
-            order.payment_status || 'unpaid',
-            order.qr_code || '',
-            getDeadline(order).toISOString().slice(0, 10),
-            orderTotal(order)
-        ]));
-        downloadCsv('orders.csv', rows);
-    });
+
 
     document.getElementById('btn-export-financial')?.addEventListener('click', () => {
         const rows = [['period', 'orders', 'revenue']];

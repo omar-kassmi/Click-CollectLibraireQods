@@ -1451,3 +1451,214 @@ main,
   font-weight:400!important;
   letter-spacing:0!important;
 }
+
+/* CORRECTIFS CIBLES - LIVRAISON, ETAPE 1 ET OUTILS ETAPE 3 */
+#section-rentree #delivery-choice:not(.delivery-choice-disabled) .delivery-unavailable-note,
+#section-rentree .delivery-unavailable-note.hidden,
+#section-rentree .delivery-unavailable-note[hidden]{display:none!important}
+#section-rentree .school-level-button.is-selected{border-color:#f3b58f!important;background:#fff1e8!important;color:#d95720!important;box-shadow:0 7px 18px rgba(231,92,37,.10)!important}
+#pack-details-view .step3-category-multiselect>button,
+#pack-details-view .step3-supply-tools>#supply-reset-filter,
+#personal-list-editor .step3-category-multiselect>button,
+#personal-list-editor .step3-supply-tools>#personal-supply-reset-filter{font-size:11px!important;line-height:1.45!important}
+
+/* ETAPE 1 - SELECTION ORANGE DOUX (RETRAIT/LIVRAISON ET TYPE DE LISTE) */
+#section-rentree .flow-radio-card input:checked + span,
+#section-rentree .flow-type-card.is-selected,
+#section-rentree .flow-type-card[aria-pressed="true"]{
+  border-color:#f3b58f!important;
+  background:#fff1e8!important;
+  color:#d95720!important;
+  box-shadow:0 7px 18px rgba(231,92,37,.10)!important;
+}
+#section-rentree .flow-radio-card input:checked + span b,
+#section-rentree .flow-radio-card input:checked + span small,
+#section-rentree .flow-type-card.is-selected b,
+#section-rentree .flow-type-card.is-selected small,
+#section-rentree .flow-type-card[aria-pressed="true"] b,
+#section-rentree .flow-type-card[aria-pressed="true"] small{
+  color:#d95720!important;
+}
+
+/* DETAILS DE COMMANDE - RETOUR A LA LIGNE DES ARTICLES */
+#tracking-details-drawer .qd-row{align-items:flex-start!important;min-width:0!important}
+#tracking-details-drawer .qd-copy{min-width:0!important;max-width:100%!important;overflow:visible!important}
+#tracking-details-drawer .qd-copy b,
+#tracking-details-drawer .qd-copy small{display:block!important;max-width:100%!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere!important;word-break:break-word!important;line-height:1.45!important}
+#tracking-details-drawer .qd-price{flex:0 0 auto!important;white-space:nowrap!important}
+
+/* PANNEAU DETAILS COMMANDE - DEFILEMENT VERTICAL */
+#tracking-details-drawer .qd-panel{height:100dvh!important;max-height:100dvh!important;min-height:0!important;overflow:hidden!important}
+#tracking-details-drawer #tracking-details-content{height:100%!important;min-height:0!important;overflow:hidden!important}
+#tracking-details-drawer .qd-body{flex:1 1 auto!important;min-height:0!important;max-height:none!important;overflow-x:hidden!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;scrollbar-gutter:stable!important;padding-bottom:42px!important}
+#tracking-details-drawer .qd-pane.qd-active{display:block!important;min-height:min-content!important}
+
+/* DETAILS COMMANDE - SCROLL FINAL SUR TOUT LE PANNEAU */
+#tracking-details-drawer .qd-panel{
+  display:block!important;
+  height:100dvh!important;
+  max-height:100dvh!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior-y:contain!important;
+  scrollbar-gutter:stable!important;
+}
+#tracking-details-drawer #tracking-details-content{
+  display:block!important;
+  height:auto!important;
+  min-height:100%!important;
+  overflow:visible!important;
+}
+#tracking-details-drawer .qd-head{position:sticky!important;top:0!important;z-index:4!important}
+#tracking-details-drawer .qd-tabs{position:sticky!important;top:120px!important;z-index:3!important;background:#fff!important}
+#tracking-details-drawer .qd-body{
+  display:block!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow:visible!important;
+  padding-bottom:72px!important;
+}
+
+/* PANNEAUX DETAILS UNIFIES - SCROLL UNIQUEMENT APRES LES ONGLETS */
+#tracking-details-drawer .qd-panel{
+  display:flex!important;flex-direction:column!important;
+  height:100dvh!important;max-height:100dvh!important;min-height:0!important;
+  overflow:hidden!important;
+}
+#tracking-details-drawer #tracking-details-content{
+  display:flex!important;flex-direction:column!important;
+  height:100%!important;min-height:0!important;overflow:hidden!important;
+}
+#tracking-details-drawer .qd-head,
+#tracking-details-drawer .qd-tabs{position:relative!important;top:auto!important;flex:0 0 auto!important}
+#tracking-details-drawer .qd-body{
+  display:block!important;flex:1 1 auto!important;height:auto!important;min-height:0!important;max-height:none!important;
+  overflow-x:hidden!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;
+  overscroll-behavior:contain!important;scrollbar-gutter:stable!important;padding-bottom:48px!important;
+}
+#tracking-details-drawer .qd-copy b[dir="rtl"],
+#tracking-details-drawer .qd-copy.is-rtl{direction:rtl!important;text-align:right!important;unicode-bidi:plaintext!important}
+
+/* PANNEAU DETAILS - STRUCTURE FINALE : HEADER + ONGLETS FIXES, LISTE SCROLLABLE */
+#tracking-details-drawer .qd-panel{
+  display:grid!important;
+  grid-template-rows:auto auto minmax(0,1fr)!important;
+  height:100dvh!important;
+  max-height:100dvh!important;
+  min-height:0!important;
+  overflow:hidden!important;
+}
+#tracking-details-drawer #tracking-details-content{
+  display:contents!important;
+}
+#tracking-details-drawer .qd-head{
+  grid-row:1!important;
+  position:relative!important;
+  flex:none!important;
+  z-index:3!important;
+}
+#tracking-details-drawer .qd-tabs{
+  grid-row:2!important;
+  position:relative!important;
+  flex:none!important;
+  z-index:3!important;
+  background:#fff!important;
+}
+#tracking-details-drawer .qd-body{
+  grid-row:3!important;
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:100%!important;
+  overflow-x:hidden!important;
+  overflow-y:scroll!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior-y:contain!important;
+  scrollbar-gutter:stable!important;
+  touch-action:pan-y!important;
+  padding-bottom:72px!important;
+}
+#tracking-details-drawer .qd-body::-webkit-scrollbar{width:12px!important}
+#tracking-details-drawer .qd-body::-webkit-scrollbar-track{background:#f5f2ef!important}
+#tracking-details-drawer .qd-body::-webkit-scrollbar-thumb{background:#8f8b87!important;border:3px solid #f5f2ef!important;border-radius:999px!important}
+#tracking-details-drawer .qd-pane.qd-active{display:block!important;height:auto!important;min-height:max-content!important}
+
+/* FIN DE LISTE TOUJOURS ACCESSIBLE DANS LE PANNEAU DETAILS */
+#tracking-details-drawer .qd-body{
+  box-sizing:border-box!important;
+  scroll-padding-bottom:140px!important;
+  padding-bottom:0!important;
+}
+#tracking-details-drawer .qd-pane.qd-active::after{
+  content:""!important;
+  display:block!important;
+  width:100%!important;
+  height:140px!important;
+  min-height:140px!important;
+  pointer-events:none!important;
+}
+#tracking-details-drawer .qd-list{margin-bottom:0!important}
+
+
+/* SUIVI COMMANDE - PANNEAU STRICTEMENT IDENTIQUE A SUCCESS.HTML */
+#tracking-details-drawer .qd-panel{
+  display:flex!important;
+  flex-direction:column!important;
+  height:100dvh!important;
+  max-height:100dvh!important;
+  min-height:0!important;
+  overflow:hidden!important;
+}
+#tracking-details-drawer .qd-head,
+#tracking-details-drawer .qd-tabs{
+  position:relative!important;
+  top:auto!important;
+  flex:0 0 auto!important;
+}
+#tracking-details-drawer .qd-body{
+  display:block!important;
+  flex:1 1 auto!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior:contain!important;
+  scrollbar-gutter:stable!important;
+  padding:22px 20px 140px!important;
+  background:#fff!important;
+}
+#tracking-details-drawer .qd-pane.qd-active{
+  display:block!important;
+  height:auto!important;
+  min-height:0!important;
+}
+#tracking-details-drawer .qd-pane.qd-active::after{
+  content:""!important;
+  display:block!important;
+  width:100%!important;
+  height:120px!important;
+  min-height:120px!important;
+}
+#tracking-details-drawer .qd-copy b,
+#tracking-details-drawer .qd-copy small{
+  white-space:normal!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  overflow-wrap:anywhere!important;
+  word-break:break-word!important;
+}
+#tracking-details-drawer .qd-copy.is-rtl,
+#tracking-details-drawer .qd-copy b[dir="rtl"]{
+  direction:rtl!important;
+  text-align:right!important;
+  unicode-bidi:plaintext!important;
+}
+@media(max-width:700px){
+  #tracking-details-drawer .qd-body{padding:18px 14px 140px!important}
+}

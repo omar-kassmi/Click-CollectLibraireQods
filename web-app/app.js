@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const RESERVATION_DAYS = 5;
     // Déployez le fichier Apps Script Web App puis collez ici son URL /exec.
-    const APP_SCRIPT_UPLOAD_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwNXzpRF85HdPV2mTPHDiXGJvdMHnatpbDZljkOhotSg-7OVTS4Hx2ngf7CmEdPJ-bG/exec";
+    const APP_SCRIPT_UPLOAD_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxxpcC4DLvjtgGqkB4T-GvX7by6QpttUuU7XL7_88niWK-HtjfVpVqKzVgp1Kul-AkV/exec";
 
     let allSchoolData = []; 
     let selectedPackItems = []; 
@@ -121,6 +121,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const settingsMap = Object.fromEntries(settings.map(s => [s.key, s.value]));
         const rentreeEnabled = settingsMap.rentree_enabled !== 'false';
         const rentreeTitle = settingsMap.rentree_title || 'Rentrée scolaire';
+        const deliveryEnabled = ['true','1','yes','on','enabled'].includes(String(settingsMap.delivery_enabled ?? 'false').trim().toLowerCase());
+        const deliveryChoice = document.getElementById('delivery-choice');
+        const deliveryInput = deliveryChoice?.querySelector('input[name="fulfillment-method"][value="delivery"]');
+        const deliveryNote = deliveryChoice?.querySelector('.delivery-unavailable-note');
+        if(deliveryChoice){
+            deliveryChoice.classList.toggle('delivery-choice-disabled', !deliveryEnabled);
+            deliveryChoice.setAttribute('aria-disabled', deliveryEnabled ? 'false' : 'true');
+        }
+        if(deliveryInput)deliveryInput.disabled=!deliveryEnabled;
+        if(deliveryNote){deliveryNote.classList.toggle('hidden',deliveryEnabled);deliveryNote.hidden=deliveryEnabled;deliveryNote.style.display=deliveryEnabled?'none':'';}
 
         document.querySelectorAll('[data-target="section-rentree"]').forEach(btn => {
             btn.classList.toggle('hidden', !rentreeEnabled);
@@ -1071,8 +1081,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const chunks=[];
         if(!orderedDocumentItems.length)chunks.push([]);
         else{
-            chunks.push(orderedDocumentItems.slice(0,12));
-            for(let i=12;i<orderedDocumentItems.length;i+=23)chunks.push(orderedDocumentItems.slice(i,i+23));
+            chunks.push(orderedDocumentItems.slice(0,6));
+            for(let i=6;i<orderedDocumentItems.length;i+=11)chunks.push(orderedDocumentItems.slice(i,i+11));
         }
         for(let pi=0;pi<chunks.length;pi++){
             const continuation=pi>0;
@@ -1094,7 +1104,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const details=[photo?'Liste personnalisée':'Rentrée scolaire 2026/2027',String(order.fulfillment_method||order.delivery_method||'').toLowerCase().includes('delivery')?'Livraison':'Retrait au magasin',photo?'Ma propre liste':supplies?'Liste officielle du site + fournitures personnalisées':'Liste officielle du site',photo?'Liste importée':[meta.school_name,meta.school_level].filter(Boolean).join(', niveau ')||'-',(order.payment_status||'unpaid')==='paid'?'Payé':'Non payé'];
                 [380,394,407,421,434].forEach((y,i)=>write(details[i],145,y));
             }
-            const left=38,right=559,xa=42,xu=420,xq=486,xt=559,top=continuation?250:458,rh=continuation?22:22;
+            const left=38,right=559,xa=42,xu=420,xq=486,xt=559,top=continuation?250:458,rh=42;
             write('Article',xa,top,{bold:true});
             write('Coût unitaire',xu,top,{bold:true,align:'right'});
             write('Quantité',xq,top,{bold:true,align:'right'});
@@ -1103,13 +1113,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const rows=pageItems.length?pageItems:(photo?[{name:'Commande par photo',price:photoPrice,quantity:1,type:'photo_price'}]:[]);
             rows.forEach((item,n)=>{
                 const rule=top+7+(n+1)*rh,nameY=rule-10,originY=rule-3,q=Number(item.quantity)||1,u=Number(item.price)||0;
-                const articleName=short(item.name||'Article',48),configurationText=itemConfigurationText(item),articleX=xa*PT,articleY=nameY*PT;
-                doc.setFont('Aptos','normal');doc.setFontSize(10);doc.setTextColor(20,20,20);doc.text(articleName,articleX,articleY,{baseline:'alphabetic'});
-                if(configurationText){const nameWidth=doc.getTextWidth(articleName);doc.setFont('helvetica','italic');doc.setFontSize(8.2);doc.setTextColor(70,70,70);doc.text(` (${short(configurationText,38)})`,articleX+nameWidth+1.6,articleY,{baseline:'alphabetic'});}
-                doc.setFont('helvetica','italic');doc.setFontSize(7.5);doc.setTextColor(105,105,105);doc.text(itemOrigin(item),xa*PT,originY*PT,{baseline:'alphabetic'});
-                write(u.toFixed(2),xu,nameY+3,{align:'right'});
-                write(q,xq,nameY+3,{align:'right'});
-                write((u*q).toFixed(2),xt,nameY+3,{align:'right'});
+                const configurationText=itemConfigurationText(item),articleX=xa*PT,articleWidth=(xu-xa-18)*PT;
+                const titleY=(rule-31)*PT,configY=(rule-11)*PT,sourceY=(rule-3)*PT;
+                doc.setFont('Aptos','normal');doc.setFontSize(10);doc.setTextColor(20,20,20);
+                const articleLines=doc.splitTextToSize(String(item.name||'Article'),articleWidth).slice(0,2);
+                doc.text(articleLines,articleX,titleY,{baseline:'alphabetic',lineHeightFactor:1.08});
+                if(configurationText){doc.setFont('helvetica','italic');doc.setFontSize(7.4);doc.setTextColor(70,70,70);doc.text(doc.splitTextToSize(`(${configurationText})`,articleWidth).slice(0,1),articleX,configY,{baseline:'alphabetic'});}
+                doc.setFont('helvetica','italic');doc.setFontSize(7.0);doc.setTextColor(105,105,105);doc.text(itemOrigin(item),articleX,sourceY,{baseline:'alphabetic'});
+                const numericY=rule-18;
+                write(u.toFixed(2),xu,numericY,{align:'right'});
+                write(q,xq,numericY,{align:'right'});
+                write((u*q).toFixed(2),xt,numericY,{align:'right'});
                 doc.setDrawColor(205);doc.setLineWidth(.22);doc.line(left*PT,rule*PT,right*PT,rule*PT);
             });
             if(pi===chunks.length-1){
@@ -1245,7 +1259,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function closeTrackingDrawer(){const drawer=document.getElementById('tracking-details-drawer');drawer?.classList.remove('qd-open');document.documentElement.classList.remove('qd-lock');document.body.classList.remove('qd-lock');}
     window.closeTrackingDrawer=closeTrackingDrawer;
-    function openTrackingDrawer(html){let drawer=document.getElementById('tracking-details-drawer');if(!drawer){drawer=document.createElement('div');drawer.id='tracking-details-drawer';drawer.className='qd-overlay';drawer.innerHTML='<aside class="qd-panel" role="dialog" aria-modal="true"><div id="tracking-details-content"></div></aside>';document.body.appendChild(drawer);drawer.addEventListener('click',event=>{if(event.target===drawer)closeTrackingDrawer()});}const content=drawer.querySelector('#tracking-details-content');content.innerHTML=html;content.style.height='100%';content.style.display='flex';content.style.flexDirection='column';drawer.classList.add('qd-open');document.documentElement.classList.add('qd-lock');document.body.classList.add('qd-lock');}
+    function openTrackingDrawer(html){let drawer=document.getElementById('tracking-details-drawer');if(!drawer){drawer=document.createElement('div');drawer.id='tracking-details-drawer';drawer.className='qd-overlay';drawer.innerHTML='<aside class="qd-panel" role="dialog" aria-modal="true"></aside>';document.body.appendChild(drawer);drawer.addEventListener('click',event=>{if(event.target===drawer)closeTrackingDrawer()});}const panel=drawer.querySelector('.qd-panel');panel.innerHTML=html;drawer.classList.add('qd-open');document.documentElement.classList.add('qd-lock');document.body.classList.add('qd-lock');}
     window.openTrackingDrawer=openTrackingDrawer;
 
     document.addEventListener('keydown', event => {
@@ -1281,7 +1295,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function qdEscape(value){return String(value??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');}
     function qdSupplyDetail(item){const parts=[];if(item?.supply_range)parts.push(String(item.supply_range).toLowerCase()==='quality'?'Qualité':'Standard');(Array.isArray(item?.supply_configuration)?item.supply_configuration:[]).forEach(choice=>{const value=choice?.value_label||choice?.value||choice?.label;if(value)parts.push(String(value))});return [...new Set(parts.filter(Boolean))].join(', ');}
-    function qdMarkup(order,items,photoUrl=''){const safe=Array.isArray(items)?items:[],school=safe.filter(item=>item.type!=='photo_upload'&&item.item_source!=='independent_supply'&&!item.supply_range),supplies=safe.filter(item=>item.type!=='photo_upload'&&(item.item_source==='independent_supply'||Boolean(item.supply_range)));const rows=(list,type)=>list.length?list.map((item,index)=>`<div class="qd-row"><div class="qd-copy"><b>${index+1}. ${qdEscape(item.name||'Article')}</b><small>${qdEscape(type==='supply'?(qdSupplyDetail(item)||'Standard'):(item.category||'Liste scolaire'))}</small></div><strong class="qd-price">${(Number(item.price)||0).toFixed(2)} DH</strong></div>`).join(''):'<div class="qd-empty">Aucun article dans cette rubrique.</div>';const photo=photoUrl?`<a class="qd-photo" href="${qdEscape(photoUrl)}" target="_blank" rel="noopener"><span>Ouvrir l’image de la liste</span><span>↗</span></a>`:'';return `<header class="qd-head"><div><h2>#${qdEscape(order?.numero_commande||order?.id||'-')}</h2><p>Détails de la commande</p></div><button type="button" class="qd-close" aria-label="Fermer">×</button></header><nav class="qd-tabs"><button type="button" class="qd-tab qd-active" data-qd-tab="school"><span class="qd-tab-num">01</span> Liste scolaire <span class="qd-badge">${school.length}</span></button><button type="button" class="qd-tab" data-qd-tab="supply"><span class="qd-tab-num">02</span> Fourniture <span class="qd-badge">${supplies.length}</span></button></nav><main class="qd-body"><section class="qd-pane qd-active" data-qd-pane="school"><div class="qd-pane-head"><h3>Liste scolaire</h3><span>${school.length} article(s)</span></div>${photo}<div class="qd-list">${rows(school,'school')}</div></section><section class="qd-pane" data-qd-pane="supply"><div class="qd-pane-head"><h3>Fourniture</h3><span>${supplies.length} article(s)</span></div><div class="qd-list">${rows(supplies,'supply')}</div></section></main>`;}
+    function qdMarkup(order,items,photoUrl=''){const safe=Array.isArray(items)?items:[],school=safe.filter(item=>item.type!=='photo_upload'&&item.item_source!=='independent_supply'&&!item.supply_range),supplies=safe.filter(item=>item.type!=='photo_upload'&&(item.item_source==='independent_supply'||Boolean(item.supply_range)));const rows=(list,type)=>list.length?list.map((item,index)=>{const rtl=/[\u0600-\u06FF]/.test(String(item.name||''));return `<div class="qd-row"><div class="qd-copy${rtl?' is-rtl':''}"><b dir="${rtl?'rtl':'ltr'}">${index+1}. ${qdEscape(item.name||'Article')}</b><small>${qdEscape(type==='supply'?(qdSupplyDetail(item)||'Standard'):(item.category||'Liste scolaire'))}</small></div><strong class="qd-price">${(Number(item.price)||0).toFixed(2)} DH</strong></div>`}).join(''):'<div class="qd-empty">Aucun article dans cette rubrique.</div>';const photo=photoUrl?`<a class="qd-photo" href="${qdEscape(photoUrl)}" target="_blank" rel="noopener"><span>Ouvrir l’image de la liste</span><span>↗</span></a>`:'';return `<header class="qd-head"><div><h2>#${qdEscape(order?.numero_commande||order?.id||'-')}</h2><p>Détails de la commande</p></div><button type="button" class="qd-close" aria-label="Fermer">×</button></header><nav class="qd-tabs"><button type="button" class="qd-tab qd-active" data-qd-tab="school"><span class="qd-tab-num">01</span> Liste scolaire <span class="qd-badge">${school.length}</span></button><button type="button" class="qd-tab" data-qd-tab="supply"><span class="qd-tab-num">02</span> Fourniture <span class="qd-badge">${supplies.length}</span></button></nav><main class="qd-body"><section class="qd-pane qd-active" data-qd-pane="school"><div class="qd-pane-head"><h3>Liste scolaire</h3><span>${school.length} article(s)</span></div>${photo}<div class="qd-list">${rows(school,'school')}</div></section><section class="qd-pane" data-qd-pane="supply"><div class="qd-pane-head"><h3>Fourniture</h3><span>${supplies.length} article(s)</span></div><div class="qd-list">${rows(supplies,'supply')}</div></section></main>`;}
     function qdBind(root,close){root?.querySelector('.qd-close')?.addEventListener('click',close);root?.querySelectorAll('[data-qd-tab]').forEach(button=>button.addEventListener('click',()=>{const tab=button.dataset.qdTab;root.querySelectorAll('[data-qd-tab]').forEach(node=>node.classList.toggle('qd-active',node===button));root.querySelectorAll('[data-qd-pane]').forEach(pane=>pane.classList.toggle('qd-active',pane.dataset.qdPane===tab));}));}
     function openOrderDetails(order,items,history,qrPayload,schoolInfo={school:'',level:''}){const safe=Array.isArray(items)?items:[];openTrackingDrawer(qdMarkup(order,safe,getPhotoUrl(order,safe)));qdBind(document.getElementById('tracking-details-drawer'),closeTrackingDrawer);}
     window.openOrderDetails = openOrderDetails;
@@ -1337,7 +1351,9 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('tracking-search-heading')?.classList.add('tracking-search-hidden');
             document.getElementById('order-tracking-form')?.classList.add('tracking-search-hidden');
             resultBox.className = 'tracking-order-layout';
-            resultBox.innerHTML = `<div class="tracking-left"><div class="tracking-hello"><button type="button" class="tracking-back-btn" onclick="showTrackingSearchForm()">‹</button><h3>Bonjour ${firstName}</h3><p>Merci pour votre confiance ! Retrouvez les détails de votre commande</p></div><div class="tracking-field"><small>Téléphone</small><strong>${data.client_phone || '-'}</strong></div><div class="tracking-field"><small>Adresse e-mail</small><strong>${data.client_email || '-'}</strong></div><div class="tracking-recap-title">Ma commande</div><div class="tracking-chips">${chips}</div><div class="tracking-status-zone"><small>Status de ma commande</small><div id="tracking-timeline-area">${buildOrderTimeline(data, history)}</div></div></div><aside class="tracking-side"><div class="tracking-qr-card"><div class="tracking-ref-side">${data.numero_commande || '-'}</div><div class="tracking-qr-box"><canvas id="${qrCanvasId}" class="bg-white"></canvas></div><p class="tracking-qr-note">Présentez ce QR code lors de la récupération de votre commande. Télécharger la facture pour le retrait !</p><div class="grid gap-2"><button type="button" class="tracking-btn tracking-btn-orange" onclick='openOrderDetails(${JSON.stringify(data)}, ${JSON.stringify(items)}, ${JSON.stringify(history)}, ${JSON.stringify(qrPayload)}, ${JSON.stringify(school)})'>Détails de ma commande</button><button type="button" id="download-${qrCanvasId}" class="tracking-btn tracking-btn-green">Télécharger ma commande</button>${normalizeTrackingStatus(data.status) === 'cancelled' ? '' : `<button type="button" id="tracking-cancel-button" class="tracking-btn tracking-btn-cancel" onclick="cancelTrackedOrder('${data.id}', '${data.numero_commande || ''}')">Annuler ma commande</button>`}</div></div><div class="tracking-pay-box"><small>Prix à payer</small><strong>${amountText}</strong></div></aside>`;
+            resultBox.innerHTML = `<div class="tracking-left"><div class="tracking-hello"><button type="button" class="tracking-back-btn" onclick="showTrackingSearchForm()">‹</button><h3>Bonjour ${firstName}</h3><p>Merci pour votre confiance ! Retrouvez les détails de votre commande</p></div><div class="tracking-field"><small>Téléphone</small><strong>${data.client_phone || '-'}</strong></div><div class="tracking-field"><small>Adresse e-mail</small><strong>${data.client_email || '-'}</strong></div><div class="tracking-recap-title">Ma commande</div><div class="tracking-chips">${chips}</div><div class="tracking-status-zone"><small>Status de ma commande</small><div id="tracking-timeline-area">${buildOrderTimeline(data, history)}</div></div></div><aside class="tracking-side"><div class="tracking-qr-card"><div class="tracking-ref-side">${data.numero_commande || '-'}</div><div class="tracking-qr-box"><canvas id="${qrCanvasId}" class="bg-white"></canvas></div><p class="tracking-qr-note">Présentez ce QR code lors de la récupération de votre commande. Télécharger la facture pour le retrait !</p><div class="grid gap-2"><button type="button" id="tracking-details-button" class="tracking-btn tracking-btn-orange">Détails de ma commande</button><button type="button" id="download-${qrCanvasId}" class="tracking-btn tracking-btn-green">Télécharger ma commande</button>${normalizeTrackingStatus(data.status) === 'cancelled' ? '' : `<button type="button" id="tracking-cancel-button" class="tracking-btn tracking-btn-cancel" onclick="cancelTrackedOrder('${data.id}', '${data.numero_commande || ''}')">Annuler ma commande</button>`}</div></div><div class="tracking-pay-box"><small>Prix à payer</small><strong>${amountText}</strong></div></aside>`;
+            const detailsButton=document.getElementById('tracking-details-button');
+            if(detailsButton)detailsButton.onclick=()=>openOrderDetails(data,items,history,qrPayload,school);
             renderQrToCanvas(qrCanvasId, qrPayload, `commande-${data.numero_commande || qrCode}.pdf`, { order: data, items, history });
             setTimeout(() => resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
         });

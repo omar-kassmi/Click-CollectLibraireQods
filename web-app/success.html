@@ -58,6 +58,73 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
 .qd-body{flex:1;min-height:0;overflow-y:auto;padding:22px 20px 28px;background:#fff}.qd-pane{display:none}.qd-pane.qd-active{display:block}.qd-pane-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:15px}.qd-pane-head h3{margin:0;color:#111827;font:950 18px/1.2 'Inter',Arial,sans-serif;letter-spacing:-.02em}.qd-pane-head span{color:#a8a19b;font:850 10px/1 'Inter',Arial,sans-serif}.qd-photo{margin-bottom:14px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border:1px solid #fed7c1;border-radius:13px;background:#fff7f1;color:#ef571d;font-size:10px;font-weight:900}.qd-list{overflow:hidden;border:1px solid #eadfd8;border-radius:16px;background:#fff}.qd-row{min-height:76px;padding:13px 14px;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;border-bottom:1px solid #eadfd8;background:#fff}.qd-row:last-child{border-bottom:0}.qd-copy{min-width:0}.qd-copy b,.qd-copy small{display:block}.qd-copy b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#292524;font:900 13px/1.25 'Inter',Arial,sans-serif}.qd-copy small{margin-top:6px;color:#8f8882;font:500 9px/1.35 'Inter',Arial,sans-serif}.qd-price{padding:8px 10px;border-radius:999px;background:#e5f9f1;color:#007e59;font:900 10px/1 'Inter',Arial,sans-serif;white-space:nowrap}.qd-empty{padding:28px;border:1px dashed #d6d3d1;border-radius:15px;background:#fafaf9;color:#78716c;font-size:10px;text-align:center}
 @media(max-width:700px){.qd-panel{width:100vw!important;max-width:100vw!important;border-radius:0!important}.qd-head{min-height:120px;padding:22px 18px 18px}.qd-head h2{font-size:24px}.qd-tabs{padding:0 8px}.qd-tab{font-size:11px}.qd-body{padding:18px 14px 24px}}
 
+
+/* PANNEAU DETAILS IDENTIQUE AU SUIVI */
+.qd-panel{display:flex!important;flex-direction:column!important;height:100dvh!important;max-height:100dvh!important;min-height:0!important;overflow:hidden!important}
+.qd-head,.qd-tabs{flex:0 0 auto!important}
+.qd-body{display:block!important;flex:1 1 auto!important;height:auto!important;min-height:0!important;max-height:none!important;overflow-x:hidden!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;scrollbar-gutter:stable!important;padding-bottom:48px!important}
+.qd-row{align-items:flex-start!important;min-width:0!important}.qd-copy{min-width:0!important;max-width:100%!important;overflow:visible!important}.qd-copy b,.qd-copy small{display:block!important;max-width:100%!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere!important;word-break:break-word!important;line-height:1.45!important}.qd-price{flex:0 0 auto!important;white-space:nowrap!important}.qd-copy b[dir="rtl"],.qd-copy.is-rtl{direction:rtl!important;text-align:right!important;unicode-bidi:plaintext!important}
+
+/* PANNEAU DETAILS - STRUCTURE FINALE : HEADER + ONGLETS FIXES, LISTE SCROLLABLE */
+#drawer .qd-panel{
+  display:grid!important;
+  grid-template-rows:auto auto minmax(0,1fr)!important;
+  height:100dvh!important;
+  max-height:100dvh!important;
+  min-height:0!important;
+  overflow:hidden!important;
+}
+#drawer #tracking-details-content{
+  display:contents!important;
+}
+#drawer .qd-head{
+  grid-row:1!important;
+  position:relative!important;
+  flex:none!important;
+  z-index:3!important;
+}
+#drawer .qd-tabs{
+  grid-row:2!important;
+  position:relative!important;
+  flex:none!important;
+  z-index:3!important;
+  background:#fff!important;
+}
+#drawer .qd-body{
+  grid-row:3!important;
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:100%!important;
+  overflow-x:hidden!important;
+  overflow-y:scroll!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior-y:contain!important;
+  scrollbar-gutter:stable!important;
+  touch-action:pan-y!important;
+  padding-bottom:72px!important;
+}
+#drawer .qd-body::-webkit-scrollbar{width:12px!important}
+#drawer .qd-body::-webkit-scrollbar-track{background:#f5f2ef!important}
+#drawer .qd-body::-webkit-scrollbar-thumb{background:#8f8b87!important;border:3px solid #f5f2ef!important;border-radius:999px!important}
+#drawer .qd-pane.qd-active{display:block!important;height:auto!important;min-height:max-content!important}
+
+/* FIN DE LISTE TOUJOURS ACCESSIBLE DANS LE PANNEAU DETAILS */
+#drawer .qd-body{
+  box-sizing:border-box!important;
+  scroll-padding-bottom:140px!important;
+  padding-bottom:0!important;
+}
+#drawer .qd-pane.qd-active::after{
+  content:""!important;
+  display:block!important;
+  width:100%!important;
+  height:140px!important;
+  min-height:140px!important;
+  pointer-events:none!important;
+}
+#drawer .qd-list{margin-bottom:0!important}
 </style>
 </head><body>
 <header class="header"><div class="header-inner"><a href="index.html"><img src="images/logo.png" class="logo" alt="Librairie El Qods"></a><nav class="nav"><a href="index.html">Accueil</a><a href="index.html?tab=section-rentree" class="active">Rentrée scolaire 2026/2027</a><a href="index.html?tab=section-autres">Autres produits</a><a href="index.html?tab=section-suivi">Suivre ma commande</a><a href="index.html?tab=section-plan-magasin">Plan & Rayons</a></nav><div class="header-actions"><span class="round">FR</span><a href="index.html?tab=section-suivi" class="round" aria-label="Rechercher"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg></a><a href="index.html?tab=section-rentree" class="commander">Commander</a></div></div></header>
@@ -116,7 +183,7 @@ loadingBox.textContent='Chargement de la commande…';
 function closeDrawer(){document.getElementById('drawer')?.classList.remove('qd-open');document.documentElement.classList.remove('qd-lock');document.body.classList.remove('qd-lock');}
 window.closeDrawer=closeDrawer;
 function qdSuccessSupplyDetail(item){const parts=[];if(item?.supply_range)parts.push(String(item.supply_range).toLowerCase()==='quality'?'Qualité':'Standard');(Array.isArray(item?.supply_configuration)?item.supply_configuration:[]).forEach(choice=>{const value=choice?.value_label||choice?.value||choice?.label;if(value)parts.push(String(value))});return [...new Set(parts.filter(Boolean))].join(', ')}
-function showDetails(){if(!order){errorBox.style.display='block';errorBox.textContent='Les détails de la commande ne sont pas encore disponibles.';return;}let drawer=document.getElementById('drawer');if(!drawer){drawer=document.createElement('div');drawer.id='drawer';drawer.className='qd-overlay';drawer.innerHTML='<aside class="qd-panel" role="dialog" aria-modal="true"></aside>';document.body.appendChild(drawer);drawer.addEventListener('click',event=>{if(event.target===drawer)closeDrawer()});}const school=items.filter(item=>item.type!=='photo_upload'&&item.item_source!=='independent_supply'&&!item.supply_range),supplies=items.filter(item=>item.type!=='photo_upload'&&(item.item_source==='independent_supply'||Boolean(item.supply_range)));const rows=(list,type)=>list.length?list.map((item,index)=>`<div class="qd-row"><div class="qd-copy"><b>${index+1}. ${qdSuccessEscape(item.name||'Article')}</b><small>${qdSuccessEscape(type==='supply'?(qdSuccessSupplyDetail(item)||'Standard'):(item.category||'Liste scolaire'))}</small></div><strong class="qd-price">${(Number(item.price)||0).toFixed(2)} DH</strong></div>`).join(''):'<div class="qd-empty">Aucun article dans cette rubrique.</div>';const photoItem=items.find(item=>item.type==='photo_upload'||item.url||item.photo_url),photoUrl=order.google_drive_url||photoItem?.url||photoItem?.photo_url||'',photo=photoUrl?`<a class="qd-photo" href="${qdSuccessEscape(photoUrl)}" target="_blank" rel="noopener"><span>Ouvrir l’image de la liste</span><span>↗</span></a>`:'';drawer.querySelector('.qd-panel').innerHTML=`<header class="qd-head"><div><h2>#${qdSuccessEscape(order.numero_commande||orderReference||'-')}</h2><p>Détails de la commande</p></div><button type="button" class="qd-close" aria-label="Fermer">×</button></header><nav class="qd-tabs"><button type="button" class="qd-tab qd-active" data-qd-tab="school"><span class="qd-tab-num">01</span> Liste scolaire <span class="qd-badge">${school.length}</span></button><button type="button" class="qd-tab" data-qd-tab="supply"><span class="qd-tab-num">02</span> Fourniture <span class="qd-badge">${supplies.length}</span></button></nav><main class="qd-body"><section class="qd-pane qd-active" data-qd-pane="school"><div class="qd-pane-head"><h3>Liste scolaire</h3><span>${school.length} article(s)</span></div>${photo}<div class="qd-list">${rows(school,'school')}</div></section><section class="qd-pane" data-qd-pane="supply"><div class="qd-pane-head"><h3>Fourniture</h3><span>${supplies.length} article(s)</span></div><div class="qd-list">${rows(supplies,'supply')}</div></section></main>`;drawer.querySelector('.qd-close').addEventListener('click',closeDrawer);drawer.querySelectorAll('[data-qd-tab]').forEach(button=>button.addEventListener('click',()=>{const tab=button.dataset.qdTab;drawer.querySelectorAll('[data-qd-tab]').forEach(node=>node.classList.toggle('qd-active',node===button));drawer.querySelectorAll('[data-qd-pane]').forEach(pane=>pane.classList.toggle('qd-active',pane.dataset.qdPane===tab));}));drawer.classList.add('qd-open');document.documentElement.classList.add('qd-lock');document.body.classList.add('qd-lock');}
+function showDetails(){if(!order){errorBox.style.display='block';errorBox.textContent='Les détails de la commande ne sont pas encore disponibles.';return;}let drawer=document.getElementById('drawer');if(!drawer){drawer=document.createElement('div');drawer.id='drawer';drawer.className='qd-overlay';drawer.innerHTML='<aside class="qd-panel" role="dialog" aria-modal="true"></aside>';document.body.appendChild(drawer);drawer.addEventListener('click',event=>{if(event.target===drawer)closeDrawer()});}const school=items.filter(item=>item.type!=='photo_upload'&&item.item_source!=='independent_supply'&&!item.supply_range),supplies=items.filter(item=>item.type!=='photo_upload'&&(item.item_source==='independent_supply'||Boolean(item.supply_range)));const rows=(list,type)=>list.length?list.map((item,index)=>{const rtl=/[\u0600-\u06FF]/.test(String(item.name||''));return `<div class="qd-row"><div class="qd-copy${rtl?' is-rtl':''}"><b dir="${rtl?'rtl':'ltr'}">${index+1}. ${qdSuccessEscape(item.name||'Article')}</b><small>${qdSuccessEscape(type==='supply'?(qdSuccessSupplyDetail(item)||'Standard'):(item.category||'Liste scolaire'))}</small></div><strong class="qd-price">${(Number(item.price)||0).toFixed(2)} DH</strong></div>`}).join(''):'<div class="qd-empty">Aucun article dans cette rubrique.</div>';const photoItem=items.find(item=>item.type==='photo_upload'||item.url||item.photo_url),photoUrl=order.google_drive_url||photoItem?.url||photoItem?.photo_url||'',photo=photoUrl?`<a class="qd-photo" href="${qdSuccessEscape(photoUrl)}" target="_blank" rel="noopener"><span>Ouvrir l’image de la liste</span><span>↗</span></a>`:'';drawer.querySelector('.qd-panel').innerHTML=`<header class="qd-head"><div><h2>#${qdSuccessEscape(order.numero_commande||orderReference||'-')}</h2><p>Détails de la commande</p></div><button type="button" class="qd-close" aria-label="Fermer">×</button></header><nav class="qd-tabs"><button type="button" class="qd-tab qd-active" data-qd-tab="school"><span class="qd-tab-num">01</span> Liste scolaire <span class="qd-badge">${school.length}</span></button><button type="button" class="qd-tab" data-qd-tab="supply"><span class="qd-tab-num">02</span> Fourniture <span class="qd-badge">${supplies.length}</span></button></nav><main class="qd-body"><section class="qd-pane qd-active" data-qd-pane="school"><div class="qd-pane-head"><h3>Liste scolaire</h3><span>${school.length} article(s)</span></div>${photo}<div class="qd-list">${rows(school,'school')}</div></section><section class="qd-pane" data-qd-pane="supply"><div class="qd-pane-head"><h3>Fourniture</h3><span>${supplies.length} article(s)</span></div><div class="qd-list">${rows(supplies,'supply')}</div></section></main>`;drawer.querySelector('.qd-close').addEventListener('click',closeDrawer);drawer.querySelectorAll('[data-qd-tab]').forEach(button=>button.addEventListener('click',()=>{const tab=button.dataset.qdTab;drawer.querySelectorAll('[data-qd-tab]').forEach(node=>node.classList.toggle('qd-active',node===button));drawer.querySelectorAll('[data-qd-pane]').forEach(pane=>pane.classList.toggle('qd-active',pane.dataset.qdPane===tab));}));drawer.classList.add('qd-open');document.documentElement.classList.add('qd-lock');document.body.classList.add('qd-lock');}
 async function makeData(url){const response=await fetch(url);const blob=await response.blob();return await new Promise(resolve=>{const reader=new FileReader();reader.onloadend=()=>resolve(reader.result);reader.readAsDataURL(blob)})}
 async function makeQrData(){
   if(window.QRCode&&typeof QRCode.toCanvas==='function'){const canvas=document.createElement('canvas');await QRCode.toCanvas(canvas,currentQrPayload(),{width:260,margin:2});return canvas.toDataURL('image/png')}
@@ -149,8 +216,8 @@ async function generateElQodsOrderPdf(order, items) {
         const chunks=[];
         if(!orderedDocumentItems.length)chunks.push([]);
         else{
-            chunks.push(orderedDocumentItems.slice(0,12));
-            for(let i=12;i<orderedDocumentItems.length;i+=23)chunks.push(orderedDocumentItems.slice(i,i+23));
+            chunks.push(orderedDocumentItems.slice(0,6));
+            for(let i=6;i<orderedDocumentItems.length;i+=11)chunks.push(orderedDocumentItems.slice(i,i+11));
         }
         for(let pi=0;pi<chunks.length;pi++){
             const continuation=pi>0;
@@ -172,7 +239,7 @@ async function generateElQodsOrderPdf(order, items) {
                 const details=[photo?'Liste personnalisée':'Rentrée scolaire 2026/2027',String(order.fulfillment_method||order.delivery_method||'').toLowerCase().includes('delivery')?'Livraison':'Retrait au magasin',photo?'Ma propre liste':supplies?'Liste officielle du site + fournitures personnalisées':'Liste officielle du site',photo?'Liste importée':[meta.school_name,meta.school_level].filter(Boolean).join(', niveau ')||'-',(order.payment_status||'unpaid')==='paid'?'Payé':'Non payé'];
                 [380,394,407,421,434].forEach((y,i)=>write(details[i],145,y));
             }
-            const left=38,right=559,xa=42,xu=420,xq=486,xt=559,top=continuation?250:458,rh=continuation?22:22;
+            const left=38,right=559,xa=42,xu=420,xq=486,xt=559,top=continuation?250:458,rh=42;
             write('Article',xa,top,{bold:true});
             write('Coût unitaire',xu,top,{bold:true,align:'right'});
             write('Quantité',xq,top,{bold:true,align:'right'});
@@ -181,13 +248,17 @@ async function generateElQodsOrderPdf(order, items) {
             const rows=pageItems.length?pageItems:(photo?[{name:'Commande par photo',price:photoPrice,quantity:1,type:'photo_price'}]:[]);
             rows.forEach((item,n)=>{
                 const rule=top+7+(n+1)*rh,nameY=rule-10,originY=rule-3,q=Number(item.quantity)||1,u=Number(item.price)||0;
-                const articleName=short(item.name||'Article',48),configurationText=itemConfigurationText(item),articleX=xa*PT,articleY=nameY*PT;
-                doc.setFont('Aptos','normal');doc.setFontSize(10);doc.setTextColor(20,20,20);doc.text(articleName,articleX,articleY,{baseline:'alphabetic'});
-                if(configurationText){const nameWidth=doc.getTextWidth(articleName);doc.setFont('helvetica','italic');doc.setFontSize(8.2);doc.setTextColor(70,70,70);doc.text(` (${short(configurationText,38)})`,articleX+nameWidth+1.6,articleY,{baseline:'alphabetic'});}
-                doc.setFont('helvetica','italic');doc.setFontSize(7.5);doc.setTextColor(105,105,105);doc.text(itemOrigin(item),xa*PT,originY*PT,{baseline:'alphabetic'});
-                write(u.toFixed(2),xu,nameY+3,{align:'right'});
-                write(q,xq,nameY+3,{align:'right'});
-                write((u*q).toFixed(2),xt,nameY+3,{align:'right'});
+                const configurationText=itemConfigurationText(item),articleX=xa*PT,articleWidth=(xu-xa-18)*PT;
+                const titleY=(rule-31)*PT,configY=(rule-11)*PT,sourceY=(rule-3)*PT;
+                doc.setFont('Aptos','normal');doc.setFontSize(10);doc.setTextColor(20,20,20);
+                const articleLines=doc.splitTextToSize(String(item.name||'Article'),articleWidth).slice(0,2);
+                doc.text(articleLines,articleX,titleY,{baseline:'alphabetic',lineHeightFactor:1.08});
+                if(configurationText){doc.setFont('helvetica','italic');doc.setFontSize(7.4);doc.setTextColor(70,70,70);doc.text(doc.splitTextToSize(`(${configurationText})`,articleWidth).slice(0,1),articleX,configY,{baseline:'alphabetic'});}
+                doc.setFont('helvetica','italic');doc.setFontSize(7.0);doc.setTextColor(105,105,105);doc.text(itemOrigin(item),articleX,sourceY,{baseline:'alphabetic'});
+                const numericY=rule-18;
+                write(u.toFixed(2),xu,numericY,{align:'right'});
+                write(q,xq,numericY,{align:'right'});
+                write((u*q).toFixed(2),xt,numericY,{align:'right'});
                 doc.setDrawColor(205);doc.setLineWidth(.22);doc.line(left*PT,rule*PT,right*PT,rule*PT);
             });
             if(pi===chunks.length-1){
