@@ -91,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         document.body.classList.toggle('school-order-active', targetId === 'section-rentree');
         requestAnimationFrame(syncSchoolProgressWithHeader);
+        requestAnimationFrame(()=>setTimeout(syncHomeWhatsappFloat,0));
         if(targetId==='section-rentree'){
             selectedListType=null;isPhotoOrder=false;selectedSchoolName=null;selectedSchoolLevel=null;
             document.querySelectorAll('input[name="fulfillment-method"]').forEach(input=>input.checked=false);
@@ -102,6 +103,42 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     navButtons.forEach(btn => btn.addEventListener('click', () => switchTab(btn.getAttribute('data-target'))));
+
+
+    // Menu vertical mobile
+    const mobileMenuToggle=document.getElementById('mobile-menu-toggle');
+    const mobileMenuClose=document.getElementById('mobile-menu-close');
+    const mobileMenuDrawer=document.getElementById('mobile-menu-drawer');
+    const mobileMenuOverlay=document.getElementById('mobile-menu-overlay');
+    function setMobileMenu(open){
+        if(!mobileMenuDrawer||!mobileMenuOverlay||!mobileMenuToggle)return;
+        mobileMenuDrawer.classList.toggle('is-open',open);
+        mobileMenuOverlay.classList.toggle('is-open',open);
+        mobileMenuDrawer.setAttribute('aria-hidden',open?'false':'true');
+        mobileMenuOverlay.setAttribute('aria-hidden',open?'false':'true');
+        mobileMenuToggle.setAttribute('aria-expanded',open?'true':'false');
+        mobileMenuToggle.classList.toggle('is-open',open);
+        document.body.classList.toggle('mobile-menu-open',open);
+    }
+    mobileMenuToggle?.addEventListener('click',()=>setMobileMenu(mobileMenuToggle.getAttribute('aria-expanded')!=='true'));
+    mobileMenuClose?.addEventListener('click',()=>setMobileMenu(false));
+    mobileMenuOverlay?.addEventListener('click',()=>setMobileMenu(false));
+    mobileMenuDrawer?.querySelectorAll('button').forEach(button=>button.addEventListener('click',()=>setMobileMenu(false)));
+    window.addEventListener('resize',()=>{if(window.innerWidth>=768)setMobileMenu(false)});
+    document.addEventListener('keydown',event=>{if(event.key==='Escape')setMobileMenu(false)});
+
+    const homeWhatsappFloat=document.getElementById('home-whatsapp-float');
+    function syncHomeWhatsappFloat(){
+        if(!homeWhatsappFloat)return;
+        const home=document.getElementById('section-accueil');
+        const homeVisible=Boolean(home&&!home.classList.contains('hidden'));
+        const scrolled=window.scrollY>Math.max(160,window.innerHeight*.18);
+        homeWhatsappFloat.classList.toggle('is-visible',homeVisible&&scrolled);
+    }
+    window.addEventListener('load',syncHomeWhatsappFloat);
+    window.addEventListener('scroll',syncHomeWhatsappFloat,{passive:true});
+    window.addEventListener('resize',syncHomeWhatsappFloat);
+    if(document.readyState==='complete')syncHomeWhatsappFloat();
 
     function syncSchoolProgressWithHeader() {
         const header = document.getElementById('main-header');
@@ -152,7 +189,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (s.key === 'contact_phone') document.querySelectorAll('#info-phone, [data-contact-phone]').forEach(el => el.innerText = s.value);
                     if (s.key === 'contact_email') document.querySelectorAll('#info-email, [data-contact-email]').forEach(el => el.innerText = s.value);
                     if (s.key === 'contact_whatsapp') document.querySelectorAll('#link-whatsapp, [data-contact-whatsapp]').forEach(el => el.href = `https://wa.me/${s.value}`);
+                    if (s.key === 'opening_week_morning') document.querySelectorAll('#opening-week-morning').forEach(el => el.textContent = s.value || '09h30 - 13h00');
+                    if (s.key === 'opening_week_afternoon') document.querySelectorAll('#opening-week-afternoon').forEach(el => el.textContent = s.value || '15h00 - 20h00');
+                    if (s.key === 'opening_saturday') document.querySelectorAll('#opening-saturday').forEach(el => el.textContent = s.value || '09h30 - 20h00');
+                    if (s.key === 'opening_sunday') document.querySelectorAll('#opening-sunday').forEach(el => el.textContent = s.value || '11h00 - 14h00');
                 });
+                const contactSettings = Object.fromEntries(settings.map(item => [item.key, item.value]));
+                const contactAddress = contactSettings.contact_address || 'Librairie El Qods, Berkane, Maroc';
+                const contactPhone = String(contactSettings.contact_phone || '').trim();
+                const contactEmail = String(contactSettings.contact_email || '').trim();
+                const contactMap = document.getElementById('contact-location-map-frame');
+                if (contactMap) contactMap.src = `https://www.google.com/maps?q=${encodeURIComponent(contactAddress)}&output=embed`;
+                const contactPhoneLink = document.getElementById('contact-page-phone-link');
+                if (contactPhoneLink) contactPhoneLink.href = contactPhone ? `tel:${contactPhone.replace(/\s+/g,'')}` : '#';
+                const contactEmailLink = document.getElementById('contact-page-email-link');
+                if (contactEmailLink) contactEmailLink.href = contactEmail ? `mailto:${contactEmail}` : '#';
             }
         } catch (err) {}
 
@@ -694,7 +745,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 row.innerHTML = `
                     <div class="flex items-center gap-3 flex-grow min-w-0">
                         <input type="checkbox" data-id="${item.id}" data-name="${item.name}" data-category="${item.category || 'Liste scolaire'}" data-price="${item.price}" ${isOutOfStock ? 'disabled' : 'checked'} class="pack-item-checkbox w-4 h-4 rounded text-[#E75C25] accent-[#E75C25] focus:ring-0 cursor-pointer flex-shrink-0">
-                        <bdi class="text-xs text-stone-800 tracking-tight truncate school-list-item-title ${/[\u0600-\u06FF]/.test(item.name || '') ? 'is-arabic' : ''}" lang="${/[\u0600-\u06FF]/.test(item.name || '') ? 'ar' : 'fr'}" dir="${/[\u0600-\u06FF]/.test(item.name || '') ? 'rtl' : 'ltr'}">${item.name}</bdi>
+                        <bdi class="text-xs text-stone-800 tracking-tight school-list-item-title ${/[\u0600-\u06FF]/.test(item.name || '') ? 'is-arabic' : ''}" lang="${/[\u0600-\u06FF]/.test(item.name || '') ? 'ar' : 'fr'}" dir="${/[\u0600-\u06FF]/.test(item.name || '') ? 'rtl' : 'ltr'}">${item.name}</bdi>
                     </div>
                     <span class="item-price-chip ${isOutOfStock ? 'text-red-700 bg-red-50 border-red-100' : 'text-emerald-700 bg-emerald-50 border-emerald-200/50'}">${availabilityText || item.price.toFixed(2) + ' DH'}</span>
                 `;
@@ -1379,16 +1430,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    window.addEventListener('scroll', () => {
-        if (mainHeader) {
-            if (window.scrollY > 40) {
-                mainHeader.classList.remove('bg-transparent', 'border-transparent', 'py-4');
-                mainHeader.classList.add('bg-white', 'shadow-md', 'border-b', 'border-gray-100', 'py-2.5');
-            } else {
-                mainHeader.classList.remove('bg-white', 'shadow-md', 'border-b', 'border-gray-100', 'py-2.5');
-                mainHeader.classList.add('bg-transparent', 'border-transparent', 'py-4');
-            }
+    function syncMainHeaderAppearance() {
+        if (!mainHeader) return;
+        const isScrolled = window.scrollY > 40;
+        mainHeader.classList.toggle('header-is-scrolled', isScrolled);
+        mainHeader.classList.toggle('header-is-top', !isScrolled);
+        if (isScrolled) {
+            mainHeader.classList.remove('bg-transparent', 'border-transparent', 'py-4');
+            mainHeader.classList.add('bg-white', 'shadow-md', 'border-b', 'border-gray-100', 'py-2.5');
+        } else {
+            mainHeader.classList.remove('bg-white', 'shadow-md', 'border-b', 'border-gray-100', 'py-2.5');
+            mainHeader.classList.add('bg-transparent', 'border-transparent', 'py-4');
         }
+        if (window.matchMedia('(max-width: 767px)').matches) {
+            mainHeader.style.setProperty('background', isScrolled ? 'rgba(255,255,255,.97)' : 'transparent', 'important');
+            mainHeader.style.setProperty('background-color', isScrolled ? 'rgba(255,255,255,.97)' : 'transparent', 'important');
+            mainHeader.style.setProperty('border-bottom-color', isScrolled ? '#eee5df' : 'transparent', 'important');
+            mainHeader.style.setProperty('box-shadow', isScrolled ? '0 8px 24px rgba(31,20,14,.08)' : 'none', 'important');
+            mainHeader.style.setProperty('backdrop-filter', isScrolled ? 'blur(12px)' : 'none', 'important');
+            mainHeader.style.setProperty('-webkit-backdrop-filter', isScrolled ? 'blur(12px)' : 'none', 'important');
+        }
+    }
+    syncMainHeaderAppearance();
+    window.addEventListener('load', syncMainHeaderAppearance);
+    window.addEventListener('pageshow', syncMainHeaderAppearance);
+    window.addEventListener('scroll', () => {
+        syncMainHeaderAppearance();
 
         if (scrollBtn) {
             if (window.scrollY > 300) {

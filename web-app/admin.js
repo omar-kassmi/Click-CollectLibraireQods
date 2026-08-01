@@ -1155,6 +1155,10 @@ o.classList.add('is-open');dataTab('archive');archiveStatus('Chargement…');con
             if (setting.key === 'contact_email') document.getElementById('set-contact-email').value = setting.value;
             if (setting.key === 'contact_phone') document.getElementById('set-contact-phone').value = setting.value;
             if (setting.key === 'contact_whatsapp') document.getElementById('set-contact-whatsapp').value = setting.value;
+            if (setting.key === 'opening_week_morning') document.getElementById('set-opening-week-morning').value = setting.value;
+            if (setting.key === 'opening_week_afternoon') document.getElementById('set-opening-week-afternoon').value = setting.value;
+            if (setting.key === 'opening_saturday') document.getElementById('set-opening-saturday').value = setting.value;
+            if (setting.key === 'opening_sunday') document.getElementById('set-opening-sunday').value = setting.value;
             if (setting.key === 'contact_facebook') document.getElementById('set-contact-facebook').value = setting.value;
             if (setting.key === 'contact_instagram') document.getElementById('set-contact-instagram').value = setting.value;
             if (setting.key === 'contact_linkedin') document.getElementById('set-contact-linkedin').value = setting.value;
@@ -1176,12 +1180,17 @@ o.classList.add('is-open');dataTab('archive');archiveStatus('Chargement…');con
             contact_email: document.getElementById('set-contact-email').value,
             contact_phone: document.getElementById('set-contact-phone').value,
             contact_whatsapp: document.getElementById('set-contact-whatsapp').value,
+            opening_week_morning: document.getElementById('set-opening-week-morning').value,
+            opening_week_afternoon: document.getElementById('set-opening-week-afternoon').value,
+            opening_saturday: document.getElementById('set-opening-saturday').value,
+            opening_sunday: document.getElementById('set-opening-sunday').value,
             contact_facebook: document.getElementById('set-contact-facebook').value,
             contact_instagram: document.getElementById('set-contact-instagram').value,
             contact_linkedin: document.getElementById('set-contact-linkedin').value
         };
         for (const [key, value] of Object.entries(updates)) {
-            await supabaseClient.from('site_settings').update({ value }).eq('key', key);
+            const { error } = await supabaseClient.from('site_settings').upsert({ key, value }, { onConflict: 'key' });
+            if (error) { alert(error.message); return; }
         }
         alert("Les coordonnées de contact ont été modifiées.");
         loadSiteSettings();

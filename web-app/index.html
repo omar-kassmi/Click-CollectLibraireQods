@@ -9,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
     <link href="https://fonts.googleapis.com.rproxy.goskope.com/css2?family=Noto+Naskh+Arabic:wght@400;500&family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=home-front-v1">
+    <link rel="stylesheet" href="styles.css?v=mobile-step3-full-titles-v1">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .font-header { font-family: 'Inter', sans-serif; }
@@ -662,7 +662,8 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
 
     <header id="main-header" class="fixed top-0 left-0 right-0 z-40 transition-all duration-300 bg-transparent border-b border-transparent py-4 px-6 md:px-12">
         <div class="site-header-shell max-w-7xl mx-auto flex justify-between items-center font-header">
-            <div class="flex items-center cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+            <button type="button" id="mobile-menu-toggle" class="mobile-menu-toggle md:hidden" aria-expanded="false" aria-controls="mobile-menu-drawer" aria-label="Ouvrir le menu"><span></span><span></span><span></span></button>
+            <div class="site-logo-link flex items-center cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
                 <img src="images/logo.png" alt="Logo" class="h-11 w-auto object-contain">
             </div>
             <nav class="hidden md:flex space-x-8 text-[14px] font-medium text-[#E75C25]">
@@ -674,6 +675,9 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
             </nav>
             
             <div class="flex items-center space-x-3.5 text-[14px]">
+                <button type="button" id="header-contact-location" onclick="switchTab('section-contact-location')" class="header-contact-location" aria-label="Coordonnées, localisation et horaires" title="Coordonnées et horaires">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.75a7.35 7.35 0 0 0-7.35 7.34c0 5.57 6.4 12.21 6.67 12.49a.95.95 0 0 0 1.36 0c.27-.28 6.67-6.92 6.67-12.49A7.35 7.35 0 0 0 12 1.75Zm0 10.56a3.22 3.22 0 1 1 0-6.44 3.22 3.22 0 0 1 0 6.44Z"></path></svg>
+                </button>
                 <div class="relative inline-block text-left">
                     <button id="lang-btn" class="border border-[#E75C25] text-[#E75C25] rounded-full w-9 h-9 flex items-center justify-center font-black text-xs transition hover:bg-orange-500/10 tracking-tighter font-header focus:outline-none">FR</button>
                     <div id="lang-dropdown" class="hidden absolute top-0 left-0 bg-white border border-stone-200 rounded-full flex flex-col items-center p-0.5 shadow-xl z-50 w-10 space-y-1.5 pb-1">
@@ -692,13 +696,22 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
         </div>
     </header>
 
-    <div class="md:hidden bg-gray-50 border-b border-gray-100 py-3 px-2 flex justify-around text-[11px] font-medium text-[#E75C25] sticky top-0 z-30">
-        <button data-target="section-accueil" class="nav-tab-btn font-bold px-2">Accueil</button>
-        <button data-target="section-rentree" class="nav-tab-btn px-2">Rentrée scolaire</button>
-        <button data-target="section-autres" class="nav-tab-btn px-2">Autres produits</button>
-        <button data-target="section-suivi" class="nav-tab-btn px-2">Suivi</button>
-        <button data-target="section-plan-magasin" class="nav-tab-btn px-2">Plan</button>
-    </div>
+    <div id="mobile-menu-overlay" class="md:hidden mobile-menu-overlay" aria-hidden="true"></div>
+    <aside id="mobile-menu-drawer" class="md:hidden mobile-menu-drawer" aria-hidden="true">
+        <header><span>Navigation</span><button type="button" id="mobile-menu-close" aria-label="Fermer le menu">×</button></header>
+        <nav aria-label="Navigation mobile">
+            <button data-target="section-accueil" class="nav-tab-btn font-bold"><span>Accueil</span><b>01</b></button>
+            <button data-target="section-rentree" class="nav-tab-btn"><span>Rentrée scolaire</span><b>02</b></button>
+            <button data-target="section-autres" class="nav-tab-btn"><span>Autres produits</span><b>03</b></button>
+            <button data-target="section-suivi" class="nav-tab-btn"><span>Suivre ma commande</span><b>04</b></button>
+            <button data-target="section-plan-magasin" class="nav-tab-btn"><span>Plan &amp; Rayons</span><b>05</b></button>
+            <button type="button" class="mobile-location-link" onclick="switchTab('section-contact-location')"><span>Localisation &amp; horaires</span><b>06</b></button>
+        </nav>
+    </aside>
+
+    <a id="home-whatsapp-float" data-contact-whatsapp href="#" target="_blank" rel="noopener" class="home-whatsapp-float" aria-label="Ouvrir une conversation WhatsApp avec la librairie" title="Contacter la librairie sur WhatsApp">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16.04 3.2A12.68 12.68 0 0 0 5.2 22.44L3.2 28.8l6.52-1.92A12.84 12.84 0 1 0 16.04 3.2Zm0 22.48a10.42 10.42 0 0 1-5.32-1.46l-.39-.23-4 1.18 1.2-3.9-.26-.4a10.17 10.17 0 0 1-1.62-5.54 10.39 10.39 0 1 1 10.39 10.35Zm5.73-7.8c-.31-.16-1.86-.91-2.15-1.01-.28-.11-.49-.16-.69.16-.21.31-.81 1.01-.99 1.22-.18.2-.36.23-.67.08-.31-.16-1.32-.49-2.51-1.55-.93-.82-1.55-1.83-1.73-2.14-.18-.31-.03-.48.13-.64.14-.14.31-.36.47-.54.15-.18.2-.31.31-.52.1-.2.05-.38-.03-.54-.08-.15-.7-1.67-.96-2.29-.25-.6-.51-.52-.7-.53h-.59c-.21 0-.54.08-.83.39-.28.31-1.08 1.06-1.08 2.59s1.11 3 1.27 3.21c.15.2 2.18 3.33 5.29 4.66.74.31 1.32.5 1.77.65.75.23 1.42.2 1.96.13.59-.09 1.86-.76 2.12-1.5.26-.73.26-1.37.18-1.5-.08-.13-.29-.2-.6-.36Z"/></svg>
+    </a>
 
     <main class="flex-grow w-full">
         <section id="section-accueil" class="content-section">
@@ -710,7 +723,6 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
                         <span class="reveal inline-block bg-orange-500/20 text-[#FF844B] border border-orange-500/30 font-bold text-[11px] px-3 py-1 rounded-full uppercase tracking-widest">Berkane, Maroc</span>
                         <h2 class="reveal delay-100 text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight text-white">Librairie & Papeterie <br><span class="text-[#E75C25]">El Qods</span></h2>
                         <p class="reveal delay-200 text-gray-200 text-sm sm:text-base max-w-lg">Commandez vos packs officiels ou déposez la photo de votre liste scolaire en arabe.</p>
-                        <button onclick="switchTab('section-rentree')" class="reveal delay-300 bg-[#E75C25] hover:bg-[#CE4E1D] text-white font-bold px-7 py-3.5 rounded-xl text-sm transition shadow-lg">Espace Rentrée Scolaire</button>
                     </div>
                 </div>
                 <button type="button" class="home-mouse-scroll" aria-label="Faire défiler vers le contenu" onclick="document.querySelector('#section-accueil .home-content-start')?.scrollIntoView({behavior:'smooth', block:'start'})">
@@ -756,6 +768,50 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
                 </div>
             </div>
 
+
+            <section id="section-grands-rayons" class="home-departments" aria-labelledby="home-departments-title">
+                <div class="home-departments-shell">
+                    <header class="home-departments-header reveal">
+                        <div>
+                            <h3 id="home-departments-title">Nos Grands Rayons</h3>
+                            <span class="home-departments-title-line" aria-hidden="true"></span>
+                        </div>
+                        <p>Parcourez nos univers thématiques sélectionnés avec soin.</p>
+                    </header>
+
+                    <div class="home-departments-grid">
+                        <button type="button" class="home-department-card reveal delay-100" onclick="switchTab('section-autres')" aria-label="Découvrir le rayon français">
+                            <img src="images/livre_francais.png" alt="Livres du rayon français">
+                            <span class="home-department-overlay" aria-hidden="true"></span>
+                            <span class="home-department-content">
+                                <small>Classique &amp; moderne</small>
+                                <strong>Rayon Français</strong>
+                                <em>Découvrir le rayon <b>→</b></em>
+                            </span>
+                        </button>
+
+                        <button type="button" class="home-department-card reveal delay-200" onclick="switchTab('section-autres')" aria-label="Découvrir le rayon arabe">
+                            <img src="images/livre_arabe.png" alt="Livres du rayon arabe">
+                            <span class="home-department-overlay" aria-hidden="true"></span>
+                            <span class="home-department-content home-department-content-rtl" dir="rtl">
+                                <small>الثقافة واللغة</small>
+                                <strong>الكتاب العربي</strong>
+                                <em>اكتشفوا القسم <b>←</b></em>
+                            </span>
+                        </button>
+
+                        <button type="button" class="home-department-card reveal delay-300" onclick="switchTab('section-autres')" aria-label="Découvrir les livres en anglais">
+                            <img src="images/livre_anglais.png" alt="Livres en langue anglaise">
+                            <span class="home-department-overlay" aria-hidden="true"></span>
+                            <span class="home-department-content">
+                                <small>Best sellers</small>
+                                <strong>English Books</strong>
+                                <em>Discover the collection <b>→</b></em>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </section>
 
             <section id="section-partenaires" class="partners-strip relative overflow-hidden">
                 <div class="partners-bg-shape partners-bg-shape-top"></div>
@@ -1003,6 +1059,67 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
         </section>
 
 
+        <section id="section-contact-location" class="content-section hidden contact-location-page">
+            <div class="contact-location-shell">
+                <nav class="contact-location-breadcrumb" aria-label="Fil d’Ariane"><button type="button" onclick="switchTab('section-accueil')">Accueil</button><span>›</span><strong>Localisation magasin</strong></nav>
+                <div class="contact-location-grid">
+                    <div class="contact-location-map reveal"><iframe id="contact-location-map-frame" title="Localisation de la Librairie El Qods" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>
+                    <article class="contact-location-details reveal delay-100">
+                        <h2>Librairie &amp; Papeterie El Qods</h2>
+                        <p data-contact-address>Chargement de l’adresse...</p>
+                        <p>Téléphone &amp; WhatsApp : <a id="contact-page-phone-link" href="#"><span data-contact-phone>...</span></a></p>
+                        <p>E-mail : <a id="contact-page-email-link" href="#"><span data-contact-email>...</span></a></p>
+                        <section class="contact-opening-hours" aria-labelledby="contact-hours-title">
+                            <h3 id="contact-hours-title">Horaires d’ouverture</h3>
+                            <div class="contact-hours-row"><span>Du lundi au vendredi :</span><strong><i id="opening-week-morning">09h30 - 13h00</i><i id="opening-week-afternoon">15h00 - 20h00</i></strong></div>
+                            <div class="contact-hours-row"><span>Samedi :</span><strong id="opening-saturday">09h30 - 20h00</strong></div>
+                            <div class="contact-hours-row"><span>Dimanche :</span><strong id="opening-sunday">11h00 - 14h00</strong></div>
+                        </section>
+                    </article>
+                </div>
+            </div>
+            <footer class="site-footer-full contact-location-footer bg-[#0D0D0D] text-stone-400 border-t border-white/10 w-full pt-16 pb-8 px-6 md:px-12 relative z-20 font-header overflow-hidden">
+                <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 border-b border-white/10 pb-16 items-start">
+                    <div class="md:col-span-4 space-y-5 reveal">
+                        <img src="images/logo.png" class="block mx-auto h-14 w-auto object-contain brightness-0 invert">
+                        <div class="space-y-1 text-sm font-light text-left">
+                            <h4 class="font-bold text-stone-400 tracking-wide text-xs uppercase mb-1">Librairie El Qods</h4>
+                            <p data-contact-address class="leading-relaxed pr-4">Chargement de l'adresse...</p>
+                            <p class="pt-2">T. Fixe : <span data-contact-phone class="text-stone-400 font-normal">...</span></p>
+                            <p>E-mail : <span data-contact-email class="text-stone-400 font-normal">...</span></p>
+                        </div>
+                        <div class="pt-2 text-left">
+                            <a data-contact-whatsapp href="#" target="_blank" class="inline-block bg-[#E75C25] hover:bg-[#CE4E1D] text-white text-xs font-bold uppercase px-8 py-4 rounded-lg transition shadow-md">Nous Contacter</a>
+                        </div>
+                    </div>
+                    <div class="md:col-span-3 flex items-center justify-center relative reveal delay-100">
+                        <img src="images/map-maroc.png" class="w-full h-auto object-contain">
+                        <div class="absolute top-[12%] right-[22%] w-10 h-10 flex items-center justify-center">
+                            <div class="absolute w-12 h-12 bg-[#E75C25] rounded-full opacity-30 blur-md"></div>
+                            <div class="absolute w-6 h-6 bg-[#E75C25] rounded-full map-marker-pulse"></div>
+                            <div class="absolute w-2 h-2 bg-[#E75C25] rounded-full shadow shadow-black"></div>
+                        </div>
+                    </div>
+                    <div class="md:col-span-2 flex flex-col space-y-4 md:pl-8 pt-2 reveal delay-200">
+                        <button onclick="switchTab('section-rentree')" class="text-left font-bold text-sm tracking-wider hover:text-[#E75C25] transition uppercase">La Rentrée</button>
+                        <button onclick="switchTab('section-autres')" class="text-left font-bold text-sm tracking-wider hover:text-[#E75C25] transition uppercase">Librairie</button>
+                        <button onclick="switchTab('section-autres')" class="text-left font-bold text-sm tracking-wider hover:text-[#E75C25] transition uppercase">Papeterie</button>
+                    </div>
+                    <div class="md:col-span-3 space-y-5 md:pl-4 reveal delay-300">
+                        <h4 class="text-[11px] font-bold tracking-widest text-stone-400 uppercase text-left">PÔLE DE SERVICES EN LIGNE</h4>
+                        <div class="flex flex-col space-y-3.5 text-xs font-bold text-stone-400 uppercase">
+                            <button onclick="switchTab('section-rentree')" class="flex items-center gap-3 hover:text-[#E75C25] text-left">Formations & Packs</button>
+                            <button onclick="switchTab('section-suivi')" class="flex items-center gap-3 hover:text-[#E75C25] text-left">Suivre mon Pack</button>
+                            <button onclick="window.open('admin.html', '_blank')" class="flex items-center gap-3 hover:text-[#E75C25] text-left">Accès Gestion</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="max-w-7xl mx-auto pt-6 flex justify-center items-center text-center text-[11px] text-stone-500 font-light gap-2 reveal delay-400">
+                    <p>&copy; 2026 Librairie El Qods Berkane - Tous droits réservés.</p>
+                </div>
+            </footer>
+        </section>
+
         <section id="section-plan-magasin" class="content-section hidden max-w-7xl mx-auto px-6 md:px-12 pt-28 pb-16">
             <div class="max-w-3xl mb-10 reveal">
                 <span class="text-[11px] font-black uppercase tracking-[0.22em] text-orange-400 font-header">Orientation en boutique</span>
@@ -1067,6 +1184,6 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
         </section>
     </main>
 
-    <script src="app.js?v=unified-panels-success-pdf-v4"></script>
+    <script src="app.js?v=mobile-header-fixed-v6-final"></script>
 </body>
 </html>
