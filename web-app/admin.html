@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com.rproxy.goskope.com/css2?family=Noto+Naskh+Arabic:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="src/shared/shared_front.css?v=src-v6">
     <style>
         body { font-family: 'Inter', sans-serif; }
         #admin-sidebar{width:216px;top:69px;bottom:0;transition:width .24s ease;background:#E75C25;color:#fff}
@@ -29,6 +29,11 @@
             #admin-main{margin-left:54px!important}
         }
     </style>
+<link rel="stylesheet" href="src/admin/commandes/commandes_front.css?v=1">
+<link rel="stylesheet" href="src/admin/metrics_rapports/metrics_rapports_front.css?v=1">
+<link rel="stylesheet" href="src/admin/packs_scolaires/packs_scolaires_front.css?v=1">
+<link rel="stylesheet" href="src/admin/nos_produits/nos_produits_front.css?v=1">
+<link rel="stylesheet" href="src/admin/configuration/configuration_front.css?v=1">
 </head>
 <body class="bg-[#F3F6FB] text-gray-900 min-h-screen">
 
@@ -84,6 +89,9 @@
                 </button>
                 <button type="button" data-pane="config" class="admin-sidebar-link w-full min-h-11 px-3 rounded-xl flex items-center gap-3 text-left text-[13px] font-extrabold text-gray-700 transition" title="Packs scolaires">
                     <svg class="w-[19px] h-[19px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5M3 16l9 5 9-5"/></svg><span class="sidebar-label whitespace-nowrap">Packs scolaires</span>
+                </button>
+                <button type="button" data-pane="products" class="admin-sidebar-link w-full min-h-11 px-3 rounded-xl flex items-center gap-3 text-left text-[13px] font-extrabold text-gray-700 transition" title="Nos produits">
+                    <svg class="w-[19px] h-[19px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16l-1 13H5L4 7Z"/><path d="M8 7a4 4 0 0 1 8 0"/></svg><span class="sidebar-label whitespace-nowrap">Nos produits</span>
                 </button>
                 <button type="button" data-pane="settings" class="admin-sidebar-link w-full min-h-11 px-3 rounded-xl flex items-center gap-3 text-left text-[13px] font-extrabold text-gray-700 transition" title="Configuration">
                     <svg class="w-[19px] h-[19px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span class="sidebar-label whitespace-nowrap">Configuration</span>
@@ -327,6 +335,57 @@
                 </aside>
             </div>
 
+            <section id="pane-products" class="hidden products-admin-page">
+                <header class="products-admin-hero">
+                    <div><span>CATALOGUE EL QODS</span><h2>Nos produits</h2><p>Gérez les catégories, les produits, l’image R2 et toutes les variantes proposées aux clients.</p></div>
+                    <div class="products-admin-hero-actions"><button id="btn-product-categories" type="button">Catégories</button><button id="btn-add-product" type="button">+ Ajouter un produit</button></div>
+                </header>
+                <div class="products-admin-toolbar">
+                    <input id="admin-products-search" type="search" placeholder="Rechercher un titre, une marque ou un SKU">
+                    <select id="admin-products-category"><option value="">Toutes les catégories</option></select><select id="admin-products-subcategory" disabled><option value="">Toutes les sous-catégories</option></select>
+                    <select id="admin-products-status"><option value="">Tous les statuts</option><option value="active">Visible</option><option value="inactive">Masqué</option><option value="featured">Mis en avant</option></select>
+                    <button id="admin-products-reset" type="button">Réinitialiser</button>
+                </div>
+                <div id="admin-products-summary" class="products-admin-summary"></div>
+                <div id="admin-products-grid" class="products-admin-grid"><p class="products-admin-empty">Chargement des produits…</p></div>
+            </section>
+
+            <div id="product-admin-overlay" class="product-admin-overlay" aria-hidden="true">
+                <aside class="product-admin-drawer" role="dialog" aria-modal="true" aria-labelledby="product-admin-title">
+                    <header><div><span id="product-admin-kicker">NOUVEAU PRODUIT</span><h2 id="product-admin-title">Ajouter un produit</h2></div><button id="product-admin-close" type="button" aria-label="Fermer">×</button></header>
+                    <nav class="product-admin-tabs"><button class="is-active" data-product-tab="info" type="button"><span>01</span> Informations</button><button data-product-tab="variants" type="button"><span>02</span> Variantes <b id="product-variant-count">0</b></button></nav>
+                    <form id="product-admin-form">
+                        <section data-product-panel="info" class="product-admin-panel is-active">
+                            <input id="product-id" type="hidden">
+                            <div class="product-form-grid">
+                                <label class="wide"><span>Titre du produit *</span><input id="product-title" required maxlength="160" placeholder="Ex : Set de géométrie Maped"></label>
+                                <label><span>Référence / SKU</span><input id="product-sku" maxlength="80" placeholder="MAP-GEO-03"></label>
+                                <label><span>Marque</span><input id="product-brand" maxlength="100" placeholder="Maped"></label>
+                                <label><span>Catégorie *</span><select id="product-main-category" required><option value="">Sélectionner une catégorie</option></select></label><label><span>Sous-catégorie *</span><select id="product-category" required disabled><option value="">Sélectionner une sous-catégorie</option></select></label>
+                                <label class="wide"><span>Description courte</span><input id="product-short-description" maxlength="220" placeholder="Phrase affichée sur la carte produit"></label>
+                                <label class="wide"><span>Description complète</span><textarea id="product-description" rows="5" placeholder="Décrivez le produit, son usage et ses caractéristiques."></textarea></label>
+                            </div>
+                            <div class="product-image-editor">
+                                <div><b>Image unique du produit *</b><small>Cette image sera commune à toutes les variantes.</small></div>
+                                <label for="product-image-file" class="product-image-drop"><input id="product-image-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><span id="product-image-preview">R2</span><div><b>Choisir ou remplacer l’image</b><small>JPG, PNG, WEBP ou GIF · 5 Mo maximum</small></div></label>
+                                <p id="product-image-status"></p>
+                            </div>
+                            <div class="product-publish-grid">
+                                <label><input id="product-active" type="checkbox" checked><i></i><span><b>Afficher sur le site</b><small>Le produit apparaît dans « Nos produits ».</small></span></label>
+                                <label><input id="product-featured" type="checkbox"><i></i><span><b>Mettre en avant</b><small>Badge Best-seller sur la carte.</small></span></label>
+                            </div>
+                        </section>
+                        <section data-product-panel="variants" class="product-admin-panel">
+                            <div class="variant-builder-head"><div><h3>Versions et options</h3><p>Chaque variante possède son prix, son stock et ses propres options.</p></div><button id="btn-add-variant" type="button">+ Variante</button></div>
+                            <div id="product-variants-editor"></div>
+                        </section>
+                    </form>
+                    <footer><button id="product-admin-cancel" type="button">Annuler</button><button id="product-admin-delete" type="button" hidden>Supprimer</button><button id="product-admin-save" type="button">Enregistrer le produit</button><p id="product-admin-error"></p></footer>
+                </aside>
+            </div>
+
+            <div id="product-category-overlay" class="product-category-overlay taxonomy-drawer-overlay" aria-hidden="true"><aside class="taxonomy-drawer"><header><div><span>ORGANISATION DU CATALOGUE</span><h2>Catégories</h2></div><button id="product-category-close" type="button">×</button></header><nav class="taxonomy-tabs"><button type="button" class="is-active" data-tax-tab="category">Catégorie</button><button type="button" data-tax-tab="subcategory">Sous-catégorie</button></nav><div class="taxonomy-body"><section class="taxonomy-pane is-active" data-tax-pane="category"><form id="product-category-form"><input id="product-category-name" required placeholder="Nom de la catégorie"><label class="taxonomy-image-picker"><span id="product-category-image-preview">Image</span><input id="product-category-image" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><small>Image ronde du catalogue</small></label><button type="submit">Enregistrer</button></form><div id="product-category-list"></div></section><section class="taxonomy-pane" data-tax-pane="subcategory"><form id="product-subcategory-form"><select id="product-subcategory-parent" required><option value="">Catégorie parente</option></select><input id="product-subcategory-name" required placeholder="Nom de la sous-catégorie"><button type="submit">Enregistrer</button></form><div id="product-subcategory-list"></div></section></div></aside></div>
+
             <section id="pane-tabs-config" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm lg:col-span-5 space-y-4">
                     <div>
@@ -415,6 +474,11 @@
     </div>
     </div>
     </div>
-    <script src="admin.js?v=cumulative-restore-v1"></script>
+<script src="src/admin/commandes/commandes_back.js?v=1"></script>
+<script src="src/admin/metrics_rapports/metrics_rapports_back.js?v=1"></script>
+<script src="src/admin/packs_scolaires/packs_scolaires_back.js?v=1"></script>
+<script src="src/admin/nos_produits/nos_produits_back.js?v=1"></script>
+<script src="src/admin/configuration/configuration_back.js?v=1"></script>
+<script src="src/admin/core/admin_core_back.js?v=src-v6"></script>
 </body>
 </html>

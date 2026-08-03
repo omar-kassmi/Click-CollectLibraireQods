@@ -1,0 +1,44 @@
+{
+  "pages": [
+    {
+      "folder": "commandes",
+      "sections": [
+        "pane-orders"
+      ],
+      "front": "./commandes/commandes_front.css",
+      "back": "./commandes/commandes_back.js"
+    },
+    {
+      "folder": "metrics_rapports",
+      "sections": [
+        "pane-metrics"
+      ],
+      "front": "./metrics_rapports/metrics_rapports_front.css",
+      "back": "./metrics_rapports/metrics_rapports_back.js"
+    },
+    {
+      "folder": "packs_scolaires",
+      "sections": [
+        "pane-config"
+      ],
+      "front": "./packs_scolaires/packs_scolaires_front.css",
+      "back": "./packs_scolaires/packs_scolaires_back.js"
+    },
+    {
+      "folder": "nos_produits",
+      "sections": [
+        "pane-products"
+      ],
+      "front": "./nos_produits/nos_produits_front.css",
+      "back": "./nos_produits/nos_produits_back.js"
+    },
+    {
+      "folder": "configuration",
+      "sections": [
+        "pane-tabs-config"
+      ],
+      "front": "./configuration/configuration_front.css",
+      "back": "./configuration/configuration_back.js"
+    }
+  ]
+}

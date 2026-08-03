@@ -1,0 +1,2 @@
+/* Back accueil */
+(function(){window.ElQodsModules=window.ElQodsModules||{application:{},admin:{}};window.ElQodsModules.application['accueil']={targets:["section-accueil", "section-grands-rayons", "section-partenaires"],mount(){this.targets.forEach(id=>{const n=document.getElementById(id);if(n)n.dataset.module='accueil'})}};document.addEventListener('DOMContentLoaded',()=>window.ElQodsModules.application['accueil'].mount())})();

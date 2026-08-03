@@ -1,0 +1,2 @@
+/* Back plan_rayons */
+(function(){window.ElQodsModules=window.ElQodsModules||{application:{},admin:{}};window.ElQodsModules.application['plan_rayons']={targets:["section-plan-magasin"],mount(){this.targets.forEach(id=>{const n=document.getElementById(id);if(n)n.dataset.module='plan_rayons'})}};document.addEventListener('DOMContentLoaded',()=>window.ElQodsModules.application['plan_rayons'].mount())})();

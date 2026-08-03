@@ -1,0 +1,2 @@
+/* Back packs_scolaires */
+(function(){window.ElQodsModules=window.ElQodsModules||{application:{},admin:{}};window.ElQodsModules.admin['packs_scolaires']={targets:["pane-config"],mount(){this.targets.forEach(id=>{const n=document.getElementById(id);if(n)n.dataset.module='packs_scolaires'})}};document.addEventListener('DOMContentLoaded',()=>window.ElQodsModules.admin['packs_scolaires'].mount())})();

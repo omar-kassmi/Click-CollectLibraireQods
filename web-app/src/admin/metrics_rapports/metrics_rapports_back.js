@@ -1,0 +1,2 @@
+/* Back metrics_rapports */
+(function(){window.ElQodsModules=window.ElQodsModules||{application:{},admin:{}};window.ElQodsModules.admin['metrics_rapports']={targets:["pane-metrics"],mount(){this.targets.forEach(id=>{const n=document.getElementById(id);if(n)n.dataset.module='metrics_rapports'})}};document.addEventListener('DOMContentLoaded',()=>window.ElQodsModules.admin['metrics_rapports'].mount())})();
