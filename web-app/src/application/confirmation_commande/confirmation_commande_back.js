@@ -1,2 +1,0 @@
-/* Back confirmation_commande */
-(function(){window.ElQodsModules=window.ElQodsModules||{application:{},admin:{}};window.ElQodsModules.application['confirmation_commande']={targets:["success-page"],mount(){this.targets.forEach(id=>{const n=document.getElementById(id);if(n)n.dataset.module='confirmation_commande'})}};document.addEventListener('DOMContentLoaded',()=>window.ElQodsModules.application['confirmation_commande'].mount())})();

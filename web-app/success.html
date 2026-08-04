@@ -125,8 +125,8 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
   pointer-events:none!important;
 }
 #drawer .qd-list{margin-bottom:0!important}
-</style>
-<link rel="stylesheet" href="src/application/confirmation_commande/confirmation_commande_front.css?v=1"></head><body>
+</style>    <link rel="stylesheet" href="styles.css?v=flat-v1">
+</head><body>
 <header class="header"><div class="header-inner"><a href="index.html"><img src="images/logo.png" class="logo" alt="Librairie El Qods"></a><nav class="nav"><a href="index.html">Accueil</a><a href="index.html?tab=section-rentree" class="active">Rentrée scolaire 2026/2027</a><a href="index.html?tab=section-autres">Autres produits</a><a href="index.html?tab=section-suivi">Suivre ma commande</a><a href="index.html?tab=section-plan-magasin">Plan & Rayons</a></nav><div class="header-actions"><span class="round">FR</span><a href="index.html?tab=section-suivi" class="round" aria-label="Rechercher"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg></a><a href="index.html?tab=section-rentree" class="commander">Commander</a></div></div></header>
 <main class="page"><section class="main"><div class="check">✓</div><h1 class="title">Merci <span id="name"></span></h1><p class="copy">Votre commande a été enregistrée !</p><p class="subcopy">Conservez la référence ou télécharger la facture pour suivre son avancement</p><div id="error" class="error"></div><div class="rules"><ul><li>Conservez votre <b>référence</b> et votre <b>QR code</b>.</li><li>Suivez l’avancement depuis « <b>Suivre ma commande</b> » avec la référence et le téléphone.</li><li>Attendez le statut « <b>Prête au retrait</b> » avant de vous déplacer.</li><li>Présentez le <b>QR code</b> lors de la récupération en magasin.</li><li>Pour une liste personnalisée, le <b>montant final</b> sera confirmé <b>après vérification</b>.</li></ul></div></section><aside class="side"><div class="card"><div id="reference" class="reference">—</div><div class="qr-box"><canvas id="qr"></canvas></div><p class="note">Présentez ce QR code lors de la récupération de votre commande. Télécharger la facture pour le retrait !</p><div class="buttons"><button id="details" class="btn orange" disabled>Détails de ma commande</button><button id="download" class="btn green" disabled>Télécharger ma commande</button><a href="index.html" class="btn white">Retour à l’accueil</a></div><p id="loading" class="loading">Chargement de la commande…</p></div></aside></main>
 <script>
@@ -295,4 +295,5 @@ async function pdf(){
     loadingBox.textContent='';
   }catch(error){console.warn('Détails Supabase indisponibles, référence et QR conservés depuis l’URL.',error)}
 })();
-</script><script src="src/application/confirmation_commande/confirmation_commande_back.js?v=1"></script></body></html>
+</script>
+</body></html>

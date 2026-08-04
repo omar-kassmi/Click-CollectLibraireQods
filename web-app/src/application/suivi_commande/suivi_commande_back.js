@@ -1,2 +1,0 @@
-/* Back suivi_commande */
-(function(){window.ElQodsModules=window.ElQodsModules||{application:{},admin:{}};window.ElQodsModules.application['suivi_commande']={targets:["section-suivi"],mount(){this.targets.forEach(id=>{const n=document.getElementById(id);if(n)n.dataset.module='suivi_commande'})}};document.addEventListener('DOMContentLoaded',()=>window.ElQodsModules.application['suivi_commande'].mount())})();

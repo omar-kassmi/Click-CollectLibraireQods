@@ -1,2 +1,0 @@
-/* Back contact_localisation */
-(function(){window.ElQodsModules=window.ElQodsModules||{application:{},admin:{}};window.ElQodsModules.application['contact_localisation']={targets:["section-contact-location"],mount(){this.targets.forEach(id=>{const n=document.getElementById(id);if(n)n.dataset.module='contact_localisation'})}};document.addEventListener('DOMContentLoaded',()=>window.ElQodsModules.application['contact_localisation'].mount())})();

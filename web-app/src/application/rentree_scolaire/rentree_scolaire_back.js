@@ -1,2 +1,0 @@
-/* Back rentree_scolaire */
-(function(){window.ElQodsModules=window.ElQodsModules||{application:{},admin:{}};window.ElQodsModules.application['rentree_scolaire']={targets:["section-rentree"],mount(){this.targets.forEach(id=>{const n=document.getElementById(id);if(n)n.dataset.module='rentree_scolaire'})}};document.addEventListener('DOMContentLoaded',()=>window.ElQodsModules.application['rentree_scolaire'].mount())})();

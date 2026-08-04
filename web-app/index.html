@@ -9,7 +9,6 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
     <link href="https://fonts.googleapis.com.rproxy.goskope.com/css2?family=Noto+Naskh+Arabic:wght@400;500&family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=mobile-step3-full-titles-v1">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .font-header { font-family: 'Inter', sans-serif; }
@@ -637,6 +636,7 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
 @media(max-width:700px){#personal-supplies-view .step3-supply-catalog h5{white-space:normal!important}#personal-supplies-view .step3-selected-list{height:328px!important}}
 
 </style>
+    <link rel="stylesheet" href="styles.css?v=flat-v1">
 </head>
 <body class="bg-white text-gray-900 min-h-screen flex flex-col justify-between antialiased">
 
@@ -652,14 +652,14 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
     </div>
 
     <script>
-        const startupParams = new URLSearchParams(window.location.search);
-        const skipSplash = startupParams.get('skipSplash') === '1' ||
-            (document.referrer && document.referrer.includes('success.html'));
-        if (skipSplash) {
+        if (sessionStorage.getItem('elqods-return-products') === '1') {
+            const splash = document.getElementById('splash-screen');
+            if (splash) splash.style.setProperty('display', 'none', 'important');
+        }
+        if (document.referrer && document.referrer.includes('success.html')) {
             const splash = document.getElementById('splash-screen');
             if (splash) {
                 splash.style.setProperty('display', 'none', 'important');
-                splash.remove();
             }
         }
     </script>
@@ -1056,15 +1056,14 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
         <section id="section-autres" class="content-section hidden products-page">
             <nav id="products-category-nav" class="products-category-nav" aria-label="Catégories de produits"><div class="products-category-nav-inner"><button class="is-active" data-products-category="">Tous les produits</button></div></nav>
             <div class="products-page-shell">
-                <header class="products-page-heading"><div><span>CATALOGUE LIBRAIRIE EL QODS</span><h2>Nos produits</h2><p>Livres, fournitures scolaires, beaux-arts, bureautique et idées cadeaux sélectionnés par la librairie.</p></div><button id="products-open-filters" type="button"><span>Filtres</span><b id="products-filter-count">0</b></button></header>
+                <div class="products-mobile-actions"><button id="products-open-filters" type="button"><span>Filtres</span><b id="products-filter-count">0</b></button></div>
                 <div class="products-layout">
                     <aside id="products-filters" class="products-filters">
-                        <div class="products-filter-head"><div><span>Affinez votre recherche</span><h3>Filtrer par</h3></div><button id="products-clear-filters" type="button">Effacer tout</button></div>
-                        <label class="products-search-field"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg><input id="products-search" type="search" placeholder="Rechercher un produit"></label>
-                        <section class="products-filter-group"><h4>Catégories</h4><div id="products-category-filters"></div></section>
-                        <section class="products-filter-group"><h4>Disponibilité</h4><label><input type="checkbox" value="in_stock" data-stock-filter><i></i><span>En stock</span></label><label><input type="checkbox" value="low_stock" data-stock-filter><i></i><span>Presque épuisé</span></label><label><input type="checkbox" value="out_of_stock" data-stock-filter><i></i><span>Rupture de stock</span></label></section>
-                        <section class="products-filter-group"><h4>Prix</h4><div class="products-price-filter"><input id="products-min-price" type="number" min="0" step="1" placeholder="Min DH"><span>—</span><input id="products-max-price" type="number" min="0" step="1" placeholder="Max DH"></div></section>
-                        <label class="products-featured-filter"><input id="products-featured-only" type="checkbox"><i></i><span>Best-sellers uniquement</span></label>
+                        <div class="products-filter-head"><div><span>Affiner le catalogue</span><h3>Filtres</h3></div><button id="products-clear-filters" type="button">Tout effacer</button></div>
+                        <section class="products-filter-group products-subcategories-filter"><h4>Sous-catégories</h4><div id="products-subcategory-filters"><p class="products-filter-hint">Choisissez une catégorie dans la barre supérieure.</p></div></section>
+                        <section class="products-filter-group"><h4>Marques</h4><div id="products-brand-filters"></div></section>
+                        <section class="products-filter-group products-price-section"><h4>Prix</h4><div class="products-price-filter"><label><span>Minimum</span><div><input id="products-min-price" type="number" min="0" step="1" placeholder="0"><b>MAD</b></div></label><i>—</i><label><span>Maximum</span><div><input id="products-max-price" type="number" min="0" step="1" placeholder="500"><b>MAD</b></div></label></div></section>
+                        <section class="products-filter-group products-availability-filter"><h4>Disponibilité</h4><label><input type="checkbox" value="in_stock" data-stock-filter><i></i><span>En stock</span><b id="products-stock-count">(0)</b></label><label><input type="checkbox" value="out_of_stock" data-stock-filter><i></i><span>Non disponible</span><b id="products-out-count">(0)</b></label></section>
                     </aside>
                     <main class="products-results"><div class="products-results-toolbar"><p id="products-results-count">Chargement…</p><select id="products-sort"><option value="newest">Les plus récents</option><option value="title">Nom A–Z</option><option value="price_asc">Prix croissant</option><option value="price_desc">Prix décroissant</option></select></div><div id="products-grid" class="products-grid"><p class="products-empty">Chargement du catalogue…</p></div></main>
                 </div>
@@ -1197,25 +1196,7 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
         </section>
     </main>
 
-    <script src="app.js?v=mobile-header-fixed-v6-final"></script>
-
-    <script>
-      window.addEventListener('DOMContentLoaded', function () {
-        const params = new URLSearchParams(window.location.search);
-        if (params.get('open') !== 'products') return;
-        const openProducts = function () {
-          if (typeof window.switchTab === 'function') {
-            window.switchTab('section-autres');
-          } else {
-            document.querySelectorAll('main > .content-section').forEach(function (section) {
-              section.classList.toggle('hidden', section.id !== 'section-autres');
-            });
-          }
-          window.scrollTo(0, 0);
-          history.replaceState(null, '', 'index.html#section-autres');
-        };
-        setTimeout(openProducts, 0);
-      });
-    </script>
+<script src="app.js?v=flat-v1"></script>
+<script src="products.js?v=flat-v1"></script>
 </body>
 </html>
