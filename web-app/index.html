@@ -4,12 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Librairie & Papeterie El Qods — Berkane</title>
+    <script>
+        try {
+            if (localStorage.getItem('elqods_client_language') === 'AR') {
+                document.documentElement.lang = 'ar';
+                document.documentElement.dir = 'rtl';
+            }
+        } catch (e) {}
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
     <link href="https://fonts.googleapis.com.rproxy.goskope.com/css2?family=Noto+Naskh+Arabic:wght@400;500&family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=mobile-step3-full-titles-v1">
+    <link rel="stylesheet" href="styles.css?v=cancel-popup-ar-v14">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .font-header { font-family: 'Inter', sans-serif; }
@@ -806,6 +815,314 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
             margin-left: 0 !important;
             margin-right: 0 !important;
         }
+
+        /* FIX FINAL ARABE : bannière et défilement des marques */
+        #section-accueil .school-banner-ar { display:none !important; }
+        #section-accueil .school-banner-fr { display:inline !important; }
+        html[dir="rtl"] #section-accueil .school-banner-fr { display:none !important; }
+        html[dir="rtl"] #section-accueil .school-banner-ar { display:inline !important; }
+        html[dir="rtl"] #section-accueil .school-list-banner-copy,
+        html[dir="rtl"] #section-accueil .school-list-banner-copy h3,
+        html[dir="rtl"] #section-accueil .school-list-banner-copy p {
+            direction:rtl !important;
+            text-align:right !important;
+            width:100% !important;
+            margin-left:0 !important;
+            margin-right:0 !important;
+        }
+        html[dir="rtl"] #section-accueil .school-list-banner-copy .school-banner-ar {
+            direction:rtl !important;
+            unicode-bidi:isolate !important;
+            text-align:right !important;
+        }
+        html[dir="rtl"] .partners-marquee-track {
+            direction:ltr !important;
+            animation:partnersMarqueeArabic 26s linear infinite !important;
+        }
+        html[dir="rtl"] .partners-marquee-wrapper:hover .partners-marquee-track { animation-play-state:paused !important; }
+        @keyframes partnersMarqueeArabic {
+            from { transform:translateX(-50%); }
+            to { transform:translateX(0); }
+        }
+        @media(max-width:768px){html[dir="rtl"] .partners-marquee-track{animation-duration:22s !important;}}
+
+        /* PAGE LOCALISATION - VERSION ARABE */
+        html[dir="rtl"] #section-contact-location .contact-location-shell,
+        html[dir="rtl"] #section-contact-location .contact-location-details,
+        html[dir="rtl"] #section-contact-location .contact-opening-hours {
+            direction: rtl !important;
+            text-align: right !important;
+        }
+        html[dir="rtl"] #section-contact-location .contact-location-breadcrumb {
+            direction: rtl !important;
+            justify-content: flex-start !important;
+            text-align: right !important;
+        }
+        html[dir="rtl"] #section-contact-location .contact-location-details > p {
+            direction: rtl !important;
+            unicode-bidi: plaintext !important;
+            text-align: right !important;
+        }
+        html[dir="rtl"] #section-contact-location .contact-location-details > p a,
+        html[dir="rtl"] #section-contact-location .contact-location-details > p a span,
+        html[dir="rtl"] #section-contact-location .contact-hours-row strong,
+        html[dir="rtl"] #section-contact-location .contact-hours-row i {
+            direction: ltr !important;
+            unicode-bidi: isolate !important;
+        }
+        html[dir="rtl"] #section-contact-location .contact-hours-row {
+            direction: rtl !important;
+            text-align: right !important;
+        }
+
+        /* SUIVI ARABE - taille legerement augmentee et scrollbar drawer toujours a droite */
+        html[dir="rtl"] #section-suivi .tracking-shell {
+            font-size: 1.035em;
+        }
+        html[dir="rtl"] #section-suivi .tracking-search-heading p,
+        html[dir="rtl"] #section-suivi .tracking-hello p,
+        html[dir="rtl"] #section-suivi .tracking-field,
+        html[dir="rtl"] #section-suivi .tracking-qr-note,
+        html[dir="rtl"] #section-suivi .tracking-btn,
+        html[dir="rtl"] #section-suivi .timeline-step h5,
+        html[dir="rtl"] #section-suivi .timeline-step p {
+            font-size: 1.04em !important;
+        }
+        html[dir="rtl"] body > #tracking-details-drawer .qd-panel {
+            direction: ltr !important;
+        }
+        html[dir="rtl"] body > #tracking-details-drawer .qd-head,
+        html[dir="rtl"] body > #tracking-details-drawer .qd-tabs,
+        html[dir="rtl"] body > #tracking-details-drawer .qd-body {
+            direction: ltr !important;
+        }
+        html[dir="rtl"] body > #tracking-details-drawer .qd-head > *,
+        html[dir="rtl"] body > #tracking-details-drawer .qd-tab,
+        html[dir="rtl"] body > #tracking-details-drawer .qd-pane,
+        html[dir="rtl"] body > #tracking-details-drawer .qd-row,
+        html[dir="rtl"] body > #tracking-details-drawer .qd-empty {
+            direction: rtl !important;
+            text-align: right !important;
+        }
+        html[dir="rtl"] body > #tracking-details-drawer .qd-body {
+            font-size: 1.055em !important;
+            overflow-y: scroll !important;
+            scrollbar-gutter: stable !important;
+        }
+        html[dir="rtl"] body > #tracking-details-drawer .qd-copy b { font-size: 13.7px !important; }
+        html[dir="rtl"] body > #tracking-details-drawer .qd-copy small { font-size: 9.6px !important; }
+        html[dir="rtl"] body > #tracking-details-drawer .qd-pane-head h3 { font-size: 19px !important; }
+        html[dir="rtl"] body > #tracking-details-drawer .qd-tab { font-size: 12.6px !important; }
+
+        /* SUIVI ARABE V5 - reduction ciblee + segment annulation RTL corrige */
+        html[dir="rtl"] #section-suivi .timeline-step p {
+            font-size: 9.5px !important;
+            line-height: 1.2 !important;
+        }
+        html[dir="rtl"] #section-suivi .tracking-qr-note {
+            font-size: 10px !important;
+            line-height: 1.4 !important;
+            font-weight: 700 !important;
+        }
+        html[dir="rtl"] #section-suivi .tracking-btn {
+            font-size: 10px !important;
+            line-height: 1.2 !important;
+            padding-top: .74rem !important;
+            padding-bottom: .74rem !important;
+        }
+        html[dir="rtl"] #section-suivi .timeline-line.is-cancelled .timeline-cancelled-segment {
+            left: calc(50% / var(--cancel-count)) !important;
+            right: auto !important;
+            width: calc(100% / var(--cancel-count)) !important;
+        }
+        @media (max-width: 640px) {
+            html[dir="rtl"] #section-suivi .timeline-step p { font-size: 9px !important; }
+            html[dir="rtl"] #section-suivi .tracking-qr-note { font-size: 9.5px !important; }
+            html[dir="rtl"] #section-suivi .tracking-btn { font-size: 9.5px !important; }
+        }
+
+        /* SUIVI RECHERCHE V9 - alignement exact FR / AR */
+        #section-suivi .tracking-shell {
+            width: min(1180px, calc(100% - 40px)) !important;
+        }
+        #section-suivi .tracking-search-heading,
+        #section-suivi #order-tracking-form {
+            width: 100% !important;
+            max-width: 760px !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+        #section-suivi .tracking-search-heading {
+            text-align: center !important;
+        }
+        #section-suivi .tracking-search-heading h2 {
+            width: 100% !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            text-align: center !important;
+        }
+        #section-suivi .tracking-search-heading p {
+            width: 100% !important;
+            max-width: none !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            text-align: left !important;
+        }
+        html[dir="rtl"] #section-suivi .tracking-search-heading p {
+            direction: rtl !important;
+            text-align: right !important;
+        }
+        html[dir="rtl"] #section-suivi #order-tracking-form {
+            direction: ltr !important;
+            grid-template-columns: auto minmax(0,1fr) minmax(0,1fr) !important;
+            align-items: center !important;
+        }
+        html[dir="rtl"] #section-suivi #order-tracking-form > #tracking-order-id {
+            grid-column: 3 !important;
+            grid-row: 1 !important;
+            direction: rtl !important;
+            text-align: right !important;
+        }
+        html[dir="rtl"] #section-suivi #order-tracking-form > .tracking-phone-control {
+            grid-column: 2 !important;
+            grid-row: 1 !important;
+            direction: ltr !important;
+        }
+        html[dir="rtl"] #section-suivi #order-tracking-form > button[type="submit"] {
+            grid-column: 1 !important;
+            grid-row: 1 !important;
+            width: auto !important;
+            min-width: 64px !important;
+            direction: rtl !important;
+        }
+        @media(max-width:960px){
+            #section-suivi .tracking-search-heading,
+            #section-suivi #order-tracking-form { max-width:760px !important; }
+            html[dir="rtl"] #section-suivi #order-tracking-form {
+                grid-template-columns: 1fr !important;
+            }
+            html[dir="rtl"] #section-suivi #order-tracking-form > #tracking-order-id,
+            html[dir="rtl"] #section-suivi #order-tracking-form > .tracking-phone-control,
+            html[dir="rtl"] #section-suivi #order-tracking-form > button[type="submit"] {
+                grid-column:1 !important;
+                grid-row:auto !important;
+                width:100% !important;
+            }
+        }
+
+        /* CORRECTION UNIQUE ONGLETS RIGHT PANEL ARABE V11 */
+        html[dir="rtl"] body > #tracking-details-drawer .qd-tabs {
+            direction: ltr !important;
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+        }
+        html[dir="rtl"] body > #tracking-details-drawer .qd-tab[data-qd-tab="school"] {
+            grid-column: 2 !important;
+            grid-row: 1 !important;
+        }
+        html[dir="rtl"] body > #tracking-details-drawer .qd-tab[data-qd-tab="supply"] {
+            grid-column: 1 !important;
+            grid-row: 1 !important;
+        }
+        html[dir="rtl"] body > #tracking-details-drawer .qd-tab {
+            display: flex !important;
+            flex-direction: row !important;
+            direction: rtl !important;
+            align-items: center !important;
+            justify-content: center !important;
+            column-gap: 10px !important;
+            white-space: nowrap !important;
+        }
+        html[dir="rtl"] body > #tracking-details-drawer .qd-tab-num {
+            order: 1 !important;
+            margin: 0 !important;
+            flex: 0 0 auto !important;
+            direction: ltr !important;
+        }
+        html[dir="rtl"] body > #tracking-details-drawer .qd-tab-label {
+            order: 2 !important;
+            margin: 0 !important;
+            flex: 0 1 auto !important;
+            direction: rtl !important;
+            unicode-bidi: isolate !important;
+            text-align: center !important;
+        }
+        html[dir="rtl"] body > #tracking-details-drawer .qd-badge {
+            order: 3 !important;
+            margin: 0 !important;
+            flex: 0 0 auto !important;
+            direction: ltr !important;
+        }
+        @media(max-width:700px){
+            html[dir="rtl"] body > #tracking-details-drawer .qd-tab { column-gap: 7px !important; }
+        }
+
+        /* SUIVI V13 - formulaire compact, resultat pleine largeur */
+        #section-suivi .tracking-search-heading,
+        #section-suivi #order-tracking-form {
+            width: 100% !important;
+            max-width: 760px !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+        html:not([dir="rtl"]) #section-suivi .tracking-search-heading p {
+            width: 100% !important;
+            max-width: none !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            padding-left: 0 !important;
+            text-align: left !important;
+        }
+        #section-suivi #tracking-result {
+            width: 100% !important;
+            max-width: none !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+        #section-suivi #tracking-result.tracking-order-layout {
+            display: grid !important;
+            grid-template-columns: minmax(0,1fr) 315px !important;
+            gap: 3rem !important;
+            align-items: start !important;
+        }
+        #section-suivi #tracking-result .tracking-not-found {
+            grid-column: 1 / -1 !important;
+            width: 100% !important;
+            min-height: 96px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            text-align: center !important;
+        }
+        html[dir="rtl"] #section-suivi #tracking-result .tracking-not-found {
+            direction: rtl !important;
+        }
+        @media(max-width:960px){
+            #section-suivi #tracking-result.tracking-order-layout {
+                grid-template-columns: 1fr !important;
+                gap: 2rem !important;
+            }
+        }
+
+        /* POPUP ANNULATION ARABE V14 */
+        html[dir="rtl"] #tracking-modal .tracking-cancel-title {
+            width: 100% !important;
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
+            direction: rtl !important;
+            text-align: center !important;
+        }
+        html[dir="rtl"] #tracking-modal .tracking-cancel-ar-text {
+            direction: rtl !important;
+            unicode-bidi: isolate !important;
+        }
+        html[dir="rtl"] #tracking-modal .tracking-cancel-ref {
+            direction: ltr !important;
+            unicode-bidi: isolate !important;
+        }
 </style>
 </head>
 <body class="bg-white text-gray-900 min-h-screen flex flex-col justify-between antialiased">
@@ -946,13 +1263,19 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
                 <div class="w-full bg-[url('images/image_27be9b.png')] bg-cover bg-center rounded-xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-stone-900/10 reveal">
                     <div class="flex items-center gap-5 w-full md:w-auto">
                         <div class="text-white"><svg class="w-11 h-11 stroke-current fill-none stroke-[1.5]" viewBox="0 0 24 24"><path d="M16 20V7a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v13" /><rect x="8" y="9" width="8" height="7" rx="1" /><path d="M16 14h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2M8 14H6a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2" /><path d="M9 5V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" /></svg></div>
-                        <div class="text-left space-y-1">
-                            <h3 class="font-header text-xl md:text-[26px] font-black text-white tracking-tight leading-none">On vous prépare votre liste scolaire ?</h3>
-                            <p class="text-stone-200 text-xs sm:text-sm font-light leading-relaxed pt-0.5">Envoyez la liste, choisissez la date de réception et profitez de vos vacances.</p>
+                        <div class="school-list-banner-copy text-left space-y-1">
+                            <h3 class="font-header text-xl md:text-[26px] font-black text-white tracking-tight leading-none">
+                                <span class="school-banner-fr">On vous prépare votre liste scolaire ?</span>
+                                <span class="school-banner-ar" lang="ar" dir="rtl">قائمتكم المدرسية جاهزة ومجهزة خصيصاً لكم</span>
+                            </h3>
+                            <p class="text-stone-200 text-xs sm:text-sm font-light leading-relaxed pt-0.5">
+                                <span class="school-banner-fr">Envoyez la liste, choisissez la date de réception et profitez de vos vacances.</span>
+                                <span class="school-banner-ar" lang="ar" dir="rtl">أرسل قائمتك، حدد موعد الاستلام، واستمتع بإجازتك.</span>
+                            </p>
                         </div>
                     </div>
                     <div class="flex-shrink-0 w-full md:w-auto text-right">
-                        <button onclick="switchTab('section-rentree')" class="w-full md:w-auto border border-white/60 hover:border-white text-white hover:bg-white/5 font-medium text-sm px-6 py-3 rounded-lg transition text-center">en savoir plus</button>
+                        <button onclick="switchTab('section-rentree')" class="w-full md:w-auto border border-white/60 hover:border-white text-white hover:bg-white/5 font-medium text-sm px-6 py-3 rounded-lg transition text-center"><span class="school-banner-fr">en savoir plus</span><span class="school-banner-ar" lang="ar" dir="rtl">إكتشف المزيد</span></button>
                     </div>
                 </div>
             </div>
@@ -1353,7 +1676,7 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
         </section>
         <section id="section-suivi" class="content-section hidden tracking-section">
             <div class="tracking-shell">
-                <div id="tracking-search-heading" class="tracking-search-heading reveal"><span>Accéder à ma commande</span><h2>Suivre ma commande</h2><p>Retrouvez les détails, le montant à régler et l’avancement de votre commande.</p></div>
+                <div id="tracking-search-heading" class="tracking-search-heading reveal"><h2>Suivre ma commande</h2><p>Retrouvez les détails, le montant à régler et l’avancement de votre commande.</p></div>
                 <form id="order-tracking-form" class="tracking-search-form reveal delay-100">
                 <input id="tracking-order-id" type="text" placeholder="Numéro de commande" class="w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm outline-none focus:border-orange-300">
                 <div class="tracking-phone-control"><div id="tracking-phone-country-picker" class="phone-country-picker tracking-country-picker"><input type="hidden" id="tracking-phone-country" value="MA"><button id="tracking-phone-country-trigger" class="phone-country-trigger tracking-country-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Choisir le pays et l’indicatif"><span id="tracking-phone-country-flag" class="phone-country-flag">🇲🇦</span><span id="tracking-phone-country-dial" class="phone-country-dial">+212</span><span class="phone-country-chevron" aria-hidden="true"></span></button><div id="tracking-phone-country-menu" class="phone-country-menu tracking-country-menu" role="listbox" hidden></div></div><input id="tracking-phone" type="tel" class="tracking-phone-input" required inputmode="numeric" pattern="[0-9]*" maxlength="20" autocomplete="tel-national" placeholder="0612345678"></div>
@@ -1373,6 +1696,6 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
         </section>
     </main>
 
-    <script src="app.js?v=rtl-home-final-v3"></script>
+    <script src="app.js?v=cancel-popup-ar-v14"></script>
 </body>
 </html>
