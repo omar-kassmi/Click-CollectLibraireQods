@@ -636,6 +636,176 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
 #personal-supplies-view .step3-selected-list{margin-top:0!important;height:386px!important}
 @media(max-width:700px){#personal-supplies-view .step3-supply-catalog h5{white-space:normal!important}#personal-supplies-view .step3-selected-list{height:328px!important}}
 
+
+        /* SAFE ARABIC RTL - conserve exactement le design français */
+        #scroll-to-top { left: 1.5rem !important; right: auto !important; }
+        html[dir="rtl"] body { direction: rtl; }
+        html[dir="rtl"] body, html[dir="rtl"] button, html[dir="rtl"] input,
+        html[dir="rtl"] textarea, html[dir="rtl"] select {
+            font-family: 'Noto Naskh Arabic', 'Plus Jakarta Sans', sans-serif;
+        }
+        html[dir="rtl"] .home-whatsapp-float { right: 1.5rem !important; left: auto !important; }
+        html[dir="rtl"] input[type="email"], html[dir="rtl"] input[type="tel"],
+        html[dir="rtl"] input[inputmode="numeric"], html[dir="rtl"] .phone-country-dial,
+        html[dir="rtl"] .item-price-chip, html[dir="rtl"] .qd-price,
+        html[dir="rtl"] #summary-total { direction: ltr; unicode-bidi: embed; }
+        html[dir="rtl"] #section-rentree .flow-view-head-with-back {
+            direction: ltr !important; display: grid !important;
+            grid-template-columns: minmax(0,1fr) 42px 42px !important;
+            grid-template-areas: "copy number back" !important;
+            align-items: center !important; column-gap: 12px !important;
+        }
+        html[dir="rtl"] #section-rentree .flow-view-head-with-back > .flow-step-back {
+            grid-area: back !important; position: static !important; inset: auto !important;
+            transform: none !important; justify-self: end !important; margin: 0 !important;
+        }
+        html[dir="rtl"] #section-rentree .flow-view-head-with-back > span {
+            grid-area: number !important; position: static !important; inset: auto !important;
+            transform: none !important; justify-self: center !important; margin: 0 !important;
+        }
+        html[dir="rtl"] #section-rentree .flow-view-head-with-back > div {
+            grid-area: copy !important; direction: rtl !important; text-align: right !important; min-width: 0 !important;
+        }
+        html[dir="rtl"] #section-rentree .flow-view-head-with-back .flow-step-back svg { transform: scaleX(-1) !important; }
+        /* Récapitulatif stable : mêmes dimensions que la version française. */
+        #checkout-form-container .checkout-columns { align-items: start !important; }
+        #checkout-form-container .checkout-summary-card { align-self: start !important; height: fit-content !important; min-height: 0 !important; }
+        #checkout-form-container .checkout-summary-card .summary-group { display:grid !important; grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important; column-gap:32px !important; width:100% !important; }
+        #checkout-form-container .checkout-summary-card .summary-row { display:contents !important; }
+        #checkout-form-container .checkout-summary-card .summary-row > span { grid-column:1 !important; text-align:left !important; justify-self:start !important; }
+        #checkout-form-container .checkout-summary-card .summary-row > b { grid-column:2 !important; width:100% !important; text-align:right !important; justify-self:stretch !important; }
+        #checkout-form-container .checkout-summary-card .summary-count-row > b { width:fit-content !important; justify-self:end !important; padding-left:12px !important; padding-right:12px !important; white-space:nowrap !important; }
+        #checkout-form-container .checkout-summary-card .summary-subtotal-row > b,
+        #checkout-form-container .checkout-summary-card .summary-grand-total > strong { color:#059669 !important; text-align:right !important; }
+        html[dir="rtl"] #checkout-form-container .checkout-summary-card .summary-row > span { text-align:right !important; }
+        html[dir="rtl"] #checkout-form-container .checkout-summary-card .summary-row > b { text-align:left !important; }
+        @media(max-width:700px){
+            #scroll-to-top { left: 1rem !important; right:auto !important; }
+            html[dir="rtl"] .home-whatsapp-float { right:1rem !important; left:auto !important; }
+            html[dir="rtl"] #section-rentree .flow-view-head-with-back { grid-template-columns:minmax(0,1fr) 36px 36px !important; column-gap:8px !important; }
+        }
+
+        /* SPLASH PAGE - MODELE EL QODS */
+        #splash-screen {
+            position: fixed; inset: 0; z-index: 2147483640;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 24px 24px 98px; overflow: hidden; text-align: center;
+            background: #d3d3d3; opacity: 1; visibility: visible;
+            transition: opacity .65s ease, visibility .65s ease;
+        }
+        #splash-screen.opacity-0 { opacity: 0; visibility: hidden; pointer-events: none; }
+        #splash-screen.hidden { display: none !important; }
+        .splash-brand { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; animation: splashBrandIn 1s cubic-bezier(.22,1,.36,1) both; }
+        .splash-logo-wrap { position: relative; width: min(395px, 66vw); overflow: hidden; background: #d3d3d3; }
+        .splash-logo-wrap::after { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; background: linear-gradient(to right,#d3d3d3 0%,rgba(211,211,211,.96) 3%,rgba(211,211,211,.82) 8%,rgba(211,211,211,.38) 15%,transparent 25%,transparent 75%,rgba(211,211,211,.38) 85%,rgba(211,211,211,.82) 92%,rgba(211,211,211,.96) 97%,#d3d3d3 100%),linear-gradient(to bottom,#d3d3d3 0%,rgba(211,211,211,.94) 3%,rgba(211,211,211,.80) 10%,rgba(211,211,211,.35) 18%,transparent 27%,transparent 72%,rgba(211,211,211,.38) 82%,rgba(211,211,211,.82) 91%,#d3d3d3 100%); }
+        .splash-logo { position: relative; z-index: 1; display: block; width: 100%; height: auto; object-fit: contain; filter: drop-shadow(0 10px 15px rgba(64,42,25,.08)); }
+        .splash-star { position: absolute; z-index: 4; top: 17%; right: 22%; width: 20px; height: 20px; animation: splashTwinkle 1.35s ease-in-out infinite; }
+        .splash-star::before, .splash-star::after { content: ''; position: absolute; left: 50%; top: 50%; background: #ffd546; transform: translate(-50%,-50%); box-shadow: 0 0 12px 5px rgba(255,197,34,.45); }
+        .splash-star::before { width: 2px; height: 20px; } .splash-star::after { width: 20px; height: 2px; }
+        #splash-screen .splash-title { margin: 26px 0 0; color: #d17b20; font: 800 clamp(15px,2vw,18px)/1.2 'Inter',sans-serif; letter-spacing: -.02em; text-transform: uppercase; }
+        #splash-screen .splash-title strong { color: #32180d; font-weight: 900; }
+        .splash-waves { position: absolute; z-index: 1; left: 0; right: 0; bottom: 72px; width: 100%; height: 120px; }
+        .splash-waves svg { display: block; width: 100%; height: 100%; }
+        .splash-category-bar { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; height: 88px; display: grid; grid-template-columns: repeat(7,1fr); align-items: center; padding: 8px 4.5%; background: #d48627; color: #fff; }
+        .splash-category { display: grid; place-items: center; opacity: .98; animation: splashIconIn .55s ease both; }
+        .splash-category:nth-child(2){animation-delay:.08s}.splash-category:nth-child(3){animation-delay:.16s}.splash-category:nth-child(4){animation-delay:.24s}.splash-category:nth-child(5){animation-delay:.32s}.splash-category:nth-child(6){animation-delay:.40s}.splash-category:nth-child(7){animation-delay:.48s}
+        .splash-category svg { width: 31px; height: 31px; fill: none; stroke: currentColor; stroke-width: 1.65; stroke-linecap: round; stroke-linejoin: round; }
+        @keyframes splashBrandIn { from { opacity:0; transform:translateY(15px) scale(.96) } to { opacity:1; transform:none } }
+        @keyframes splashIconIn { from { opacity:0; transform:translateY(12px) } to { opacity:1; transform:none } }
+        @keyframes splashTwinkle { 0%,100% { transform:scale(.65) rotate(0); opacity:.55 } 50% { transform:scale(1.2) rotate(45deg); opacity:1 } }
+        @media (max-width:640px) {
+            #splash-screen { padding-bottom: 88px; }
+            .splash-logo-wrap { width:min(315px,80vw); }
+            #splash-screen .splash-title { margin-top:20px; font-size:13px; }
+            .splash-waves { bottom:64px; height:92px; }
+            .splash-category-bar { height:72px; padding-inline:3%; }
+            .splash-category svg { width:25px; height:25px; }
+        }
+        @media (prefers-reduced-motion:reduce) { .splash-brand,.splash-category,.splash-star { animation:none !important; } }
+        /* ACCUEIL ARABE - ALIGNEMENTS DEFINITIFS */
+        #scroll-to-top { right: 1.5rem !important; left: auto !important; }
+        html[dir="rtl"] #scroll-to-top { left: 1.5rem !important; right: auto !important; }
+
+        html[dir="rtl"] #section-accueil #home-hero-gradient {
+            background-image: linear-gradient(to left, rgba(0,0,0,.90), rgba(0,0,0,.55), transparent) !important;
+        }
+        html[dir="rtl"] #section-accueil .home-hero-shell {
+            direction: rtl !important;
+            justify-content: flex-start !important;
+        }
+        html[dir="rtl"] #section-accueil #home-hero-copy {
+            width: min(42rem, 100%) !important;
+            margin-left: 0 !important;
+            margin-right: auto !important;
+            direction: rtl !important;
+            text-align: right !important;
+        }
+        html[dir="rtl"] #section-accueil #home-hero-location {
+            display: block !important;
+            width: max-content !important;
+            margin-left: 0 !important;
+            margin-right: auto !important;
+            direction: rtl !important;
+            text-align: right !important;
+        }
+        html[dir="rtl"] #section-accueil #home-hero-title {
+            direction: rtl !important;
+            text-align: right !important;
+        }
+        html[dir="rtl"] #section-accueil #home-category-heading,
+        html[dir="rtl"] #section-partenaires #home-brands-heading {
+            width: 100% !important;
+            direction: rtl !important;
+            text-align: right !important;
+        }
+        @media(max-width:700px) {
+            #scroll-to-top { right: 1rem !important; left: auto !important; }
+            html[dir="rtl"] #scroll-to-top { left: 1rem !important; right: auto !important; }
+        }
+
+        /* CORRECTIF FINAL CIBLE : HERO ARABE A DROITE + LISERE FOOTER */
+        html[dir="rtl"] body {
+            overflow-x: hidden !important;
+        }
+        html[dir="rtl"] #section-accueil .home-hero-shell {
+            max-width: none !important;
+            width: 100% !important;
+            direction: ltr !important;
+            display: flex !important;
+            justify-content: flex-end !important;
+            padding-right: clamp(24px, 6vw, 96px) !important;
+            padding-left: clamp(24px, 6vw, 96px) !important;
+        }
+        html[dir="rtl"] #section-accueil #home-hero-copy {
+            width: min(42rem, 100%) !important;
+            max-width: 42rem !important;
+            margin-left: auto !important;
+            margin-right: 0 !important;
+            direction: rtl !important;
+            text-align: right !important;
+        }
+        html[dir="rtl"] #section-accueil #home-hero-location {
+            display: block !important;
+            width: max-content !important;
+            margin-left: auto !important;
+            margin-right: 0 !important;
+            direction: rtl !important;
+            text-align: right !important;
+        }
+        html[dir="rtl"] #section-accueil #home-hero-title,
+        html[dir="rtl"] #section-accueil #home-hero-description {
+            width: 100% !important;
+            max-width: none !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            direction: rtl !important;
+            text-align: right !important;
+        }
+        html[dir="rtl"] .site-footer-full {
+            width: 100% !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
 </style>
 </head>
 <body class="bg-white text-gray-900 min-h-screen flex flex-col justify-between antialiased">
@@ -646,11 +816,31 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
         </svg>
     </button>
 
-    <div id="splash-screen" class="fixed inset-0 bg-white flex flex-col items-center justify-center z-50">
-        <img src="images/logo.png" alt="Logo" class="w-28 h-28 object-contain mb-4 animate-pulse">
-        <h1 class="font-header text-xl font-semibold tracking-widest text-gray-400 uppercase text-center px-4">Papeterie El Qods</h1>
+    <div id="splash-screen" role="status" aria-label="Chargement de la Librairie et Papeterie El Qods">
+        <div class="splash-brand">
+            <div class="splash-logo-wrap">
+                <img src="images/splash-animation-2.gif" alt="Animation du logo Al Qods" class="splash-logo">
+            </div>
+            <h1 class="splash-title">LIBRAIRIE &amp; PAPETERIE <strong>AL QODS</strong></h1>
+        </div>
+        <div class="splash-waves" aria-hidden="true">
+            <svg viewBox="0 0 1440 150" preserveAspectRatio="none">
+                <path fill="#e2a45d" d="M0,42 C90,70 178,22 285,42 C420,68 500,8 660,35 C820,63 930,86 1080,35 C1200,-5 1290,72 1440,47 L1440,150 L0,150 Z"/>
+                <path fill="#f3d5b2" d="M0,52 C120,92 210,38 340,55 C500,75 590,19 760,50 C935,82 1030,58 1160,46 C1280,35 1355,83 1440,66 L1440,150 L0,150 Z"/>
+                <path fill="#f6e4cc" d="M0,69 C145,116 250,53 405,69 C570,88 670,51 830,73 C1000,96 1135,53 1260,67 C1340,77 1394,91 1440,83 L1440,150 L0,150 Z"/>
+                <path fill="#d48627" d="M0,82 C150,144 245,80 405,82 C555,84 620,119 790,93 C980,64 1090,89 1235,94 C1325,97 1385,104 1440,99 L1440,150 L0,150 Z"/>
+            </svg>
+        </div>
+        <div class="splash-category-bar" aria-hidden="true">
+            <span class="splash-category"><svg viewBox="0 0 32 32"><path d="M6 26 25 7m-4-1 5 5M4 28l5-2-3-3-2 5Z"/></svg></span>
+            <span class="splash-category"><svg viewBox="0 0 32 32"><path d="M7 8h18v18H7zM10 4h12v7H10zM10 21h12M10 24h12M22 15h5v5h-5"/></svg></span>
+            <span class="splash-category"><svg viewBox="0 0 32 32"><path d="m5 9 11-4 11 4-11 4L5 9Zm0 6 11 4 11-4M5 21l11 4 11-4"/></svg></span>
+            <span class="splash-category"><svg viewBox="0 0 32 32"><path d="M7 9h18v5H7zm2 5v12m14-12v12M6 20h20M12 4l14-3v5L12 9z"/></svg></span>
+            <span class="splash-category"><svg viewBox="0 0 32 32"><rect x="4" y="7" width="19" height="14" rx="1"/><path d="M10 25h7m-3-4v4M25 9h4v16h-7v-2"/></svg></span>
+            <span class="splash-category"><svg viewBox="0 0 32 32"><path d="M5 13h22v13H5zM8 18h8M18 18h6M9 13V9h5v4M21 13V7h3v6M12 7l2-3 2 3-2 2-2-2Z"/></svg></span>
+            <span class="splash-category"><svg viewBox="0 0 32 32"><path d="M5 5h8v22H5zm14 3h8v19h-8zM8 9h2m-2 4h2m-2 10h2m12-11h2m-2 4h2M13 18h6v9h-6z"/></svg></span>
+        </div>
     </div>
-
     <script>
         if (document.referrer && document.referrer.includes('success.html')) {
             const splash = document.getElementById('splash-screen');
@@ -682,7 +872,6 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
                     <button id="lang-btn" class="border border-[#E75C25] text-[#E75C25] rounded-full w-9 h-9 flex items-center justify-center font-black text-xs transition hover:bg-orange-500/10 tracking-tighter font-header focus:outline-none">FR</button>
                     <div id="lang-dropdown" class="hidden absolute top-0 left-0 bg-white border border-stone-200 rounded-full flex flex-col items-center p-0.5 shadow-xl z-50 w-10 space-y-1.5 pb-1">
                         <button id="lang-opt-fr" onclick="switchLanguage('FR')" class="bg-[#E75C25] text-white rounded-full w-[34px] h-[34px] flex items-center justify-center font-black text-xs font-header focus:outline-none">FR</button>
-                        <button id="lang-opt-en" onclick="switchLanguage('EN')" class="text-[#E75C25] hover:bg-orange-50 rounded-full w-[34px] h-[34px] flex items-center justify-center font-black text-xs font-header focus:outline-none">EN</button>
                         <button id="lang-opt-ar" onclick="switchLanguage('AR')" class="text-[#E75C25] hover:bg-orange-50 rounded-full w-[34px] h-[34px] flex items-center justify-center font-black text-xs font-header focus:outline-none">AR</button>
                     </div>
                 </div>
@@ -717,11 +906,11 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
         <section id="section-accueil" class="content-section">
             <div class="home-hero relative min-h-screen flex flex-col justify-center overflow-hidden bg-stone-950">
                 <div class="absolute inset-0 z-0 w-full h-full reveal"><img src="images/boutique.png" class="w-full h-full object-cover opacity-75"></div>
-                <div class="absolute inset-0 z-10 bg-gradient-to-r from-black/90 via-black/55 to-transparent"></div>
+                <div id="home-hero-gradient" class="absolute inset-0 z-10 bg-gradient-to-r from-black/90 via-black/55 to-transparent"></div>
                 <div class="home-hero-shell max-w-7xl mx-auto px-6 md:px-12 pt-36 pb-24 w-full flex-grow flex items-center relative z-20">
-                    <div class="max-w-2xl space-y-5 text-left text-white">
-                        <span class="reveal inline-block bg-orange-500/20 text-[#FF844B] border border-orange-500/30 font-bold text-[11px] px-3 py-1 rounded-full uppercase tracking-widest">Berkane, Maroc</span>
-                        <h2 class="reveal delay-100 text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight text-white">Librairie & Papeterie <br><span class="text-[#E75C25]">El Qods</span></h2>
+                    <div id="home-hero-copy" class="max-w-2xl space-y-5 text-left text-white">
+                        <span id="home-hero-location" class="reveal inline-block bg-orange-500/20 text-[#FF844B] border border-orange-500/30 font-bold text-[11px] px-3 py-1 rounded-full uppercase tracking-widest">Berkane, Maroc</span>
+                        <h2 id="home-hero-title" class="reveal delay-100 text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight text-white">Librairie & Papeterie <br><span class="text-[#E75C25]">El Qods</span></h2>
                         <p class="reveal delay-200 text-gray-200 text-sm sm:text-base max-w-lg">Commandez vos packs officiels ou déposez la photo de votre liste scolaire en arabe.</p>
                     </div>
                 </div>
@@ -737,7 +926,7 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
             </div>
 
             <div class="home-content-start max-w-7xl mx-auto px-6 md:px-12 pt-20 bg-white text-gray-900 w-full overflow-hidden">
-                <div class="text-left mb-10 space-y-2 reveal">
+                <div id="home-category-heading" class="text-left mb-10 space-y-2 reveal">
 
                     <h3 class="text-3xl font-black text-[#E75C25] tracking-tight font-header">Bonjour</h3>
                     <p class="text-base font-black text-[#E75C25] tracking-tight font-header">Choisissez parmi des catégories inspirantes :</p>
@@ -817,7 +1006,7 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
                 <div class="partners-bg-shape partners-bg-shape-top"></div>
                 <div class="partners-bg-shape partners-bg-shape-bottom"></div>
                 <div class="partners-inner mx-auto px-6 md:px-12 relative z-10">
-                    <div class="mb-7 reveal text-left">
+                    <div id="home-brands-heading" class="mb-7 reveal text-left">
                         <h3 class="text-2xl md:text-3xl font-black text-[#E75C25] tracking-tight font-header">Nos marques</h3>
                     </div>
                     <div class="partners-marquee-wrapper reveal delay-100" aria-label="Logos de nos marques">
@@ -1184,6 +1373,6 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
         </section>
     </main>
 
-    <script src="app.js?v=mobile-header-fixed-v6-final"></script>
+    <script src="app.js?v=rtl-home-final-v3"></script>
 </body>
 </html>

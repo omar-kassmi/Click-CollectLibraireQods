@@ -1190,6 +1190,7 @@ o.classList.add('is-open');dataTab('archive');archiveStatus('Chargement…');con
             if (input) input.value = setting.value;
             if (setting.key === 'rentree_enabled') document.getElementById('set-rentree-enabled').value = setting.value;
             if (setting.key === 'rentree_title') document.getElementById('set-rentree-title').value = setting.value;
+            if (setting.key === 'rentree_title_ar') document.getElementById('set-rentree-title-ar').value = setting.value;
             if (setting.key === 'delivery_enabled') document.getElementById('set-delivery-enabled').value = setting.value;
             if (setting.key === 'contact_address') document.getElementById('set-contact-address').value = setting.value;
             if (setting.key === 'contact_email') document.getElementById('set-contact-email').value = setting.value;
@@ -1209,6 +1210,7 @@ o.classList.add('is-open');dataTab('archive');archiveStatus('Chargement…');con
         event.preventDefault();
         await supabaseClient.from('site_settings').update({ value: document.getElementById('set-rentree-enabled').value }).eq('key', 'rentree_enabled');
         await supabaseClient.from('site_settings').update({ value: document.getElementById('set-rentree-title').value }).eq('key', 'rentree_title');
+        await supabaseClient.from('site_settings').upsert({ key: 'rentree_title_ar', value: document.getElementById('set-rentree-title-ar').value.trim() || 'الدخول المدرسي' }, { onConflict: 'key' });
         await supabaseClient.from('site_settings').upsert({ key: 'delivery_enabled', value: document.getElementById('set-delivery-enabled').value }, { onConflict: 'key' });
         alert("Visibilité de l'onglet Rentrée mise à jour.");
     });

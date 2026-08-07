@@ -39,14 +39,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedPersonalSupplyCategoryIds = new Set();
 
 
-    // Masquage progressif de la Splash Page après 5 secondes
+    // Masquage progressif de la Splash Page après 6,5 secondes
     setTimeout(() => {
         const splash = document.getElementById('splash-screen');
         if (splash) {
             splash.classList.add('opacity-0');
             setTimeout(() => splash.classList.add('hidden'), 500);
         }
-    }, 5000);
+    }, 6500);
 
     // ==========================================
     // 1. GESTION DES ETAPES DE LA TIMELINE (STEPPER)
@@ -1468,6 +1468,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // SAFE ARABIC TRANSLATION - texte uniquement, aucun style structurel injecté
+    const SAFE_AR = {
+      'Berkane, Maroc':'بركان - المغرب','Librairie & Papeterie':'مكتبة و وراقة','El Qods':'القدس','Commandez vos packs officiels ou déposez la photo de votre liste scolaire en arabe.':'مكتبة، وراقة، ولوازم مكتبية: كل ما تحتاجه بالقرب منك في بركان','Accueil':'الرئيسية','Rentrée scolaire':'الدخول المدرسي','Autres produits':'منتجات أخرى','Suivre ma commande':'تتبع طلبي','Plan & Rayons':'الخريطة والأقسام','Commander':'اطلب الآن','Navigation':'التنقل','Localisation & horaires':'الموقع والمواعيد',
+      'Bonjour':'مرحباً','Choisissez parmi des catégories inspirantes :':'اختاروا من بين فئاتنا المتنوعة:','Livre':'كتب','Fournitures':'لوازم مدرسية','Cadeaux':'هدايا','Jouets et jeux':'ألعاب','Bureautique':'مستلزمات مكتبية','Quran':'القرآن الكريم','High tech':'تقنيات حديثة','Nos marques':'علاماتنا التجارية','Nos Grands Rayons':'أقسامنا الرئيسية في الكتب','Parcourez nos univers thématiques sélectionnés avec soin.':'تصفح عوالمنا الموضوعية المختارة بعناية.',
+      'Je choisis mon mode de retrait et ma liste':'أختار طريقة الاستلام ونوع اللائحة','Choisissez d’abord la réception, puis le type de liste.':'اختاروا أولاً طريقة الاستلام ثم نوع اللائحة.','Je choisis le mode de retrait':'أختار طريقة الاستلام','Retrait au magasin':'الاستلام من المتجر','Livraison':'التوصيل','Je choisis le type de liste':'أختار نوع اللائحة','Liste officielle du site':'اللائحة الرسمية للموقع','Ma propre liste':'لائحتي الخاصة',
+      'Je choisis mon établissement et mon niveau':'أختار المؤسسة والمستوى','Sélectionnez votre établissement, puis votre niveau scolaire.':'اختاروا المؤسسة ثم المستوى الدراسي.','Continuer avec cette liste':'متابعة بهذه اللائحة','Je personnalise ma liste et mes fournitures':'أخصص لائحتي ولوازمي','Je complète ma liste scolaire':'أكمل لائحتي المدرسية','Continuer vers mes informations':'متابعة إلى معلوماتي',
+      'Mes informations et le récapitulatif':'معلوماتي وملخص الطلب','Vérifiez la commande puis confirmez la réservation.':'تحققوا من الطلب ثم أكدوا الحجز.','Nom et prénom':'الاسم الكامل','Numéro WhatsApp':'رقم واتساب','Adresse e-mail':'البريد الإلكتروني','Consignes pour la commande':'ملاحظات الطلب','Confirmer et réserver ma commande':'تأكيد وحجز طلبي','Récapitulatif de la commande':'ملخص الطلب','Mode de retrait':'طريقة الاستلام','Type de liste':'نوع اللائحة','École':'المؤسسة','Niveau':'المستوى','Articles de la liste':'عناصر اللائحة','Fournitures choisies':'اللوازم المختارة','Sous-total liste':'المجموع الفرعي للائحة','Sous-total fournitures':'المجموع الفرعي للوازم','Total estimé':'المجموع التقديري','Toutes les catégories':'جميع الفئات','Réinitialiser':'إعادة الضبط','Passer cette étape':'تخطي هذه الخطوة','Annuler':'إلغاء','Fermer':'إغلاق'
+    };
+    const safeOriginalText=new WeakMap(),safeOriginalAttr=new WeakMap();let safeLanguage='FR',safeBusy=false;
+    function safeTranslate(root,toArabic){const host=root===document?document.body:root;if(!host)return;const els=host.nodeType===1?[host,...host.querySelectorAll('*')]:[...host.querySelectorAll('*')];els.forEach(el=>['placeholder','title','aria-label'].forEach(attr=>{if(!el.hasAttribute(attr))return;const saved=safeOriginalAttr.get(el)||{};if(!(attr in saved))saved[attr]=el.getAttribute(attr);safeOriginalAttr.set(el,saved);const value=saved[attr];el.setAttribute(attr,toArabic?(SAFE_AR[value]||value):value)}));const walker=document.createTreeWalker(host,NodeFilter.SHOW_TEXT),nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);nodes.forEach(node=>{const parent=node.parentElement;if(!parent||parent.closest('script,style,noscript')||!node.nodeValue.trim())return;if(!safeOriginalText.has(node))safeOriginalText.set(node,node.nodeValue);const original=safeOriginalText.get(node),key=original.trim();node.nodeValue=toArabic&&SAFE_AR[key]?original.replace(key,SAFE_AR[key]):original})}
+    function safeApplyLanguage(lang){safeLanguage=lang==='AR'?'AR':'FR';const ar=safeLanguage==='AR';document.documentElement.lang=ar?'ar':'fr';document.documentElement.dir=ar?'rtl':'ltr';document.body.dir=ar?'rtl':'ltr';safeBusy=true;safeTranslate(document,ar);safeBusy=false;localStorage.setItem('elqods_client_language',safeLanguage)}
+    const safeObserver=new MutationObserver(records=>{if(safeLanguage!=='AR'||safeBusy)return;safeBusy=true;records.forEach(r=>r.addedNodes.forEach(n=>{if(n.nodeType===1)safeTranslate(n,true)}));safeBusy=false});safeObserver.observe(document.body,{childList:true,subtree:true});
+
     // MENU CHANGER LA LANGUE
     const langBtn = document.getElementById('lang-btn');
     const langDropdown = document.getElementById('lang-dropdown');
@@ -1496,8 +1509,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (langOptions[key]) langOptions[key].className = "text-[#E75C25] hover:bg-orange-50 rounded-full w-[34px] h-[34px] flex items-center justify-center font-black text-xs font-header focus:outline-none";
         });
         if (langOptions[lang]) langOptions[lang].className = "bg-[#E75C25] text-white rounded-full w-[34px] h-[34px] flex items-center justify-center font-black text-xs font-header focus:outline-none";
+        safeApplyLanguage(lang);
         if (langDropdown) langDropdown.classList.add('hidden');
     };
+    if(localStorage.getItem('elqods_client_language')==='AR')window.switchLanguage('AR');
 
     const urlParams = new URLSearchParams(window.location.search);
     const tabParam = urlParams.get('tab');
