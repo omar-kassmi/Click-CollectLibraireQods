@@ -41,9 +41,37 @@ begin
     end if;
 end $$;
 
+-- Noms bilingues des écoles et niveaux
+alter table public.schools add column if not exists name_ar text;
+alter table public.school_levels add column if not exists name_ar text;
+alter table public.school_levels add column if not exists cycle text;
+alter table public.school_levels drop constraint if exists school_levels_cycle_check;
+alter table public.school_levels add constraint school_levels_cycle_check
+check (cycle is null or cycle in ('prescolaire','primaire','college','lycee','autre'));
+alter table public.school_lists add column if not exists school_name_ar text;
+alter table public.school_lists add column if not exists level_ar text;
+
+update public.school_lists sl
+set school_name_ar = s.name_ar
+from public.schools s
+where sl.school_name = s.name and s.name_ar is not null
+  and (sl.school_name_ar is null or btrim(sl.school_name_ar) = '');
+
+update public.school_lists sl
+set level_ar = l.name_ar
+from public.school_levels l
+where sl.level = l.name and l.name_ar is not null
+  and (sl.level_ar is null or btrim(sl.level_ar) = '');
+
 commit;
 
 -- Doit retourner zero ligne.
 select id, numero_commande, status
 from public.orders
 where status not in ('new','preparing','ready','collected','cancelled','expired','draft_google_form');
+
+-- Adresse arabe configurable depuis l'administration.
+-- La valeur vide est créée uniquement si la clé n'existe pas déjà.
+insert into public.site_settings (key, value)
+values ('contact_address_ar', '')
+on conflict (key) do nothing;

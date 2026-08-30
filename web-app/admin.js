@@ -92,6 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
     .data-manager .paired-fields{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)!important;gap:14px!important;padding:12px!important;border:1px solid #e7e0db!important;border-radius:17px!important;background:#f7f5f3!important}.data-manager .paired-control{display:flex!important;min-width:0!important;flex-direction:column!important;gap:6px!important}.data-manager .paired-control small{margin-left:2px!important;color:#9f9791!important;font-size:8px!important;font-weight:950!important;letter-spacing:.09em!important;text-transform:uppercase!important}.data-manager .paired-control input,.data-manager .paired-control select{width:100%!important;height:48px!important;min-height:48px!important;margin:0!important;padding:0 14px!important;border:1px solid #ddd6d1!important;border-radius:13px!important;background:#fff!important;color:#292524!important;font-size:12px!important;font-weight:800!important;box-shadow:0 5px 14px rgba(49,32,22,.04)!important;box-sizing:border-box!important}.data-manager .paired-control select{padding-right:38px!important;cursor:pointer!important}.data-manager .paired-control input:focus,.data-manager .paired-control select:focus{border-color:#E75C25!important;box-shadow:0 0 0 4px rgba(231,92,37,.09)!important;outline:none!important}.data-manager #archive-custom-period.hidden{display:none!important}.data-manager #archive-custom-period:not(.hidden){display:flex!important}.data-manager #archive-custom-period .custom-time-fields{width:100%!important}.data-manager .auto-fields.is-disabled .paired-fields{background:#eceae8!important}.data-manager .auto-fields.is-disabled .paired-control input,.data-manager .auto-fields.is-disabled .paired-control select{background:#e7e5e3!important;box-shadow:none!important}@media(max-width:620px){.data-manager .paired-fields{grid-template-columns:minmax(90px,.8fr) minmax(0,1.2fr)!important;gap:9px!important;padding:9px!important}.data-manager .paired-control input,.data-manager .paired-control select{height:44px!important;min-height:44px!important;padding:0 10px!important}}
     /* SCHOOL LIST ITEM LABEL LANGUAGE */
     .pack-item-label-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}.pack-item-label-head>label{margin:0!important;color:#a8a29e;font-size:9px;font-weight:900;text-transform:uppercase}.pack-item-language{display:inline-grid;grid-template-columns:1fr 1fr;gap:2px;padding:2px;border:1px solid #e7e5e4;border-radius:8px;background:#f5f5f4}.pack-item-language button{min-width:34px;height:24px;padding:0 7px;border:0;border-radius:6px;background:transparent;color:#78716c;font-size:8px;font-weight:950}.pack-item-language button.is-active{background:#E75C25;color:#fff;box-shadow:0 3px 8px rgba(231,92,37,.2)}#admin-item-name.is-arabic{font-family:Tahoma,Arial,sans-serif!important;font-size:13px!important;text-align:right!important;direction:rtl!important}
+    /* CATALOGUES BILINGUES ECOLES / NIVEAUX */
+    .catalog-master-row b{min-width:0}.catalog-master-row b small{display:block;margin-top:3px;color:#9a938d;font-family:'Noto Naskh Arabic',Tahoma,Arial,sans-serif;font-size:11px;font-weight:600;line-height:1.25;text-align:left}.catalog-dialog-field input[dir="rtl"]{font-family:'Noto Naskh Arabic',Tahoma,Arial,sans-serif;font-size:14px;text-align:right}.catalog-level-edit svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9}
     /* SCHOOL EDIT AND PRINT */
     .r2-upload-field{display:grid;gap:8px}.r2-upload-zone{position:relative;min-height:94px;padding:13px;display:grid;grid-template-columns:72px minmax(0,1fr);align-items:center;gap:13px;border:1px dashed #f0b99d;border-radius:14px;background:#fff9f5;cursor:pointer}.r2-upload-zone:hover{border-color:#E75C25;background:#fff4ec}.r2-upload-zone input{position:absolute;width:1px;height:1px;opacity:0}.r2-upload-preview{width:72px;height:66px;display:grid;place-items:center;overflow:hidden;border:1px solid #eee3dc;border-radius:11px;background:#fff;color:#E75C25;font-size:10px;font-weight:900}.r2-upload-preview img{width:100%;height:100%;object-fit:contain}.r2-upload-copy b,.r2-upload-copy small{display:block}.r2-upload-copy b{font-size:11px;color:#292524}.r2-upload-copy small{margin-top:5px;color:#8f8781;font-size:9px;line-height:1.4}.r2-upload-status{min-height:15px;color:#78716c;font-size:9px;font-weight:800}.r2-upload-status.is-error{color:#b91c1c}.r2-upload-status.is-success{color:#047857}
         .school-master-row{grid-template-columns:34px minmax(0,1fr) auto!important}.catalog-row-actions{display:flex;gap:4px}.catalog-school-edit{color:#E75C25!important}.catalog-school-edit svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9}.school-edit-logo-preview{min-height:76px;display:flex;align-items:center;justify-content:center;gap:10px;border:1px dashed #d6d3d1;border-radius:12px;background:#fafaf9}.school-edit-logo-preview img{max-width:120px;max-height:56px}.print-period-card{width:min(540px,calc(100vw - 24px))!important}.print-mode{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:5px;background:#f5f5f4;border-radius:12px}.print-mode button{height:40px;border:0;border-radius:9px;background:transparent;font-size:10px;font-weight:900}.print-mode button.is-active{background:#fff;color:#E75C25}.print-dates{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.print-dates.hidden{display:none!important}.print-dates span{display:block;margin-bottom:5px;font-size:9px;font-weight:900}.print-dates input{width:100%;height:44px;padding:0 12px;border:1px solid #ddd;border-radius:11px}.print-count{margin-top:14px;padding:11px;background:#fff7ed;color:#9a3412;border-radius:11px;font-weight:850}.admin-action-primary:disabled{opacity:.45}@media(max-width:520px){.print-mode,.print-dates{grid-template-columns:1fr}}
@@ -455,18 +457,90 @@ document.addEventListener('DOMContentLoaded', () => {
         schoolCatalogCache=schoolsResult.data||[];levelCatalogCache=levelsResult.data||[];fillSchoolAndLevelDropdowns(selectedSchool,selectedLevel);renderMasterCatalogs();
     }
     function syncSelectedSchoolLogo(){const select=document.getElementById('cfg-school'),logo=document.getElementById('cfg-school-logo-url');if(!select||!logo)return;logo.value=select.selectedOptions[0]?.dataset.logo||'';updateSchoolLogoPreview();}
+    function catalogEditIcon(){return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4ZM13.5 6.5l4 4"/></svg>'}
     function openCreateSchoolDialog(){
-        const dialog=openAdminActionDialog(`<div class="admin-action-card catalog-create-dialog"><div class="admin-action-head"><div><h3>Ajouter une école</h3><p>Le logo sera stocké dans Cloudflare R2.</p></div><button class="admin-action-close" data-dialog-close>×</button></div><div class="admin-action-body"><label class="catalog-dialog-field"><span>Nom de l'école</span><input id="catalog-school-name" type="text" placeholder="Ex : École Al Anouar"></label><div class="r2-upload-field"><span class="text-[9px] font-black uppercase text-stone-500">Logo de l’école</span><label class="r2-upload-zone" for="catalog-school-logo-file"><input id="catalog-school-logo-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><span id="catalog-school-logo-preview" class="r2-upload-preview">R2</span><span class="r2-upload-copy"><b>Choisir un logo</b><small>JPG, PNG, WEBP ou GIF · 5 Mo maximum</small></span></label><div id="catalog-school-logo-status" class="r2-upload-status"></div></div><div class="admin-action-buttons"><button class="admin-action-button admin-action-cancel" data-dialog-close>Annuler</button><button id="catalog-school-save" class="admin-action-button admin-action-primary">Ajouter</button></div></div></div>`);
-        const nameInput=dialog.querySelector('#catalog-school-name'),fileInput=dialog.querySelector('#catalog-school-logo-file'),preview=dialog.querySelector('#catalog-school-logo-preview'),status=dialog.querySelector('#catalog-school-logo-status'),save=dialog.querySelector('#catalog-school-save');
+        const dialog=openAdminActionDialog(`<div class="admin-action-card catalog-create-dialog"><div class="admin-action-head"><div><h3>Ajouter une école</h3><p>Renseignez les noms français et arabe. Le logo sera stocké dans Cloudflare R2.</p></div><button class="admin-action-close" data-dialog-close>×</button></div><div class="admin-action-body"><label class="catalog-dialog-field"><span>Nom de l'école — français</span><input id="catalog-school-name" type="text" placeholder="Ex : École Al Anouar"></label><label class="catalog-dialog-field"><span>Nom de l'école — arabe</span><input id="catalog-school-name-ar" type="text" lang="ar" dir="rtl" placeholder="مثال: مدرسة الأنوار"></label><div class="r2-upload-field"><span class="text-[9px] font-black uppercase text-stone-500">Logo de l’école</span><label class="r2-upload-zone" for="catalog-school-logo-file"><input id="catalog-school-logo-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><span id="catalog-school-logo-preview" class="r2-upload-preview">R2</span><span class="r2-upload-copy"><b>Choisir un logo</b><small>JPG, PNG, WEBP ou GIF · 5 Mo maximum</small></span></label><div id="catalog-school-logo-status" class="r2-upload-status"></div></div><div class="admin-action-buttons"><button class="admin-action-button admin-action-cancel" data-dialog-close>Annuler</button><button id="catalog-school-save" class="admin-action-button admin-action-primary">Ajouter</button></div></div></div>`);
+        const nameInput=dialog.querySelector('#catalog-school-name'),nameArInput=dialog.querySelector('#catalog-school-name-ar'),fileInput=dialog.querySelector('#catalog-school-logo-file'),preview=dialog.querySelector('#catalog-school-logo-preview'),status=dialog.querySelector('#catalog-school-logo-status'),save=dialog.querySelector('#catalog-school-save');
         let previewUrl='';
         fileInput.onchange=()=>{const file=fileInput.files?.[0];if(previewUrl)URL.revokeObjectURL(previewUrl);preview.innerHTML='R2';status.textContent='';status.className='r2-upload-status';if(file){previewUrl=URL.createObjectURL(file);preview.innerHTML=`<img src="${previewUrl}" alt="Aperçu">`;}};
-        save.onclick=async()=>{const name=nameInput.value.trim(),file=fileInput.files?.[0];if(!name)return alert("Saisissez le nom de l'école.");if(!file)return alert("Sélectionnez le logo de l’école.");save.disabled=true;save.textContent='Envoi vers R2…';try{const uploaded=await uploadAdminImageToR2(file,'school_logo');status.textContent='Logo envoyé dans Cloudflare R2.';status.className='r2-upload-status is-success';const {data,error}=await supabaseClient.from('schools').insert([{name,logo_url:uploaded.url,is_active:true}]).select().single();if(error)throw error;closeAdminActionDialog();await loadSchoolAndLevelCatalogs(data.name,document.getElementById('cfg-level')?.value||'');}catch(error){status.textContent=error.message;status.className='r2-upload-status is-error';save.disabled=false;save.textContent='Ajouter';}};
+        save.onclick=async()=>{const name=nameInput.value.trim(),name_ar=nameArInput.value.trim()||null,file=fileInput.files?.[0];if(!name)return alert("Saisissez le nom français de l'école.");if(!file)return alert("Sélectionnez le logo de l’école.");save.disabled=true;save.textContent='Envoi vers R2…';try{const uploaded=await uploadAdminImageToR2(file,'school_logo');status.textContent='Logo envoyé dans Cloudflare R2.';status.className='r2-upload-status is-success';const {data,error}=await supabaseClient.from('schools').insert([{name,name_ar,logo_url:uploaded.url,is_active:true}]).select().single();if(error)throw error;closeAdminActionDialog();await loadSchoolAndLevelCatalogs(data.name,document.getElementById('cfg-level')?.value||'');}catch(error){status.textContent=error.message;status.className='r2-upload-status is-error';save.disabled=false;save.textContent='Ajouter';}};
         nameInput?.focus();
     }
     function openCreateLevelDialog(){
-        const dialog=openAdminActionDialog(`<div class="admin-action-card catalog-create-dialog"><div class="admin-action-head"><div><h3>Ajouter un niveau</h3><p>Le niveau sera disponible pour toutes les écoles.</p></div><button class="admin-action-close" data-dialog-close>×</button></div><div class="admin-action-body"><label class="catalog-dialog-field"><span>Nom du niveau</span><input id="catalog-level-name" type="text" placeholder="Ex : CE1"></label><div class="admin-action-buttons"><button class="admin-action-button admin-action-cancel" data-dialog-close>Annuler</button><button id="catalog-level-save" class="admin-action-button admin-action-primary">Ajouter</button></div></div></div>`);
-        dialog.querySelector('#catalog-level-save').onclick=async()=>{const name=dialog.querySelector('#catalog-level-name').value.trim();if(!name)return alert('Saisissez le nom du niveau.');const {data,error}=await supabaseClient.from('school_levels').insert([{name,is_active:true}]).select().single();if(error)return alert(error.message);closeAdminActionDialog();await loadSchoolAndLevelCatalogs(document.getElementById('cfg-school')?.value||'',data.name);};
+        const dialog=openAdminActionDialog(`<div class="admin-action-card catalog-create-dialog"><div class="admin-action-head"><div><h3>Ajouter un niveau</h3><p>Le niveau sera disponible pour toutes les écoles.</p></div><button type="button" class="admin-action-close" data-dialog-close>×</button></div><form id="catalog-level-form" class="admin-action-body"><label class="catalog-dialog-field catalog-cycle-field"><span>Cycle scolaire <b>*</b></span><select id="catalog-level-cycle" required><option value="" selected disabled>-- Choisir le cycle --</option><option value="prescolaire">Préscolaire</option><option value="primaire">Primaire</option><option value="college">Collège</option><option value="lycee">Lycée</option><option value="autre">Autre</option></select></label><label class="catalog-dialog-field"><span>Nom du niveau — français</span><input id="catalog-level-name" type="text" placeholder="Ex : CE1" required></label><label class="catalog-dialog-field"><span>Nom du niveau — arabe</span><input id="catalog-level-name-ar" type="text" lang="ar" dir="rtl" placeholder="مثال: السنة الثانية ابتدائي"></label><div id="catalog-level-error" class="r2-upload-status"></div><div class="admin-action-buttons"><button type="button" class="admin-action-button admin-action-cancel" data-dialog-close>Annuler</button><button type="submit" id="catalog-level-save" class="admin-action-button admin-action-primary">Ajouter</button></div></form></div>`);
+        const form=dialog.querySelector('#catalog-level-form');
+        const save=dialog.querySelector('#catalog-level-save');
+        const errorBox=dialog.querySelector('#catalog-level-error');
+        form.addEventListener('submit',async event=>{
+            event.preventDefault();
+            event.stopPropagation();
+            const name=dialog.querySelector('#catalog-level-name').value.trim();
+            const name_ar=dialog.querySelector('#catalog-level-name-ar').value.trim()||null;
+            const cycle=dialog.querySelector('#catalog-level-cycle').value;
+            if(!name||!cycle)return;
+            save.disabled=true;save.textContent='Ajout en cours…';errorBox.textContent='';errorBox.className='r2-upload-status';
+            try{
+                const duplicate=levelCatalogCache.find(item=>normalizeCatalogName(item.name)===normalizeCatalogName(name));
+                if(duplicate)throw new Error(`Le niveau « ${name} » existe déjà.`);
+                const {data,error}=await supabaseClient.from('school_levels').insert([{name,name_ar,cycle,is_active:true}]).select('id,name,name_ar,cycle').single();
+                if(error)throw error;
+                closeAdminActionDialog();
+                await loadSchoolAndLevelCatalogs(document.getElementById('cfg-school')?.value||'',data.name);
+            }catch(error){errorBox.textContent=error.message||'Ajout impossible.';errorBox.className='r2-upload-status is-error';save.disabled=false;save.textContent='Ajouter';}
+        });
         dialog.querySelector('#catalog-level-name')?.focus();
+    }
+    function masterMinusIcon(){return '<span aria-hidden="true">−</span>'}
+    function openEditSchoolDialog(id){
+        const school=schoolCatalogCache.find(x=>String(x.id)===String(id));if(!school)return;
+        const oldName=String(school.name||'');
+        const d=openAdminActionDialog(`<div class="admin-action-card catalog-create-dialog"><div class="admin-action-head"><div><h3>Modifier l’école</h3><p>Modifiez les noms français et arabe, et remplacez le logo si nécessaire.</p></div><button class="admin-action-close" data-dialog-close>×</button></div><div class="admin-action-body"><label class="catalog-dialog-field"><span>Nom — français</span><input id="school-edit-name" value="${catalogEscape(oldName)}"></label><label class="catalog-dialog-field"><span>Nom — arabe</span><input id="school-edit-name-ar" lang="ar" dir="rtl" value="${catalogEscape(school.name_ar||'')}" placeholder="اسم المدرسة بالعربية"></label><div class="r2-upload-field"><span class="text-[9px] font-black uppercase text-stone-500">Logo de l’école</span><label class="r2-upload-zone" for="school-edit-logo-file"><input id="school-edit-logo-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><span id="school-edit-r2-preview" class="r2-upload-preview">${school.logo_url?`<img src="${catalogEscape(school.logo_url)}" alt="Logo actuel">`:'R2'}</span><span class="r2-upload-copy"><b>${school.logo_url?'Remplacer le logo':'Choisir un logo'}</b><small>Laissez vide pour conserver le logo actuel.</small></span></label><div id="school-edit-r2-status" class="r2-upload-status"></div></div><div class="admin-action-buttons"><button class="admin-action-button admin-action-cancel" data-dialog-close>Annuler</button><button id="school-edit-save" class="admin-action-button admin-action-primary">Enregistrer</button></div></div></div>`);
+        const name=d.querySelector('#school-edit-name'),nameAr=d.querySelector('#school-edit-name-ar'),file=d.querySelector('#school-edit-logo-file'),preview=d.querySelector('#school-edit-r2-preview'),status=d.querySelector('#school-edit-r2-status'),save=d.querySelector('#school-edit-save');
+        let previewUrl='';
+        file.onchange=()=>{const selected=file.files?.[0];if(previewUrl)URL.revokeObjectURL(previewUrl);if(selected){previewUrl=URL.createObjectURL(selected);preview.innerHTML=`<img src="${previewUrl}" alt="Nouveau logo">`;status.textContent='';status.className='r2-upload-status';}};
+        save.onclick=async()=>{const next=name.value.trim(),nextAr=nameAr.value.trim()||null,selected=file.files?.[0];if(!next)return alert('Saisissez le nom français de l’école.');save.disabled=true;save.textContent=selected?'Envoi vers R2…':'Enregistrement…';try{let logo_url=school.logo_url||null;if(selected){const uploaded=await uploadAdminImageToR2(selected,'school_logo');logo_url=uploaded.url;status.textContent='Nouveau logo envoyé dans Cloudflare R2.';status.className='r2-upload-status is-success';}const {error}=await supabaseClient.from('schools').update({name:next,name_ar:nextAr,logo_url}).eq('id',school.id);if(error)throw error;const {error:e2}=await supabaseClient.from('school_lists').update({school_name:next,school_name_ar:nextAr,school_logo_url:logo_url}).eq('school_name',oldName);if(e2)throw e2;closeAdminActionDialog();await loadSchoolAndLevelCatalogs();await loadSchoolLists();}catch(error){status.textContent=error.message;status.className='r2-upload-status is-error';save.disabled=false;save.textContent='Enregistrer';}};
+        name.focus();
+    }
+    function openEditLevelDialog(id){
+        const levelId=String(id||'').trim();
+        const level=levelCatalogCache.find(item=>String(item.id)===levelId);
+        if(!level){alert('Niveau introuvable. Rechargez la page puis réessayez.');return;}
+        const oldName=String(level.name||'').trim();
+        const currentCycle=String(level.cycle||'');
+        const cycleOptions=[['prescolaire','Préscolaire'],['primaire','Primaire'],['college','Collège'],['lycee','Lycée'],['autre','Autre']].map(([value,label])=>`<option value="${value}"${currentCycle===value?' selected':''}>${label}</option>`).join('');
+        const dialog=openAdminActionDialog(`<div class="admin-action-card catalog-create-dialog"><div class="admin-action-head"><div><h3>Modifier le niveau</h3><p>Cette action remplace la valeur existante. Aucun nouveau niveau ne sera créé.</p></div><button type="button" class="admin-action-close" data-dialog-close>×</button></div><form id="level-edit-form" class="admin-action-body"><input id="level-edit-id" type="hidden" value="${catalogEscape(levelId)}"><label class="catalog-dialog-field catalog-cycle-field"><span>Cycle scolaire <b>*</b></span><select id="level-edit-cycle" required><option value="" disabled${currentCycle?'':' selected'}>-- Choisir le cycle --</option>${cycleOptions}</select></label><label class="catalog-dialog-field"><span>Nom — français</span><input id="level-edit-name" value="${catalogEscape(oldName)}" required></label><label class="catalog-dialog-field"><span>Nom — arabe</span><input id="level-edit-name-ar" lang="ar" dir="rtl" value="${catalogEscape(level.name_ar||'')}" placeholder="اسم المستوى بالعربية"></label><div id="level-edit-error" class="r2-upload-status"></div><div class="admin-action-buttons"><button type="button" class="admin-action-button admin-action-cancel" data-dialog-close>Annuler</button><button type="submit" id="level-edit-save" class="admin-action-button admin-action-primary">Enregistrer la modification</button></div></form></div>`);
+        const form=dialog.querySelector('#level-edit-form'),save=dialog.querySelector('#level-edit-save'),errorBox=dialog.querySelector('#level-edit-error');
+        form.addEventListener('submit',async event=>{
+            event.preventDefault();event.stopPropagation();
+            const persistedId=dialog.querySelector('#level-edit-id').value;
+            const cycle=dialog.querySelector('#level-edit-cycle').value;
+            const next=dialog.querySelector('#level-edit-name').value.trim();
+            const nextAr=dialog.querySelector('#level-edit-name-ar').value.trim()||null;
+            if(!next||!cycle)return;
+            save.disabled=true;save.textContent='Modification en cours…';errorBox.textContent='';errorBox.className='r2-upload-status';
+            try{
+                const duplicate=levelCatalogCache.find(item=>String(item.id)!==persistedId&&normalizeCatalogName(item.name)===normalizeCatalogName(next));
+                if(duplicate)throw new Error(`Le niveau « ${next} » existe déjà.`);
+                const {data:updated,error:updateError}=await supabaseClient.from('school_levels').update({name:next,name_ar:nextAr,cycle}).eq('id',persistedId).select('id,name,name_ar,cycle').single();
+                if(updateError)throw updateError;
+                if(!updated||String(updated.id)!==persistedId)throw new Error('Le niveau existant n’a pas été modifié.');
+                const {error:listError}=await supabaseClient.from('school_lists').update({level:next,level_ar:nextAr}).eq('level',oldName);
+                if(listError)throw listError;
+                closeAdminActionDialog();
+                await loadSchoolAndLevelCatalogs(document.getElementById('cfg-school')?.value||'',next);
+                await loadSchoolLists();
+            }catch(error){errorBox.textContent=error.message||'Modification impossible.';errorBox.className='r2-upload-status is-error';save.disabled=false;save.textContent='Enregistrer la modification';}
+        });
+        dialog.querySelector('#level-edit-cycle')?.focus();
+    }
+    function renderMasterCatalogs(){
+        const schools=document.getElementById('catalog-schools-list'),levels=document.getElementById('catalog-levels-list'),cats=document.getElementById('catalog-supply-categories-list');
+        if(schools)schools.innerHTML=schoolCatalogCache.map(x=>`<div class="catalog-master-row school-master-row"><span class="catalog-school-mini">${x.logo_url?`<img src="${catalogEscape(normalizeDriveImageUrl(x.logo_url))}" alt="">`:'🏫'}</span><b>${catalogEscape(x.name)}${x.name_ar?`<small lang="ar" dir="rtl">${catalogEscape(x.name_ar)}</small>`:''}</b><span class="catalog-row-actions"><button type="button" class="catalog-school-edit" data-school-edit="${x.id}" title="Modifier">${catalogEditIcon()}</button><button data-master-delete="school" data-id="${x.id}" data-name="${catalogEscape(x.name)}">${masterMinusIcon()}</button></span></div>`).join('')||'<p>Aucune école</p>';
+        if(levels)levels.innerHTML=levelCatalogCache.map(x=>`<div class="catalog-master-row"><span class="catalog-row-placeholder"></span><b>${catalogEscape(x.name)}${x.name_ar?`<small lang="ar" dir="rtl">${catalogEscape(x.name_ar)}</small>`:''}</b><span class="catalog-row-actions"><button type="button" class="catalog-level-edit catalog-school-edit" data-level-edit="${x.id}" title="Modifier">${catalogEditIcon()}</button><button data-master-delete="level" data-id="${x.id}" data-name="${catalogEscape(x.name)}">${masterMinusIcon()}</button></span></div>`).join('')||'<p>Aucun niveau</p>';
+        if(cats)cats.innerHTML=supplyCategoryCache.map(x=>`<div class="catalog-master-row"><span class="catalog-row-placeholder"></span><b>${catalogEscape(x.name)}</b><button data-master-delete="category" data-id="${x.id}" data-name="${catalogEscape(x.name)}">${masterMinusIcon()}</button></div>`).join('')||'<p>Aucune catégorie</p>';
+        document.querySelectorAll('[data-school-edit]').forEach(button=>button.onclick=event=>{event.preventDefault();event.stopPropagation();openEditSchoolDialog(button.dataset.schoolEdit)});
+        document.querySelectorAll('[data-level-edit]').forEach(button=>button.onclick=event=>{event.preventDefault();event.stopPropagation();openEditLevelDialog(button.dataset.levelEdit)});
+        document.querySelectorAll('[data-master-delete]').forEach(button=>button.onclick=()=>openMasterDeleteDialog(button.dataset.masterDelete,button.dataset.id,button.dataset.name));
     }
     async function loadSupplyCategories(selectedId=''){
         const {data,error}=await supabaseClient.from('supply_categories').select('*').order('name',{ascending:true});
@@ -478,21 +552,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function masterMinusIcon(){return '<span aria-hidden="true">−</span>'}
     function openEditSchoolDialog(id){
-        const school=schoolCatalogCache.find(x=>String(x.id)===String(id));if(!school)return;
-        const oldName=String(school.name||'');
-        const d=openAdminActionDialog(`<div class="admin-action-card catalog-create-dialog"><div class="admin-action-head"><div><h3>Modifier l’école</h3><p>Remplacez le logo par une nouvelle image R2 si nécessaire.</p></div><button class="admin-action-close" data-dialog-close>×</button></div><div class="admin-action-body"><label class="catalog-dialog-field"><span>Nom</span><input id="school-edit-name" value="${catalogEscape(oldName)}"></label><div class="r2-upload-field"><span class="text-[9px] font-black uppercase text-stone-500">Logo de l’école</span><label class="r2-upload-zone" for="school-edit-logo-file"><input id="school-edit-logo-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><span id="school-edit-r2-preview" class="r2-upload-preview">${school.logo_url?`<img src="${catalogEscape(school.logo_url)}" alt="Logo actuel">`:'R2'}</span><span class="r2-upload-copy"><b>${school.logo_url?'Remplacer le logo':'Choisir un logo'}</b><small>Laissez vide pour conserver le logo actuel.</small></span></label><div id="school-edit-r2-status" class="r2-upload-status"></div></div><div class="admin-action-buttons"><button class="admin-action-button admin-action-cancel" data-dialog-close>Annuler</button><button id="school-edit-save" class="admin-action-button admin-action-primary">Enregistrer</button></div></div></div>`);
-        const name=d.querySelector('#school-edit-name'),file=d.querySelector('#school-edit-logo-file'),preview=d.querySelector('#school-edit-r2-preview'),status=d.querySelector('#school-edit-r2-status'),save=d.querySelector('#school-edit-save');
+        const schoolId=String(id||'').trim();
+        const school=schoolCatalogCache.find(item=>String(item.id)===schoolId);
+        if(!school){alert('École introuvable. Rechargez la page puis réessayez.');return;}
+        const oldName=String(school.name||'').trim();
+        const dialog=openAdminActionDialog(`<div class="admin-action-card catalog-create-dialog"><div class="admin-action-head"><div><h3>Modifier l’école</h3><p>Modifiez les noms français et arabe. Le logo peut être conservé ou remplacé.</p></div><button type="button" class="admin-action-close" data-dialog-close>×</button></div><form id="school-edit-form" class="admin-action-body"><input id="school-edit-id" type="hidden" value="${catalogEscape(schoolId)}"><label class="catalog-dialog-field"><span>Nom de l’école — français</span><input id="school-edit-name" value="${catalogEscape(oldName)}" required></label><label class="catalog-dialog-field"><span>Nom de l’école — arabe</span><input id="school-edit-name-ar" lang="ar" dir="rtl" value="${catalogEscape(school.name_ar||'')}" placeholder="اسم المدرسة بالعربية"></label><div class="r2-upload-field"><span class="text-[9px] font-black uppercase text-stone-500">Logo de l’école</span><label class="r2-upload-zone" for="school-edit-logo-file"><input id="school-edit-logo-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><span id="school-edit-r2-preview" class="r2-upload-preview">${school.logo_url?`<img src="${catalogEscape(school.logo_url)}" alt="Logo actuel">`:'R2'}</span><span class="r2-upload-copy"><b>${school.logo_url?'Remplacer le logo':'Choisir un logo'}</b><small>Laissez vide pour conserver le logo actuel.</small></span></label><div id="school-edit-r2-status" class="r2-upload-status"></div></div><div class="admin-action-buttons"><button type="button" class="admin-action-button admin-action-cancel" data-dialog-close>Annuler</button><button type="submit" id="school-edit-save" class="admin-action-button admin-action-primary">Enregistrer la modification</button></div></form></div>`);
+        const form=dialog.querySelector('#school-edit-form'),name=dialog.querySelector('#school-edit-name'),nameAr=dialog.querySelector('#school-edit-name-ar'),file=dialog.querySelector('#school-edit-logo-file'),preview=dialog.querySelector('#school-edit-r2-preview'),status=dialog.querySelector('#school-edit-r2-status'),save=dialog.querySelector('#school-edit-save');
         let previewUrl='';
         file.onchange=()=>{const selected=file.files?.[0];if(previewUrl)URL.revokeObjectURL(previewUrl);if(selected){previewUrl=URL.createObjectURL(selected);preview.innerHTML=`<img src="${previewUrl}" alt="Nouveau logo">`;status.textContent='';status.className='r2-upload-status';}};
-        save.onclick=async()=>{const next=name.value.trim(),selected=file.files?.[0];if(!next)return alert('Saisissez le nom de l’école.');save.disabled=true;save.textContent=selected?'Envoi vers R2…':'Enregistrement…';try{let logo_url=school.logo_url||null;if(selected){const uploaded=await uploadAdminImageToR2(selected,'school_logo');logo_url=uploaded.url;status.textContent='Nouveau logo envoyé dans Cloudflare R2.';status.className='r2-upload-status is-success';}const {error}=await supabaseClient.from('schools').update({name:next,logo_url}).eq('id',school.id);if(error)throw error;const {error:e2}=await supabaseClient.from('school_lists').update({school_name:next,school_logo_url:logo_url}).eq('school_name',oldName);if(e2)throw e2;school.name=next;school.logo_url=logo_url;closeAdminActionDialog();await loadSchoolAndLevelCatalogs();await loadSchoolLists();}catch(error){status.textContent=error.message;status.className='r2-upload-status is-error';save.disabled=false;save.textContent='Enregistrer';}};
+        form.addEventListener('submit',async event=>{
+            event.preventDefault();event.stopPropagation();
+            const persistedId=dialog.querySelector('#school-edit-id').value;
+            const next=name.value.trim(),nextAr=nameAr.value.trim()||null,selected=file.files?.[0];
+            if(!next)return;
+            save.disabled=true;save.textContent=selected?'Envoi du logo…':'Modification en cours…';
+            try{
+                const duplicate=schoolCatalogCache.find(item=>String(item.id)!==persistedId&&normalizeCatalogName(item.name)===normalizeCatalogName(next));
+                if(duplicate)throw new Error(`L’école « ${next} » existe déjà.`);
+                let logo_url=school.logo_url||null;
+                if(selected){const uploaded=await uploadAdminImageToR2(selected,'school_logo');logo_url=uploaded.url;}
+                const {data:updated,error:updateError}=await supabaseClient.from('schools').update({name:next,name_ar:nextAr,logo_url}).eq('id',persistedId).select('id,name,name_ar,logo_url').single();
+                if(updateError)throw updateError;
+                if(!updated||String(updated.id)!==persistedId)throw new Error('L’école existante n’a pas été modifiée.');
+                const {error:listError}=await supabaseClient.from('school_lists').update({school_name:next,school_name_ar:nextAr,school_logo_url:logo_url}).eq('school_name',oldName);
+                if(listError)throw listError;
+                closeAdminActionDialog();
+                await loadSchoolAndLevelCatalogs(next,document.getElementById('cfg-level')?.value||'');
+                await loadSchoolLists();
+            }catch(error){status.textContent=error.message||'Modification impossible.';status.className='r2-upload-status is-error';save.disabled=false;save.textContent='Enregistrer la modification';}
+        });
         name.focus();
     }
     function renderMasterCatalogs(){
         const schools=document.getElementById('catalog-schools-list'),levels=document.getElementById('catalog-levels-list'),cats=document.getElementById('catalog-supply-categories-list');
-        if(schools)schools.innerHTML=schoolCatalogCache.map(x=>`<div class="catalog-master-row school-master-row"><span class="catalog-school-mini">${x.logo_url?`<img src="${catalogEscape(normalizeDriveImageUrl(x.logo_url))}" alt="">`:'🏫'}</span><b>${catalogEscape(x.name)}</b><span class="catalog-row-actions"><button type="button" class="catalog-school-edit" data-school-edit="${x.id}" title="Modifier"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4ZM13.5 6.5l4 4"/></svg></button><button data-master-delete="school" data-id="${x.id}" data-name="${catalogEscape(x.name)}">${masterMinusIcon()}</button></span></div>`).join('')||'<p>Aucune école</p>';
-        if(levels)levels.innerHTML=levelCatalogCache.map(x=>`<div class="catalog-master-row"><span class="catalog-row-placeholder"></span><b>${catalogEscape(x.name)}</b><button data-master-delete="level" data-id="${x.id}" data-name="${catalogEscape(x.name)}">${masterMinusIcon()}</button></div>`).join('')||'<p>Aucun niveau</p>';
+        if(schools)schools.innerHTML=schoolCatalogCache.map(x=>`<div class="catalog-master-row school-master-row"><span class="catalog-school-mini">${x.logo_url?`<img src="${catalogEscape(normalizeDriveImageUrl(x.logo_url))}" alt="">`:'🏫'}</span><b>${catalogEscape(x.name)}${x.name_ar?`<small lang="ar" dir="rtl">${catalogEscape(x.name_ar)}</small>`:''}</b><span class="catalog-row-actions"><button type="button" class="catalog-school-edit" data-school-edit="${x.id}" title="Modifier"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4ZM13.5 6.5l4 4"/></svg></button><button data-master-delete="school" data-id="${x.id}" data-name="${catalogEscape(x.name)}">${masterMinusIcon()}</button></span></div>`).join('')||'<p>Aucune école</p>';
+        if(levels)levels.innerHTML=levelCatalogCache.map(x=>`<div class="catalog-master-row catalog-level-row"><span class="catalog-row-placeholder"></span><b>${catalogEscape(x.name)}${x.name_ar?`<small lang="ar" dir="rtl">${catalogEscape(x.name_ar)}</small>`:''}</b><span class="catalog-row-actions"><button type="button" class="catalog-level-edit catalog-school-edit" data-level-edit="${x.id}" title="Modifier le niveau" aria-label="Modifier ${catalogEscape(x.name)}">${catalogEditIcon()}</button><button data-master-delete="level" data-id="${x.id}" data-name="${catalogEscape(x.name)}">${masterMinusIcon()}</button></span></div>`).join('')||'<p>Aucun niveau</p>';
         if(cats)cats.innerHTML=supplyCategoryCache.map(x=>`<div class="catalog-master-row"><span class="catalog-row-placeholder"></span><b>${catalogEscape(x.name)}</b><button data-master-delete="category" data-id="${x.id}" data-name="${catalogEscape(x.name)}">${masterMinusIcon()}</button></div>`).join('')||'<p>Aucune catégorie</p>';
-        document.querySelectorAll('[data-school-edit]').forEach(button=>button.onclick=()=>openEditSchoolDialog(button.dataset.schoolEdit));
+        document.querySelectorAll('[data-school-edit]').forEach(button=>button.onclick=event=>{event.preventDefault();event.stopPropagation();openEditSchoolDialog(button.dataset.schoolEdit)});
+        document.querySelectorAll('[data-level-edit]').forEach(button=>button.onclick=event=>{event.preventDefault();event.stopPropagation();openEditLevelDialog(button.dataset.levelEdit)});
         document.querySelectorAll('[data-master-delete]').forEach(button=>button.onclick=()=>openMasterDeleteDialog(button.dataset.masterDelete,button.dataset.id,button.dataset.name));
     }
     function openMasterDeleteDialog(kind,id,name){
@@ -505,9 +602,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function isPackDrawerDirty(){return Boolean(activePackDrawerKind)&&packFormSnapshot()!==packDrawerBaseline}
     function updatePackDrawerPrice(){let amount=0;if(activePackDrawerKind==='school')amount=currentFormItems.reduce((sum,item)=>sum+(Number(item.price)||0),0);else if(activePackDrawerKind==='supply')amount=Number(document.getElementById('supply-item-standard')?.value)||0;if(packDrawerPrice)packDrawerPrice.textContent=`Prix : ${amount.toFixed(2)} DH`;const count=document.getElementById('school-items-tab-count');if(count)count.textContent=String(currentFormItems.length)}
     function setSchoolDrawerTab(tab){document.querySelectorAll('[data-school-tab]').forEach(button=>button.classList.toggle('is-active',button.dataset.schoolTab===tab));document.querySelectorAll('[data-school-panel]').forEach(panel=>panel.hidden=panel.dataset.schoolPanel!==tab)}
-    function setSupplyTab(tab){document.querySelectorAll('[data-supply-tab]').forEach(b=>b.classList.toggle('is-active',b.dataset.supplyTab===tab));document.querySelectorAll('[data-supply-panel]').forEach(p=>p.hidden=p.dataset.supplyPanel!==tab);document.getElementById('pack-drawer-body').scrollTop=0;}
+    function setSupplyTab(tab){const drawer=document.getElementById('pack-editor-drawer');if(drawer)drawer.dataset.supplyActiveTab=tab;document.querySelectorAll('[data-supply-tab]').forEach(b=>b.classList.toggle('is-active',b.dataset.supplyTab===tab));document.querySelectorAll('[data-supply-panel]').forEach(p=>{p.hidden=p.dataset.supplyPanel!==tab});document.getElementById('pack-drawer-body').scrollTop=0;}
     function prepareSchoolDrawerForm(){if(!formAdd||formAdd.dataset.drawerReady)return;formAdd.dataset.drawerReady='true';const children=[...formAdd.children],info=document.createElement('section'),items=document.createElement('section');info.className='pack-drawer-form-section';info.dataset.schoolPanel='info';items.className='pack-drawer-form-section';items.dataset.schoolPanel='items';items.hidden=true;children.slice(0,3).forEach(node=>{node.className='pack-drawer-field';node.querySelector('p')?.remove();info.appendChild(node)});const builder=children[3],preview=children[4];if(builder){builder.className='pack-drawer-items-builder';items.appendChild(builder)}if(preview){preview.className='pack-drawer-items-list';items.appendChild(preview)}[btnSavePack,btnCancelEditPack].forEach(node=>node?.remove());formAdd.innerHTML='';formAdd.append(info,items);document.getElementById('school-form-host')?.appendChild(formAdd)}
-    function prepareSupplyDrawerForm(){if(!supplyAdminForm||supplyAdminForm.dataset.drawerReady)return;supplyAdminForm.dataset.drawerReady='true';supplyAdminForm.className='pack-drawer-supply-form';const editor=document.getElementById('supply-spec-editor'),info=document.createElement('section'),spec=document.createElement('section');info.dataset.supplyPanel='info';info.className='supply-info-pane';spec.dataset.supplyPanel='spec';spec.className='supply-spec-pane';spec.hidden=true;[...supplyAdminForm.children].forEach(n=>{if(n===editor)spec.appendChild(n);else if(n.matches?.('div.flex.gap-2'))n.remove();else info.appendChild(n)});supplyAdminForm.innerHTML='';supplyAdminForm.append(info,spec);document.getElementById('supply-form-host')?.appendChild(supplyAdminForm)}
+    function prepareSupplyDrawerForm(){if(!supplyAdminForm||supplyAdminForm.dataset.drawerReady)return;supplyAdminForm.dataset.drawerReady='true';supplyAdminForm.className='pack-drawer-supply-form';const editor=document.getElementById('supply-spec-editor'),info=document.createElement('section'),spec=document.createElement('section');info.dataset.supplyPanel='info';info.className='supply-info-pane';spec.dataset.supplyPanel='spec';spec.className='supply-spec-pane';spec.hidden=true;[...supplyAdminForm.children].forEach(n=>{if(n===editor)spec.appendChild(n);else if(n.matches?.('div.flex.gap-2'))n.remove();else info.appendChild(n)});const modeGrid=info.querySelector('.supply-mode-grid'),specToggle=modeGrid?.querySelector('#supply-has-specs')?.closest('.supply-mode-card'),siteToggle=info.querySelector('#supply-item-active')?.closest('.supply-mode-card'),checks=document.createElement('div');checks.className='supply-info-checks';if(specToggle)checks.appendChild(specToggle);if(siteToggle)checks.appendChild(siteToggle);if(modeGrid&&!modeGrid.querySelector('.supply-mode-card'))modeGrid.classList.add('ranges-only');if(checks.children.length)info.appendChild(checks);supplyAdminForm.innerHTML='';supplyAdminForm.append(info,spec);document.getElementById('supply-form-host')?.appendChild(supplyAdminForm)}
     function openPackDrawer(kind,{editing=false}={}){setPackDrawerValidationError('');prepareSchoolDrawerForm();prepareSupplyDrawerForm();if(kind==='supply'&&!supplyCategoryCache.length)loadSupplyCategories();if(kind==='school'&&(!schoolCatalogCache.length||!levelCatalogCache.length))loadSchoolAndLevelCatalogs(document.getElementById('cfg-school')?.value||'',document.getElementById('cfg-level')?.value||'');activePackDrawerKind=kind;document.getElementById('school-form-host').hidden=kind!=='school';document.getElementById('supply-form-host').hidden=kind!=='supply';schoolDrawerTabs?.classList.toggle('is-hidden',kind!=='school');supplyDrawerTabs?.classList.toggle('is-hidden',kind!=='supply');packDrawerTitle.textContent=kind==='school'?'Liste scolaire':'Fourniture';packDrawerKicker.textContent=editing?'MODIFICATION':'NOUVEL ÉLÉMENT';if(kind==='school')setSchoolDrawerTab('info');if(kind==='supply')setSupplyTab('info');document.getElementById('pack-drawer-delete').hidden=!(kind==='supply'&&editing);document.querySelector('.pack-drawer-footer')?.classList.toggle('no-delete',!(kind==='supply'&&editing));packEditorOverlay.classList.add('is-open');packEditorOverlay.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';updatePackDrawerPrice();requestAnimationFrame(()=>packDrawerBaseline=packFormSnapshot(kind))}
     function closePackDrawerNow(){setPackDrawerValidationError('');packEditorOverlay.classList.remove('is-open');packEditorOverlay.setAttribute('aria-hidden','true');document.body.style.overflow='';activePackDrawerKind=null;packDrawerBaseline=''}
     function discardAndClosePackDrawer(){const kind=activePackDrawerKind;closePackDrawerNow();if(kind==='school')resetPackForm();else if(kind==='supply')resetSupplyAdminForm()}
@@ -1193,6 +1290,7 @@ o.classList.add('is-open');dataTab('archive');archiveStatus('Chargement…');con
             if (setting.key === 'rentree_title_ar') document.getElementById('set-rentree-title-ar').value = setting.value;
             if (setting.key === 'delivery_enabled') document.getElementById('set-delivery-enabled').value = setting.value;
             if (setting.key === 'contact_address') document.getElementById('set-contact-address').value = setting.value;
+            if (setting.key === 'contact_address_ar') document.getElementById('set-contact-address-ar').value = setting.value;
             if (setting.key === 'contact_email') document.getElementById('set-contact-email').value = setting.value;
             if (setting.key === 'contact_phone') document.getElementById('set-contact-phone').value = setting.value;
             if (setting.key === 'contact_whatsapp') document.getElementById('set-contact-whatsapp').value = setting.value;
@@ -1201,7 +1299,9 @@ o.classList.add('is-open');dataTab('archive');archiveStatus('Chargement…');con
             if (setting.key === 'opening_saturday') document.getElementById('set-opening-saturday').value = setting.value;
             if (setting.key === 'opening_sunday') document.getElementById('set-opening-sunday').value = setting.value;
             if (setting.key === 'contact_facebook') document.getElementById('set-contact-facebook').value = setting.value;
+            if (setting.key === 'contact_x') document.getElementById('set-contact-x').value = setting.value;
             if (setting.key === 'contact_instagram') document.getElementById('set-contact-instagram').value = setting.value;
+            if (setting.key === 'contact_youtube') document.getElementById('set-contact-youtube').value = setting.value;
             if (setting.key === 'contact_linkedin') document.getElementById('set-contact-linkedin').value = setting.value;
         });
     }
@@ -1219,6 +1319,7 @@ o.classList.add('is-open');dataTab('archive');archiveStatus('Chargement…');con
         event.preventDefault();
         const updates = {
             contact_address: document.getElementById('set-contact-address').value,
+            contact_address_ar: document.getElementById('set-contact-address-ar').value.trim(),
             contact_email: document.getElementById('set-contact-email').value,
             contact_phone: document.getElementById('set-contact-phone').value,
             contact_whatsapp: document.getElementById('set-contact-whatsapp').value,
@@ -1227,7 +1328,9 @@ o.classList.add('is-open');dataTab('archive');archiveStatus('Chargement…');con
             opening_saturday: document.getElementById('set-opening-saturday').value,
             opening_sunday: document.getElementById('set-opening-sunday').value,
             contact_facebook: document.getElementById('set-contact-facebook').value,
+            contact_x: document.getElementById('set-contact-x').value,
             contact_instagram: document.getElementById('set-contact-instagram').value,
+            contact_youtube: document.getElementById('set-contact-youtube').value,
             contact_linkedin: document.getElementById('set-contact-linkedin').value
         };
         for (const [key, value] of Object.entries(updates)) {
@@ -1520,11 +1623,37 @@ o.classList.add('is-open');dataTab('archive');archiveStatus('Chargement…');con
     const supplyAdminList = document.getElementById('supply-items-admin-list');
     const supplyEscape = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
     let supplySpecs=[];const uid=p=>`${p}-${Date.now()}-${Math.random().toString(36).slice(2,6)}`;const iconEye='<svg viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="3"/></svg>',iconTrash='<svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3m3 0-1 13H7L6 7m4 4v5m4-5v5"/></svg>';
-    function syncSupplyMode(){const quality=document.getElementById('supply-has-quality').checked,specs=document.getElementById('supply-has-specs').checked;document.getElementById('supply-quality-field').hidden=!quality;const tab=document.getElementById('supply-spec-tab');tab.disabled=!specs;tab.classList.toggle('is-disabled',!specs);if(!specs)setSupplyTab('info');renderSpecs();}
+    const supplyRangeTrigger=document.getElementById('supply-range-trigger');
+    const supplyRangeMenu=document.getElementById('supply-range-menu');
+    const supplyRangeSummary=document.getElementById('supply-range-summary');
+    function selectedSupplyRanges(){return [...(supplyRangeMenu?.querySelectorAll('input:checked')||[])].map(input=>input.value)}
+    function setSelectedSupplyRanges(ranges){
+        const selected=new Set(ranges?.length?ranges:['entry']);
+        supplyRangeMenu?.querySelectorAll('input').forEach(input=>input.checked=selected.has(input.value));
+        syncSupplyRangeSelection();
+    }
+    function syncSupplyRangeSelection(){
+        let selected=selectedSupplyRanges();
+        if(!selected.length){const entry=supplyRangeMenu?.querySelector('input[value="entry"]');if(entry)entry.checked=true;selected=['entry']}
+        const labels={entry:'Entrée de gamme',middle:'Moyenne gamme',high:'Haute de gamme'};
+        if(supplyRangeSummary)supplyRangeSummary.textContent=selected.length===3?'3 gammes sélectionnées':selected.length===1?labels[selected[0]]:`${selected.length} gammes sélectionnées`;
+        const fields={entry:document.getElementById('supply-item-standard')?.closest('div'),middle:document.getElementById('supply-quality-field'),high:document.getElementById('supply-high-field')};
+        Object.entries(fields).forEach(([range,field])=>{if(!field)return;const visible=selected.includes(range);field.hidden=!visible;field.classList.toggle('is-range-hidden',!visible);field.querySelector('input')?.toggleAttribute('required',visible)});
+        const count=selected.length;
+        supplyRangeMenu?.querySelectorAll('label').forEach(label=>{const input=label.querySelector('input');label.classList.toggle('is-disabled',input.checked&&count===1)});
+        updatePackDrawerPrice();
+        if(typeof renderSpecs==='function')renderSpecs();
+    }
+    supplyRangeTrigger?.addEventListener('click',event=>{event.stopPropagation();const open=supplyRangeMenu.hidden;supplyRangeMenu.hidden=!open;supplyRangeTrigger.setAttribute('aria-expanded',String(open))});
+    supplyRangeMenu?.addEventListener('click',event=>event.stopPropagation());
+    supplyRangeMenu?.querySelectorAll('input').forEach(input=>input.addEventListener('change',()=>{if(!selectedSupplyRanges().length)input.checked=true;syncSupplyRangeSelection()}));
+    document.addEventListener('click',()=>{if(supplyRangeMenu&&!supplyRangeMenu.hidden){supplyRangeMenu.hidden=true;supplyRangeTrigger?.setAttribute('aria-expanded','false')}});
+    function syncSupplyMode(){const specs=document.getElementById('supply-has-specs').checked;syncSupplyRangeSelection();const tab=document.getElementById('supply-spec-tab');tab.disabled=!specs;tab.classList.toggle('is-disabled',!specs);if(!specs)setSupplyTab('info');renderSpecs();}
     function renderSpecs(){
         const box=document.getElementById('supply-spec-list');
         if(!box)return;
-        const quality=document.getElementById('supply-has-quality').checked;
+        const activeRanges=selectedSupplyRanges();
+        const rangeMeta={entry:{label:'Entrée de gamme',className:'v-std',key:'std'},middle:{label:'Moyenne gamme',className:'v-qual',key:'qual'},high:{label:'Haute de gamme',className:'v-high',key:'high'}};
         document.getElementById('supply-spec-count').textContent=supplySpecs.length;
         const pencil='<svg viewBox="0 0 24 24"><path d="M4 20h4l11-11-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg>';
         box.innerHTML=supplySpecs.length?supplySpecs.map((sp,si)=>{
@@ -1539,14 +1668,16 @@ o.classList.add('is-open');dataTab('archive');archiveStatus('Chargement…');con
                     <div class="spec-top">
                         <label><span>Nom</span><input class="spec-name" value="${supplyEscape(sp.name)}" placeholder="Ex : Couleur"></label>
                         <label class="spec-supp"><input type="checkbox" ${sp.supp?'checked':''}><i aria-hidden="true"></i><b>Supplément</b></label>
+                        <button type="button" class="spec-add-value" title="Ajouter une valeur" aria-label="Ajouter une valeur">+</button>
                     </div>
-                    ${sp.supp?`<div class="spec-legends"><span class="spec-legend-empty"></span><span>Standard</span>${quality?'<span>Qualité</span>':''}</div>`:''}
-                    <div class="spec-values">${sp.values.map((v,vi)=>`<div class="spec-row ${sp.supp?'':'no-supp'}">
+                    ${sp.supp?`<div class="spec-legends spec-legends-dynamic ranges-${activeRanges.length}"><span class="spec-legend-empty"></span>${activeRanges.map(range=>`<span>${rangeMeta[range].label}</span>`).join('')}<span class="spec-actions-legend"></span></div>`:''}
+                    <div class="spec-values">${sp.values.map((v,vi)=>`<div class="spec-row ${sp.supp?`spec-row-dynamic ranges-${activeRanges.length}`:'no-supp'}">
                         <input class="v-name" data-v="${v.id}" value="${supplyEscape(v.name)}" placeholder="Valeur">
-                        ${sp.supp?`<input class="v-std" data-v="${v.id}" type="number" min="0" step="0.01" value="${v.std}">${quality?`<input class="v-qual" data-v="${v.id}" type="number" min="0" step="0.01" value="${v.qual}">`:''}`:''}
-                        <button type="button" class="v-eye ${v.active?'':'off'}" data-v="${v.id}" title="Afficher ou masquer">${iconEye}</button>
-                        <button type="button" class="v-delete" data-v="${v.id}" title="Supprimer">${iconTrash}</button>
-                        ${vi===sp.values.length-1?'<button type="button" class="v-add" title="Ajouter une valeur">+</button>':'<span class="action-space"></span>'}
+                        ${sp.supp?activeRanges.map(range=>`<input class="${rangeMeta[range].className}" data-v="${v.id}" data-range="${range}" aria-label="Supplément ${rangeMeta[range].label}" type="number" min="0" step="0.01" value="${v[rangeMeta[range].key]??0}">`).join(''):''}
+                        <div class="spec-row-actions">
+                            <button type="button" class="v-eye ${v.active?'':'off'}" data-v="${v.id}" title="Afficher ou masquer">${iconEye}</button>
+                            <button type="button" class="v-delete" data-v="${v.id}" title="Supprimer la valeur" aria-label="Supprimer la valeur">${iconTrash}</button>
+                        </div>
                     </div>`).join('')}</div>
                     <button type="button" class="spec-validate">Valider</button>
                 </section>
@@ -1561,20 +1692,20 @@ o.classList.add('is-open');dataTab('archive');archiveStatus('Chargement…');con
             card.querySelector('.spec-delete')?.addEventListener('click',()=>{supplySpecs=supplySpecs.filter(x=>x.id!==sp.id);renderSpecs()});
             card.querySelectorAll('.v-name').forEach(x=>x.addEventListener('input',()=>sp.values.find(v=>v.id===x.dataset.v).name=x.value));
             card.querySelectorAll('.v-std').forEach(x=>x.addEventListener('input',()=>sp.values.find(v=>v.id===x.dataset.v).std=Number(x.value)||0));
-            card.querySelectorAll('.v-qual').forEach(x=>x.addEventListener('input',()=>sp.values.find(v=>v.id===x.dataset.v).qual=Number(x.value)||0));
+            card.querySelectorAll('.v-qual').forEach(x=>x.addEventListener('input',()=>sp.values.find(v=>v.id===x.dataset.v).qual=Number(x.value)||0));card.querySelectorAll('.v-high').forEach(x=>x.addEventListener('input',()=>sp.values.find(v=>v.id===x.dataset.v).high=Number(x.value)||0));
             card.querySelectorAll('.v-eye').forEach(x=>x.addEventListener('click',()=>{const v=sp.values.find(v=>v.id===x.dataset.v);v.active=!v.active;renderSpecs()}));
-            card.querySelectorAll('.v-delete').forEach(x=>x.addEventListener('click',()=>{sp.values=sp.values.filter(v=>v.id!==x.dataset.v);if(!sp.values.length)sp.values.push({id:uid('v'),name:'',std:0,qual:0,active:true});renderSpecs()}));
-            card.querySelector('.v-add')?.addEventListener('click',()=>{sp.values.push({id:uid('v'),name:'',std:0,qual:0,active:true});renderSpecs()});
+            card.querySelectorAll('.v-delete').forEach(x=>{x.disabled=sp.values.length===1;x.classList.toggle('is-disabled',sp.values.length===1);x.addEventListener('click',()=>{if(sp.values.length<=1)return;sp.values=sp.values.filter(v=>v.id!==x.dataset.v);renderSpecs()})});
+            card.querySelector('.spec-add-value')?.addEventListener('click',()=>{sp.values.push({id:uid('v'),name:'',std:0,qual:0,high:0,active:true});renderSpecs()});
             card.querySelector('.spec-validate')?.addEventListener('click',()=>{sp.collapsed=true;renderSpecs()});
         });
     }
-    document.getElementById('add-supply-spec').onclick=()=>{supplySpecs.push({id:uid('s'),name:'',supp:false,active:true,collapsed:false,values:[{id:uid('v'),name:'',std:0,qual:0,active:true}]});renderSpecs()};document.getElementById('supply-has-quality').onchange=syncSupplyMode;document.getElementById('supply-has-specs').onchange=syncSupplyMode;
+    document.getElementById('add-supply-spec').onclick=()=>{supplySpecs.push({id:uid('s'),name:'',supp:false,active:true,collapsed:false,values:[{id:uid('v'),name:'',std:0,qual:0,high:0,active:true}]});renderSpecs()};document.getElementById('supply-has-specs').onchange=syncSupplyMode;function syncSupplyToggleVisuals(){['supply-has-specs','supply-item-active'].forEach(id=>{const input=document.getElementById(id),card=input?.closest('.supply-mode-card');card?.classList.toggle('is-checked',!!input?.checked)})}['supply-has-specs','supply-item-active'].forEach(id=>document.getElementById(id)?.addEventListener('change',syncSupplyToggleVisuals));syncSupplyToggleVisuals();setSelectedSupplyRanges(['entry','middle','high']);
 
 
     async function loadSupplySpecs(itemId){
         supplySpecs=[];
         if(!itemId){renderSpecs();return;}
-        const {data,error}=await supabaseClient.from('supply_attributes').select('id,name,has_supplement,is_active,sort_order,supply_attribute_values(id,label,standard_supplement,quality_supplement,is_active,sort_order)').eq('supply_item_id',itemId).order('sort_order',{ascending:true});
+        const {data,error}=await supabaseClient.from('supply_attributes').select('id,name,has_supplement,is_active,sort_order,supply_attribute_values(id,label,standard_supplement,quality_supplement,high_supplement,is_active,sort_order)').eq('supply_item_id',itemId).order('sort_order',{ascending:true});
         if(error){console.error('Chargement des spécificités :',error);alert('Impossible de charger les spécificités : '+error.message);renderSpecs();return;}
         supplySpecs=(data||[]).map(attribute=>({
             id:String(attribute.id),
@@ -1583,10 +1714,10 @@ o.classList.add('is-open');dataTab('archive');archiveStatus('Chargement…');con
             active:attribute.is_active!==false,
             collapsed:true,
             values:(attribute.supply_attribute_values||[]).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0)).map(value=>({
-                id:String(value.id),name:value.label||'',std:Number(value.standard_supplement)||0,qual:Number(value.quality_supplement)||0,active:value.is_active!==false
+                id:String(value.id),name:value.label||'',std:Number(value.standard_supplement)||0,qual:Number(value.quality_supplement)||0,high:Number(value.high_supplement??value.quality_supplement)||0,active:value.is_active!==false
             }))
         }));
-        supplySpecs.forEach(spec=>{if(!spec.values.length)spec.values.push({id:uid('v'),name:'',std:0,qual:0,active:true})});
+        supplySpecs.forEach(spec=>{if(!spec.values.length)spec.values.push({id:uid('v'),name:'',std:0,qual:0,high:0,active:true})});
         renderSpecs();
     }
     function validateSupplySpecs(){
@@ -1610,7 +1741,7 @@ o.classList.add('is-open');dataTab('archive');archiveStatus('Chargement…');con
             }]).select('id').single();
             if(attributeError)throw attributeError;
             const values=spec.values.filter(value=>(value.name||'').trim()).map((value,valueIndex)=>({
-                attribute_id:attribute.id,label:value.name.trim(),standard_supplement:spec.supp?Number(value.std)||0:0,quality_supplement:spec.supp?Number(value.qual)||0:0,is_active:value.active!==false,sort_order:valueIndex
+                attribute_id:attribute.id,label:value.name.trim(),standard_supplement:spec.supp?Number(value.std)||0:0,quality_supplement:spec.supp?Number(value.qual)||0:0,high_supplement:spec.supp?Number(value.high)||0:0,is_active:value.active!==false,sort_order:valueIndex
             }));
             if(values.length){const {error:valueError}=await supabaseClient.from('supply_attribute_values').insert(values);if(valueError)throw valueError;}
         }
@@ -1621,15 +1752,15 @@ o.classList.add('is-open');dataTab('archive');archiveStatus('Chargement…');con
         supplyAdminForm.reset();
         document.getElementById('supply-item-id').value = '';
         document.getElementById('supply-item-active').checked = true;document.getElementById('supply-item-category-id').value='';
-        document.getElementById('cancel-supply-edit')?.classList.add('hidden');document.getElementById('supply-has-quality').checked=true;document.getElementById('supply-has-specs').checked=false;supplySpecs=[];syncSupplyMode();
+        document.getElementById('cancel-supply-edit')?.classList.add('hidden');setSelectedSupplyRanges(['entry','middle','high']);document.getElementById('supply-has-specs').checked=false;supplySpecs=[];syncSupplyMode();syncSupplyToggleVisuals();
     }
 
     const supplyPencil=()=>'<svg viewBox="0 0 24 24"><path d="M4 20h4l11-11-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg>';
     function renderExistingSuppliesList(supplies){
-        const box=document.getElementById('existing-supplies-list'),count=document.getElementById('existing-supplies-count');if(!box)return;const categoryFilters=getAdminMultiValues('filter-supply-category'),featureFilters=getAdminMultiValues('filter-supply-feature');const matchesFeature=i=>!featureFilters.length||featureFilters.some(ff=>(ff==='specs'&&i.has_specs===true)||(ff==='no-specs'&&i.has_specs!==true)||(ff==='quality-2'&&i.has_quality!==false)||(ff==='quality-1'&&i.has_quality===false));const visible=supplies.filter(i=>(!categoryFilters.length||categoryFilters.includes(String(i.category_id)))&&matchesFeature(i));const cats=supplyCategoryCache.filter(c=>!categoryFilters.length||categoryFilters.includes(String(c.id)));if(count)count.textContent=`${supplyCategoryCache.length} catégories, ${supplies.length} fournitures`;box.innerHTML=cats.map(cat=>{const items=visible.filter(i=>String(i.category_id)===String(cat.id));return `<article class="supply-kanban-column ${cat.is_active===false?'is-category-off':''}"><header><b>${supplyEscape(cat.name)}</b><button class="supply-category-eye ${cat.is_active===false?'off':''}" data-id="${cat.id}" data-active="${cat.is_active!==false}">${iconEye}</button></header><div class="supply-kanban-cards">${items.map(i=>`<div class="supply-kanban-card ${i.is_active===false?'is-item-off':''}"><div class="supply-card-actions"><button class="supply-card-eye ${i.is_active===false?'off':''}" data-id="${i.id}" data-active="${i.is_active!==false}">${iconEye}</button><span></span><button class="existing-supply-edit" data-id="${i.id}">${supplyPencil()}</button><button class="supply-card-delete" data-id="${i.id}">${iconTrash}</button></div><b>${supplyEscape(i.name)}</b><small>${i.has_quality===false?'1 gamme':'2 gammes'} · ${i.spec_count||0} spécificité${(i.spec_count||0)>1?'s':''}</small></div>`).join('')||'<div class="supply-kanban-empty">Aucune fourniture</div>'}</div></article>`}).join('')||'<div class="supply-kanban-empty-all">Aucune catégorie.</div>';
+        const box=document.getElementById('existing-supplies-list'),count=document.getElementById('existing-supplies-count');if(!box)return;const categoryFilters=getAdminMultiValues('filter-supply-category'),featureFilters=getAdminMultiValues('filter-supply-feature');const matchesFeature=i=>!featureFilters.length||featureFilters.some(ff=>(ff==='specs'&&i.has_specs===true)||(ff==='no-specs'&&i.has_specs!==true)||ff==='quality-3');const visible=supplies.filter(i=>(!categoryFilters.length||categoryFilters.includes(String(i.category_id)))&&matchesFeature(i));const cats=supplyCategoryCache.filter(c=>!categoryFilters.length||categoryFilters.includes(String(c.id)));if(count)count.textContent=`${supplyCategoryCache.length} catégories, ${supplies.length} fournitures`;box.innerHTML=cats.map(cat=>{const items=visible.filter(i=>String(i.category_id)===String(cat.id));return `<article class="supply-kanban-column ${cat.is_active===false?'is-category-off':''}"><header><b>${supplyEscape(cat.name)}</b><button class="supply-category-eye ${cat.is_active===false?'off':''}" data-id="${cat.id}" data-active="${cat.is_active!==false}">${iconEye}</button></header><div class="supply-kanban-cards">${items.map(i=>`<div class="supply-kanban-card ${i.is_active===false?'is-item-off':''}"><div class="supply-card-actions"><button class="supply-card-eye ${i.is_active===false?'off':''}" data-id="${i.id}" data-active="${i.is_active!==false}">${iconEye}</button><span></span><button class="existing-supply-edit" data-id="${i.id}">${supplyPencil()}</button><button class="supply-card-delete" data-id="${i.id}">${iconTrash}</button></div><b>${supplyEscape(i.name)}</b><small>3 gammes · ${i.spec_count||0} spécificité${(i.spec_count||0)>1?'s':''}</small></div>`).join('')||'<div class="supply-kanban-empty">Aucune fourniture</div>'}</div></article>`}).join('')||'<div class="supply-kanban-empty-all">Aucune catégorie.</div>';
         box.querySelectorAll('.supply-category-eye').forEach(b=>b.onclick=async()=>{const {error}=await supabaseClient.from('supply_categories').update({is_active:b.dataset.active!=='true'}).eq('id',b.dataset.id);if(error)return alert(error.message);await loadSupplyCategories();await loadSupplyAdmin();});
         box.querySelectorAll('.supply-card-eye').forEach(b=>b.onclick=async()=>{await supabaseClient.from('supply_items').update({is_active:b.dataset.active!=='true'}).eq('id',b.dataset.id);await loadSupplyAdmin();});
-        box.querySelectorAll('.existing-supply-edit').forEach(b=>b.onclick=async()=>{const i=supplies.find(x=>String(x.id)===String(b.dataset.id));document.getElementById('supply-item-id').value=i.id;document.getElementById('supply-item-name').value=i.name||'';await loadSupplyCategories(i.category_id);document.getElementById('supply-item-standard').value=i.standard_price||0;document.getElementById('supply-item-quality').value=i.quality_price||0;document.getElementById('supply-item-active').checked=i.is_active!==false;document.getElementById('supply-has-quality').checked=i.has_quality!==false;document.getElementById('supply-has-specs').checked=i.has_specs===true;await loadSupplySpecs(i.id);syncSupplyMode();openPackDrawer('supply',{editing:true});});
+        box.querySelectorAll('.existing-supply-edit').forEach(b=>b.onclick=async()=>{const i=supplies.find(x=>String(x.id)===String(b.dataset.id));document.getElementById('supply-item-id').value=i.id;document.getElementById('supply-item-name').value=i.name||'';await loadSupplyCategories(i.category_id);document.getElementById('supply-item-standard').value=i.standard_price||0;document.getElementById('supply-item-quality').value=i.quality_price||0;document.getElementById('supply-item-high').value=i.high_price??i.quality_price??0;setSelectedSupplyRanges(['entry',...(Number(i.quality_price)>0?['middle']:[]),...(Number(i.high_price)>0?['high']:[])]);document.getElementById('supply-item-active').checked=i.is_active!==false;document.getElementById('supply-has-specs').checked=i.has_specs===true;await loadSupplySpecs(i.id);syncSupplyMode();syncSupplyToggleVisuals();openPackDrawer('supply',{editing:true});});
         box.querySelectorAll('.supply-card-delete').forEach(b=>b.onclick=()=>openMasterDeleteDialog('supply',b.dataset.id,'cette fourniture'));
     }
     async function loadSupplyAdmin(){if(!supplyCategoryCache.length)await loadSupplyCategories();const [ir,sr]=await Promise.all([supabaseClient.from('supply_items').select('*').order('name'),supabaseClient.from('supply_attributes').select('supply_item_id')]);if(ir.error)return;const n={};(sr.data||[]).forEach(x=>n[x.supply_item_id]=(n[x.supply_item_id]||0)+1);window.supplyItemsAdminCache=(ir.data||[]).map(x=>({...x,spec_count:n[x.id]||0}));renderExistingSuppliesList(window.supplyItemsAdminCache);if(supplyAdminList)supplyAdminList.innerHTML='';}
@@ -1644,10 +1775,10 @@ o.classList.add('is-open');dataTab('archive');archiveStatus('Chargement…');con
             name: document.getElementById('supply-item-name').value.trim(),
             category:(supplyCategoryCache.find(c=>String(c.id)===String(document.getElementById('supply-item-category-id').value))?.name||'Fournitures'),
             category_id:Number(document.getElementById('supply-item-category-id').value),
-            has_quality:document.getElementById('supply-has-quality').checked,
+            has_quality:selectedSupplyRanges().length>1,
             has_specs:document.getElementById('supply-has-specs').checked,
-            standard_price: Number(document.getElementById('supply-item-standard').value) || 0,
-            quality_price: Number(document.getElementById('supply-item-quality').value) || 0,
+            standard_price:selectedSupplyRanges().includes('entry')?(Number(document.getElementById('supply-item-standard').value)||0):0,
+            quality_price:selectedSupplyRanges().includes('middle')?(Number(document.getElementById('supply-item-quality').value)||0):0,high_price:selectedSupplyRanges().includes('high')?(Number(document.getElementById('supply-item-high').value)||0):0,
             is_active: document.getElementById('supply-item-active').checked
         };
         if(!payload.name||!payload.category_id)return alert('Le nom et la catégorie sont obligatoires.');
@@ -1660,7 +1791,7 @@ o.classList.add('is-open');dataTab('archive');archiveStatus('Chargement…');con
         await loadSupplyAdmin();
     });
     document.getElementById('pack-drawer-delete')?.addEventListener('click',async()=>{const id=document.getElementById('supply-item-id').value;if(!id||!confirm('Supprimer cette fourniture ?'))return;const {error}=await supabaseClient.from('supply_items').delete().eq('id',id);if(error)return alert(error.message);closePackDrawerNow();resetSupplyAdminForm();await loadSupplyAdmin();});
-    ['supply-item-standard','supply-item-quality'].forEach(id=>document.getElementById(id)?.addEventListener('input',updatePackDrawerPrice));
+    ['supply-item-standard','supply-item-quality','supply-item-high'].forEach(id=>document.getElementById(id)?.addEventListener('input',updatePackDrawerPrice));
     document.getElementById('cancel-supply-edit')?.addEventListener('click', resetSupplyAdminForm);
     syncSupplyMode();loadSchoolAndLevelCatalogs();loadSupplyCategories();
     loadSupplyAdmin();

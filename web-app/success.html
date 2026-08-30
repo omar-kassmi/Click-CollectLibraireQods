@@ -1,19 +1,27 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>Commande confirmée — Librairie El Qods</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<link href="styles.css?v=dropdown-clean" rel="stylesheet"/>
 <style>
 :root{--orange:#ef571d;--green:#32d19a;--paper:#fffaf7}*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:var(--paper);color:#292524}
-.header{height:81px;position:fixed;inset:0 0 auto;z-index:40;background:#fff;border-bottom:1px solid #f6f2ef}.header-inner{height:100%;padding:0 33px 0 42px;display:flex;align-items:center;justify-content:space-between}.logo{height:47px;width:auto}.nav{display:flex;align-items:center;gap:34px;color:var(--orange);font-size:14px}.nav .active{font-weight:700}.header-actions{display:flex;align-items:center;gap:13px}.round{width:39px;height:39px;display:grid;place-items:center;border:1px solid var(--orange);border-radius:50%;color:var(--orange);font-size:12px;font-weight:700}.commander{height:43px;padding:0 23px;display:flex;align-items:center;border-radius:10px;background:var(--orange);color:#fff;font-size:14px;font-weight:700}
-.page{min-height:100vh;padding-top:81px;display:grid;grid-template-columns:minmax(0,1fr) 337px}.main{display:flex;flex-direction:column;align-items:center;padding:62px 42px 36px;text-align:center}.check{width:83px;height:83px;display:grid;place-items:center;border-radius:50%;background:#cdf8e7;color:#009c69;font-size:44px;font-weight:700;line-height:1}.title{margin:16px 0 0;color:var(--orange);font-size:49px;font-weight:800;line-height:1;letter-spacing:-2.2px}.copy{margin:20px 0 0;color:#57534e;font-size:16px;line-height:1.3}.subcopy{margin:10px 0 0;color:#57534e;font-size:16px;line-height:1.3}.rules{width:100%;margin-top:44px;padding:12px 18px;border:2px solid #dc4c12;border-radius:7px;background:#fff5ef;text-align:left}.rules ul{margin:0;padding-left:20px;color:#111;font-size:14px;line-height:1.42}.rules li{padding-left:2px}.rules li::marker{font-size:10px}
+.page{min-height:100vh;padding-top:104px;display:grid;grid-template-columns:minmax(0,1fr) 337px}.main{display:flex;flex-direction:column;align-items:center;padding:62px 42px 36px;text-align:center}.check{width:83px;height:83px;display:grid;place-items:center;border-radius:50%;background:#cdf8e7;color:#009c69;font-size:44px;font-weight:700;line-height:1}.title{margin:16px 0 0;color:var(--orange);font-size:49px;font-weight:800;line-height:1;letter-spacing:-2.2px}.copy{margin:20px 0 0;color:#57534e;font-size:16px;line-height:1.3}.subcopy{margin:10px 0 0;color:#57534e;font-size:16px;line-height:1.3}.rules{width:100%;margin-top:44px;padding:12px 18px;border:2px solid #dc4c12;border-radius:7px;background:#fff5ef;text-align:left}.rules ul{margin:0;padding-left:20px;color:#111;font-size:14px;line-height:1.42}.rules li{padding-left:2px}.rules li::marker{font-size:10px}
 .side{padding:27px 24px 16px 3px}.card{width:310px;min-height:530px;padding:24px 17px 16px;border:1px solid #fbf4ef;border-radius:31px;background:rgba(255,255,255,.84);box-shadow:0 16px 45px rgba(62,35,18,.045);text-align:center}.reference{margin-bottom:14px;color:var(--orange);font-size:27px;font-weight:800;line-height:1.05;letter-spacing:-1px}.qr-box{height:214px;display:grid;place-items:center;padding:14px;border:1px solid #eee7df;border-radius:23px;background:#fff}.qr-box canvas,.qr-box img{width:180px!important;height:180px!important;object-fit:contain;display:block}.note{margin:15px 6px;color:#8c8783;font-size:11px;font-style:italic;font-weight:700;line-height:1.35}.buttons{display:grid;gap:8px}.btn{width:100%;height:47px;display:flex;align-items:center;justify-content:center;border-radius:13px;font-size:12px;font-weight:700}.orange{background:var(--orange);color:#fff}.green{background:var(--green);color:#fff}.white{border:1px solid #e7e5e4;background:#fff;color:#292524}.btn:disabled{opacity:.55}.loading{margin:6px 0 0;color:#aaa;font-size:10px}.error{display:none;margin-top:12px;padding:10px;border:1px solid #fecaca;border-radius:10px;background:#fef2f2;color:#b91c1c;font-size:12px}
 .drawer{position:fixed;inset:0;z-index:9999;display:none;background:rgba(13,13,13,.44);backdrop-filter:blur(6px)}.drawer.open{display:block}.panel{position:absolute;inset:0 0 0 auto;width:min(460px,100vw);height:100vh;padding:24px;overflow:auto;background:#fff;box-shadow:-30px 0 90px rgba(0,0,0,.28)}.row{display:flex;justify-content:space-between;gap:16px;padding:12px 14px;border:1px solid #f1ebe5;border-radius:16px;background:#fbfaf8;font-size:12px}.row b{text-align:right}
-@media(max-width:950px){.nav{gap:18px;font-size:12px}}@media(max-width:850px){.nav{display:none}.page{grid-template-columns:1fr}.main{padding:35px 18px 26px}.side{padding:0 18px 35px}.card{width:min(100%,310px);min-height:0;margin:auto}.rules{margin-top:30px}}@media(max-width:560px){.header{height:64px}.header-inner{padding:0 16px}.logo{height:40px}.commander{display:none}.page{padding-top:64px}.title{font-size:41px}.copy,.subcopy{font-size:14px}.rules ul{font-size:13px}}
+@media(max-width:850px){.page{grid-template-columns:1fr}.main{padding:35px 18px 26px}.side{padding:0 18px 35px}.card{width:min(100%,310px);min-height:0;margin:auto}.rules{margin-top:30px}}@media(max-width:560px){.page{padding-top:84px}.title{font-size:41px}.copy,.subcopy{font-size:14px}.rules ul{font-size:13px}}
+
+/* Version arabe de cette page */
+html[dir="rtl"] body{direction:rtl}
+html[dir="rtl"] .rules{text-align:right}
+html[dir="rtl"] .rules ul{padding-left:0;padding-right:20px}
+html[dir="rtl"] .row b{text-align:left}
+html[dir="rtl"] .site-header-shell{direction:rtl}
 
 .drawer{position:fixed;inset:0;z-index:9999;display:none;background:rgba(18,15,13,.5);backdrop-filter:blur(7px)}.drawer.open{display:block}.client-order-card{position:absolute;inset:0 0 0 auto;width:min(510px,100vw);height:100vh;display:flex;flex-direction:column;overflow:hidden;border-radius:24px 0 0 24px;background:#fff;box-shadow:-28px 0 80px rgba(0,0,0,.25);animation:clientDrawerIn .24s ease-out}@keyframes clientDrawerIn{from{transform:translateX(100%)}to{transform:none}}.client-order-head{min-height:116px;padding:23px 22px;display:flex;align-items:flex-start;justify-content:space-between;background:linear-gradient(135deg,#2d2926,#171513);color:#fff}.client-order-head span{display:block;margin-bottom:7px;color:#cfc5bd;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em}.client-order-head h2{margin:0;color:#fff;font-size:22px;font-weight:900}.client-order-close{width:36px;height:36px;border:1px solid rgba(255,255,255,.18);border-radius:11px;background:rgba(255,255,255,.08);color:#fff;font-size:23px}.client-order-tabs{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #eee7df;background:#fff}.client-order-tabs button{position:relative;min-height:56px;border:0;background:#fff;color:#8c827b;font-size:11px;font-weight:850}.client-order-tabs button span{margin-right:6px;color:#c7bdb6}.client-order-tabs button b{margin-left:6px;padding:2px 6px;border-radius:999px;background:#f5f2ef;font-size:8px}.client-order-tabs button.is-active{color:#E75C25}.client-order-tabs button.is-active:after{content:'';position:absolute;left:18%;right:18%;bottom:-1px;height:3px;border-radius:999px 999px 0 0;background:#E75C25}.client-order-body{flex:1;min-height:0;overflow-y:auto;padding:20px;background:#fbfaf9}.client-order-panel{display:none}.client-order-panel.is-active{display:block}.client-order-section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.client-order-section-head h3{margin:0;font-size:13px;font-weight:900}.client-order-section-head span{color:#9b918a;font-size:9px}.client-drawer-list{display:grid;gap:8px}.client-drawer-item{min-height:62px;padding:11px 13px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #eee7df;border-radius:14px;background:#fff}.client-drawer-item span{min-width:0}.client-drawer-item b,.client-drawer-item small{display:block}.client-drawer-item b{overflow:hidden;text-overflow:ellipsis;color:#332d29;font-size:11px;font-weight:850;white-space:nowrap}.client-drawer-item small{margin-top:4px;color:#8b817a;font-size:8.5px}.client-drawer-item>strong{flex:0 0 auto;padding:6px 9px;border-radius:999px;background:#e8faf2;color:#087b5b;font-size:9px}.client-drawer-empty{padding:30px;border:1px dashed #ddd4ce;border-radius:14px;color:#9b918a;text-align:center;font-size:10px}@media(max-width:600px){.client-order-card{width:100vw;border-radius:0}.client-order-head{min-height:104px}}
 
@@ -125,11 +133,469 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
   pointer-events:none!important;
 }
 #drawer .qd-list{margin-bottom:0!important}
+
+</style>
+<style id="home-footer-exact-styles">
+/* Footer final verrouille : fond noir, groupes espaces, sous-colonnes compactes. */
+.site-footer-full.elq-footer{
+  display:block!important; position:relative!important; box-sizing:border-box!important;
+  width:100vw!important; max-width:100vw!important;
+  margin:0 calc(50% - 50vw)!important; padding:0!important;
+  background:#111!important; color:#858585!important; overflow:visible!important;
+  border:0!important; border-top:3px solid #E75C25!important; text-align:left!important;
+}
+.site-footer-full.elq-footer .elq-footer-shell{
+  box-sizing:border-box!important; width:min(1280px,calc(100vw - 96px))!important;
+  max-width:none!important; margin:0 auto!important; padding:56px 0 26px!important;
+}
+.site-footer-full.elq-footer .elq-footer-main{
+  box-sizing:border-box!important; width:100%!important; margin:0!important; padding:0 0 30px!important;
+  background:transparent!important; color:#858585!important;
+  display:grid!important; grid-template-columns:240px minmax(0,1fr)!important;
+  column-gap:40px!important; align-items:start!important;
+}
+.site-footer-full.elq-footer .elq-footer-brand{
+  min-width:0!important; display:flex!important; flex-direction:column!important;
+  align-items:flex-start!important; gap:14px!important; text-align:left!important;
+}
+.site-footer-full.elq-footer .elq-footer-logo{
+  display:block!important; width:auto!important; height:110px!important;
+  max-width:150px!important; margin:0 0 4px -8px!important; object-fit:contain!important;
+  object-position:left center!important;
+  filter:grayscale(1) brightness(2.2)!important;
+}
+.site-footer-full.elq-footer .elq-footer-contact{
+  display:flex!important; flex-direction:column!important; gap:6px!important;
+  margin:0!important; color:#a3a09d!important; font-size:12.5px!important;
+  line-height:1.5!important; text-align:left!important;
+}
+.site-footer-full.elq-footer .elq-footer-contact-btn{
+  display:inline-block!important; margin-top:8px!important; padding:12px 22px!important;
+  border:0!important; border-radius:12px!important; background:#E75C25!important;
+  color:#fff!important; font-size:11.5px!important; font-weight:800!important;
+  letter-spacing:.03em!important; text-transform:uppercase!important; text-decoration:none!important;
+  cursor:pointer!important; transition:background .15s!important;
+}
+.site-footer-full.elq-footer .elq-footer-contact-btn:hover{background:#CE4E1D!important}
+.site-footer-full.elq-footer .elq-footer-columns{
+  display:grid!important; grid-template-columns:repeat(3,minmax(0,max-content))!important;
+  justify-content:start!important; align-items:start!important;
+  column-gap:90px!important; row-gap:28px!important; width:100%!important; min-width:0!important; margin:0!important;
+}
+.site-footer-full.elq-footer .elq-footer-column{
+  min-width:0!important; display:flex!important; flex-direction:column!important;
+  align-items:flex-start!important; text-align:left!important;
+}
+.site-footer-full.elq-footer .elq-footer-column h3{
+  display:block!important; width:auto!important; margin:0 0 16px!important;
+  padding:0!important; border:0!important;
+  background:transparent!important; color:#E75C25!important;
+  font-size:12.5px!important; font-weight:900!important; line-height:1!important;
+  text-align:left!important; text-transform:uppercase!important; letter-spacing:.02em!important;
+  white-space:nowrap!important;
+}
+.site-footer-full.elq-footer .elq-footer-links{
+  display:flex!important; flex-direction:column!important; align-items:flex-start!important;
+  gap:13px!important; width:100%!important; margin:0!important;
+}
+.site-footer-full.elq-footer .elq-footer-column button{
+  display:block!important; width:auto!important; max-width:100%!important;
+  margin:0!important; padding:0!important; border:0!important;
+  background:transparent!important; color:#c7c4c1!important;
+  font-size:13px!important; font-weight:600!important; line-height:1.3!important;
+  text-align:left!important; text-transform:none!important; white-space:nowrap!important;
+  cursor:pointer!important; transition:color .15s!important;
+}
+.site-footer-full.elq-footer .elq-footer-column button:hover{color:#E75C25!important}
+.site-footer-full.elq-footer .elq-footer-social{
+  display:flex!important; align-items:center!important; justify-content:flex-start!important;
+  gap:22px!important; width:100%!important; margin:0!important;
+  padding:22px 0 0!important; border-top:1px solid #232323!important;
+  color:#a3a09d!important; font-size:14px!important; text-align:left!important;
+}
+.site-footer-full.elq-footer .elq-footer-social span{color:#a3a09d!important}
+.site-footer-full.elq-footer .elq-footer-social a{
+  display:inline-flex!important; align-items:center!important; justify-content:center!important;
+  width:22px!important; height:22px!important; color:#82807d!important; transition:color .15s!important;
+}
+.site-footer-full.elq-footer .elq-footer-social a svg{
+  width:100%!important; height:100%!important; fill:none!important; stroke:currentColor!important;
+  stroke-width:1.6!important; stroke-linecap:round!important; stroke-linejoin:round!important;
+}
+.site-footer-full.elq-footer .elq-footer-social a:hover{color:#E75C25!important}
+.site-footer-full.elq-footer .elq-footer-copyright{
+  display:flex!important; align-items:center!important; justify-content:center!important;
+  position:static!important; inset:auto!important; transform:none!important;
+  box-sizing:border-box!important; width:100%!important; max-width:none!important;
+  min-height:0!important; margin:0!important; padding:18px 20px!important;
+  border:0!important; border-top:1px solid #262626!important; background:#111!important; color:#78766f!important;
+  box-shadow:none!important; clip-path:none!important;
+  font-size:11.5px!important; line-height:1.3!important; text-align:center!important;
+  text-indent:0!important; white-space:normal!important;
+}
+.elq-footer-credit{
+  display:flex!important; align-items:center!important; justify-content:center!important;
+  box-sizing:border-box!important; width:100vw!important; max-width:100vw!important;
+  margin:0 calc(50% - 50vw)!important; padding:14px 20px!important;
+  background:#fff!important; color:#78716c!important; font-size:11px!important;
+  font-weight:600!important; text-align:center!important;
+}
+
+/* ---- Version arabe (RTL) ---- */
+html[dir="rtl"] .site-footer-full.elq-footer{text-align:right!important}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-main{direction:rtl!important}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-brand{align-items:flex-end!important;text-align:right!important}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-logo{margin:0 -8px 4px 0!important;object-position:right center!important}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-contact{align-items:flex-end!important;text-align:right!important}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-contact span{text-align:right!important;direction:rtl!important}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-columns{direction:rtl!important;justify-content:start!important}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-column{align-items:flex-end!important;text-align:right!important}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-column h3{text-align:right!important;width:100%!important}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-links{align-items:flex-end!important;width:100%!important}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-column button{text-align:right!important;width:100%!important}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-social{justify-content:flex-end!important;text-align:right!important}
+html[dir="rtl"] .elq-footer-credit{direction:rtl!important}
+
+@media(max-width:1024px){
+  .site-footer-full.elq-footer .elq-footer-main{grid-template-columns:1fr!important;row-gap:36px!important}
+  .site-footer-full.elq-footer .elq-footer-columns{grid-template-columns:repeat(3,minmax(0,1fr))!important;column-gap:32px!important}
+}
+@media(max-width:640px){
+  .site-footer-full.elq-footer .elq-footer-columns{grid-template-columns:1fr!important;row-gap:28px!important}
+  .site-footer-full.elq-footer .elq-footer-column button{white-space:normal!important}
+}
+
+
+@media(max-width:1024px){
+ .site-footer-full.elq-footer .elq-footer-main{flex-wrap:wrap!important; row-gap:36px!important}
+ .site-footer-full.elq-footer .elq-footer-columns{gap:28px 48px!important}
+}
+@media(max-width:700px){
+ .site-footer-full.elq-footer .elq-footer-shell{width:calc(100vw - 32px)!important; padding:40px 0 20px!important}
+ .site-footer-full.elq-footer .elq-footer-logo{height:90px!important}
+ .site-footer-full.elq-footer .elq-footer-main{flex-direction:column!important; gap:32px!important}
+ .site-footer-full.elq-footer .elq-footer-columns{flex-direction:column!important; gap:26px!important}
+}
+
+
+/* Footer final : alignements FR/AR, colonnes, social et bouton */
+@media (min-width: 901px){
+  html[dir="ltr"] .site-footer-full.elq-footer .elq-footer-columns{transform:translateX(72px)!important;}
+  html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-columns{transform:translateX(-72px)!important;}
+}
+.site-footer-full.elq-footer .elq-footer-contact-btn{border-radius:0!important;}
+.site-footer-full.elq-footer .elq-footer-social{
+  width:100%!important;max-width:none!important;margin:28px auto 0!important;padding:0!important;
+  display:flex!important;justify-content:center!important;align-items:center!important;text-align:center!important;
+  border-top:0!important;border-bottom:0!important;box-shadow:none!important;
+}
+.site-footer-full.elq-footer .elq-footer-social:before,
+.site-footer-full.elq-footer .elq-footer-social:after{content:none!important;display:none!important;}
+html[dir="ltr"] .site-footer-full.elq-footer .elq-footer-brand,
+html[dir="ltr"] .site-footer-full.elq-footer .elq-footer-contact{align-items:flex-end!important;text-align:right!important;}
+html[dir="ltr"] .site-footer-full.elq-footer .elq-footer-contact span{width:100%!important;text-align:right!important;}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-brand,
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-contact{align-items:flex-start!important;text-align:left!important;}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-contact span{width:100%!important;text-align:left!important;direction:rtl!important;}
+.site-footer-full.elq-footer .elq-footer-logo{align-self:center!important;margin-left:auto!important;margin-right:auto!important;object-position:center!important;}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-columns{direction:rtl!important;}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-column{align-items:flex-start!important;text-align:left!important;}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-column h3,
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-links,
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-column button{align-items:flex-start!important;text-align:left!important;}
+
+
+/* Footer: placement adapte a la langue sur desktop. */
+@media (min-width: 901px) {
+  html:not([dir="rtl"]) .site-footer-full.elq-footer .elq-footer-columns {
+    justify-content: end !important;
+  }
+
+  html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-columns {
+    justify-content: start !important;
+    direction: rtl !important;
+  }
+
+  html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-column,
+  html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-column h3,
+  html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-column button {
+    align-items: flex-end !important;
+    text-align: right !important;
+  }
+
+  html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-links {
+    align-items: flex-end !important;
+  }
+}
+
+/* En arabe, le libelle et les icones des reseaux sociaux restent centres. */
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-social {
+  width: 100% !important;
+  justify-content: center !important;
+  text-align: center !important;
+  direction: rtl !important;
+}
+</style><style id="success-widget-right-fr">
+/* Widget QR strictement a droite en francais. */
+html[lang="fr"] .page, html:not([lang="ar"]) .page { grid-template-columns:minmax(0,1fr) 337px !important; }
+html[lang="fr"] .page>.main, html:not([lang="ar"]) .page>.main { grid-column:1 !important; grid-row:1 !important; }
+html[lang="fr"] .page>.side, html:not([lang="ar"]) .page>.side { grid-column:2 !important; grid-row:1 !important; padding:27px 24px 16px 3px !important; }
+@media(max-width:820px){html[lang] .page{grid-template-columns:1fr !important}html[lang] .page>.main{grid-column:1 !important;grid-row:1 !important}html[lang] .page>.side{grid-column:1 !important;grid-row:2 !important;padding:0 16px 24px !important}}
 </style>
 </head><body>
-<header class="header"><div class="header-inner"><a href="index.html"><img src="images/logo.png" class="logo" alt="Librairie El Qods"></a><nav class="nav"><a href="index.html">Accueil</a><a href="index.html?tab=section-rentree" class="active">Rentrée scolaire 2026/2027</a><a href="index.html?tab=section-autres">Autres produits</a><a href="index.html?tab=section-suivi">Suivre ma commande</a><a href="index.html?tab=section-plan-magasin">Plan & Rayons</a></nav><div class="header-actions"><span class="round">FR</span><a href="index.html?tab=section-suivi" class="round" aria-label="Rechercher"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg></a><a href="index.html?tab=section-rentree" class="commander">Commander</a></div></div></header>
-<main class="page"><section class="main"><div class="check">✓</div><h1 class="title">Merci <span id="name"></span></h1><p class="copy">Votre commande a été enregistrée !</p><p class="subcopy">Conservez la référence ou télécharger la facture pour suivre son avancement</p><div id="error" class="error"></div><div class="rules"><ul><li>Conservez votre <b>référence</b> et votre <b>QR code</b>.</li><li>Suivez l’avancement depuis « <b>Suivre ma commande</b> » avec la référence et le téléphone.</li><li>Attendez le statut « <b>Prête au retrait</b> » avant de vous déplacer.</li><li>Présentez le <b>QR code</b> lors de la récupération en magasin.</li><li>Pour une liste personnalisée, le <b>montant final</b> sera confirmé <b>après vérification</b>.</li></ul></div></section><aside class="side"><div class="card"><div id="reference" class="reference">—</div><div class="qr-box"><canvas id="qr"></canvas></div><p class="note">Présentez ce QR code lors de la récupération de votre commande. Télécharger la facture pour le retrait !</p><div class="buttons"><button id="details" class="btn orange" disabled>Détails de ma commande</button><button id="download" class="btn green" disabled>Télécharger ma commande</button><a href="index.html" class="btn white">Retour à l’accueil</a></div><p id="loading" class="loading">Chargement de la commande…</p></div></aside></main>
+<header class="fixed top-0 left-0 right-0 z-40 transition-all duration-300 bg-transparent border-b border-transparent py-4 px-6 md:px-12" id="main-header">
+<div class="site-header-shell max-w-7xl mx-auto flex justify-between items-center font-header">
+<button aria-controls="mobile-menu-drawer" aria-expanded="false" aria-label="Ouvrir le menu" class="mobile-menu-toggle md:hidden" id="mobile-menu-toggle" type="button"><span></span><span></span><span></span></button>
+<div class="site-logo-link flex items-center cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+<img alt="Logo" class="h-11 w-auto object-contain" src="images/logo.png"/>
+</div>
+<nav class="hidden md:flex space-x-8 text-[14px] font-medium text-[#E75C25]">
+<button class="nav-tab-btn font-bold" data-target="section-accueil">Accueil</button>
+<button class="nav-tab-btn font-medium hover:opacity-80" data-target="section-rentree">Rentrée scolaire</button>
+<div class="products-nav-menu"><button aria-expanded="false" aria-haspopup="true" class="products-nav-trigger font-medium" type="button"><span>Nos produits</span><svg aria-hidden="true" viewbox="0 0 20 20"><path d="m5.5 7.5 4.5 4.5 4.5-4.5"></path></svg></button><div aria-label="Nos produits" class="products-mega-menu" role="menu"><div class="products-mega-inner"><section class="products-mega-column"><h3>Fournitures diverses</h3><button data-target="section-autres" type="button"><span>Fourniture scolaire</span></button><button data-target="section-autres" type="button"><span>Fourniture bureautique</span></button><button data-target="section-autres" type="button"><span>Fourniture informatique</span></button></section><section class="products-mega-column"><h3>Culture</h3><button data-target="section-autres" type="button"><span>Le Saint Qoran</span></button><button data-target="section-autres" type="button"><span>Livre arabe</span></button><button data-target="section-autres" type="button"><span>Livre français</span></button><button data-target="section-autres" type="button"><span>Livre anglais</span></button><button data-target="section-autres" type="button"><span>Autre</span></button></section><section class="products-mega-column"><h3>Divers</h3><button data-target="section-autres" type="button"><span>Jeux et Loisirs</span></button><button data-target="section-autres" type="button"><span>Beaux Arts</span></button><button data-target="section-autres" type="button"><span>Cadeaux</span></button></section></div></div></div>
+<button class="nav-tab-btn font-medium hover:opacity-80" data-target="section-suivi">Suivre ma commande</button>
+<div class="services-nav-menu">
+<button aria-expanded="false" aria-haspopup="true" class="services-nav-trigger font-medium" type="button">
+<span>Nos services</span>
+<svg aria-hidden="true" viewbox="0 0 20 20"><path d="m5.5 7.5 4.5 4.5 4.5-4.5"></path></svg>
+</button>
+<div aria-label="Nos services" class="services-mega-menu" role="menu">
+<div class="services-mega-inner">
+<section class="services-mega-column">
+<h3>Procédures administratives</h3>
+<button data-service-category="Procédures administratives" data-service-image="inscription_fond.png" data-service-name="Inscription faculté" role="menuitem" type="button"><span>Inscription faculté</span><i>›</i></button>
+<button data-service-category="Procédures administratives" data-service-image="passport_fond.png" data-service-name="Renouvellement/demande passeport" role="menuitem" type="button"><span>Renouvellement/demande passeport</span><i>›</i></button>
+</section>
+<section class="services-mega-column">
+<h3>Services informatiques</h3>
+<button data-service-category="Services informatiques" data-service-image="ordinateur_fond.png" data-service-name="Réparer un ordinateur" role="menuitem" type="button"><span>Réparer un ordinateur</span><i>›</i></button>
+<button data-service-category="Services informatiques" data-service-image="licence_fond.png" data-service-name="Acheter une licence" role="menuitem" type="button"><span>Acheter une licence</span><i>›</i></button>
+</section>
+<section class="services-mega-column">
+<h3>Autres services</h3>
+<button data-service-category="Autres services" data-service-image="impression_fond.png" data-service-name="Impression" role="menuitem" type="button"><span>Impression</span><i>›</i></button>
+</section>
+</div>
+</div>
+</div>
+</nav>
+<div class="flex items-center space-x-3.5 text-[14px]">
+<button aria-label="Coordonnées, localisation et horaires" class="header-contact-location" id="header-contact-location" onclick="switchTab('section-contact-location')" title="Coordonnées et horaires" type="button">
+<svg aria-hidden="true" viewbox="0 0 24 24"><path d="M12 1.75a7.35 7.35 0 0 0-7.35 7.34c0 5.57 6.4 12.21 6.67 12.49a.95.95 0 0 0 1.36 0c.27-.28 6.67-6.92 6.67-12.49A7.35 7.35 0 0 0 12 1.75Zm0 10.56a3.22 3.22 0 1 1 0-6.44 3.22 3.22 0 0 1 0 6.44Z"></path></svg>
+</button>
+<div class="relative inline-block text-left">
+<button class="border border-[#E75C25] text-[#E75C25] rounded-full w-9 h-9 flex items-center justify-center font-black text-xs transition hover:bg-orange-500/10 tracking-tighter font-header focus:outline-none" id="lang-btn">FR</button>
+<div class="hidden absolute top-0 left-0 bg-white border border-stone-200 rounded-full flex flex-col items-center p-0.5 shadow-xl z-50 w-10 space-y-1.5 pb-1" id="lang-dropdown">
+<button class="bg-[#E75C25] text-white rounded-full w-[34px] h-[34px] flex items-center justify-center font-black text-xs font-header focus:outline-none" id="lang-opt-fr" onclick="switchLanguage('FR')">FR</button>
+<button class="text-[#E75C25] hover:bg-orange-50 rounded-full w-[34px] h-[34px] flex items-center justify-center font-black text-xs font-header focus:outline-none" id="lang-opt-ar" onclick="switchLanguage('AR')">AR</button>
+</div>
+</div>
+<button class="border border-[#E75C25] text-[#E75C25] rounded-full w-9 h-9 flex items-center justify-center transition hover:bg-orange-500/10 focus:outline-none">
+<svg class="w-4 h-4 stroke-current fill-none stroke-[2.5]" viewbox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" x2="16.65" y1="21" y2="16.65"></line></svg>
+</button>
+<button class="bg-[#E75C25] hover:bg-[#CE4E1D] text-white font-medium px-5 py-2.5 rounded-lg transition text-[14px] shadow-sm" onclick="switchTab('section-rentree')">Commander</button>
+</div>
+</div>
+</header>
+<div aria-hidden="true" class="md:hidden mobile-menu-overlay" id="mobile-menu-overlay"></div>
+<aside aria-hidden="true" class="md:hidden mobile-menu-drawer" id="mobile-menu-drawer">
+<header><span>Navigation</span><button aria-label="Fermer le menu" id="mobile-menu-close" type="button">×</button></header>
+<nav aria-label="Navigation mobile">
+<button class="nav-tab-btn font-bold" data-target="section-accueil"><span>Accueil</span><b>01</b></button>
+<button class="nav-tab-btn" data-target="section-rentree"><span>Rentrée scolaire</span><b>02</b></button>
+<div class="mobile-products-group"><button aria-expanded="false" class="mobile-products-toggle" id="mobile-products-toggle" type="button"><span>Nos produits</span><b>03</b></button><div class="mobile-products-menu" hidden="" id="mobile-products-menu"><section><h3>Fournitures diverses</h3><button data-target="section-autres">Fourniture scolaire</button><button data-target="section-autres">Fourniture bureautique</button><button data-target="section-autres">Fourniture informatique</button></section><section><h3>Culture</h3><button data-target="section-autres">Le Saint Qoran</button><button data-target="section-autres">Livre arabe</button><button data-target="section-autres">Livre français</button><button data-target="section-autres">Livre anglais</button><button data-target="section-autres">Autre</button></section><section><h3>Divers</h3><button data-target="section-autres">Jeux et Loisirs</button><button data-target="section-autres">Beaux Arts</button><button data-target="section-autres">Cadeaux</button></section></div></div>
+<button class="nav-tab-btn" data-target="section-suivi"><span>Suivre ma commande</span><b>04</b></button>
+<div class="mobile-services-group">
+<button aria-expanded="false" class="mobile-services-toggle" id="mobile-services-toggle" type="button"><span>Nos services</span><b>05</b></button>
+<div class="mobile-services-list" hidden="" id="mobile-services-list">
+<h3>Procédures administratives</h3>
+<button data-service-category="Procédures administratives" data-service-image="inscription_fond.png" data-service-name="Inscription faculté" type="button">Inscription faculté</button>
+<button data-service-category="Procédures administratives" data-service-image="passport_fond.png" data-service-name="Renouvellement/demande passeport" type="button">Renouvellement/demande passeport</button>
+<h3>Services informatiques</h3>
+<button data-service-category="Services informatiques" data-service-image="ordinateur_fond.png" data-service-name="Réparer un ordinateur" type="button">Réparer un ordinateur</button>
+<button data-service-category="Services informatiques" data-service-image="licence_fond.png" data-service-name="Acheter une licence" type="button">Acheter une licence</button>
+<h3>Autres services</h3>
+<button data-service-category="Autres services" data-service-image="impression_fond.png" data-service-name="Impression" type="button">Impression</button>
+</div>
+</div>
+<button class="mobile-location-link" onclick="switchTab('section-contact-location')" type="button"><span>Localisation &amp; horaires</span><b>06</b></button>
+</nav>
+</aside>
+<main class="page"><section class="main"><div class="check">✓</div><h1 class="title">Merci <span id="name"></span></h1><p class="copy">Votre commande a été enregistrée !</p><p class="subcopy">Conservez la référence ou télécharger la facture pour suivre son avancement</p><div class="error" id="error"></div><div class="rules"><ul><li>Conservez votre <b>référence</b> et votre <b>QR code</b>.</li><li>Suivez l’avancement depuis « <b>Suivre ma commande</b> » avec la référence et le téléphone.</li><li>Attendez le statut « <b>Prête au retrait</b> » avant de vous déplacer.</li><li>Présentez le <b>QR code</b> lors de la récupération en magasin.</li><li>Pour une liste personnalisée, le <b>montant final</b> sera confirmé <b>après vérification</b>.</li></ul></div></section><aside class="side"><div class="card"><div class="reference" id="reference">—</div><div class="qr-box"><canvas id="qr"></canvas></div><p class="note">Présentez ce QR code lors de la récupération de votre commande. Télécharger la facture pour le retrait !</p><div class="buttons"><button class="btn orange" disabled="" id="details">Détails de ma commande</button><button class="btn green" disabled="" id="download">Télécharger ma commande</button><a class="btn white" href="index.html">Retour à l’accueil</a></div><p class="loading" id="loading">Chargement de la commande…</p></div></aside></main>
+<footer class="site-footer-full elq-footer">
+<div class="elq-footer-shell">
+<div class="elq-footer-main">
+<div class="elq-footer-brand">
+<img alt="Librairie Al Qods" class="elq-footer-logo" src="images/logo_noir_blanc.png"/>
+<div class="elq-footer-contact">
+<span data-contact-address="">Avenue Hassan II, Berkane, Maroc</span>
+<span>Téléphone &amp; WhatsApp : <span data-contact-phone="">+212 5 36 60 00 00</span></span>
+<span>E-mail : <span data-contact-email="">contact@papeterieberkane.ma</span></span>
+</div>
+<a class="elq-footer-contact-btn" data-contact-whatsapp="" href="#" rel="noopener" target="_blank">Nous contacter</a>
+</div>
+<div class="elq-footer-columns">
+<section class="elq-footer-column">
+<h3>Navigation</h3>
+<div class="elq-footer-links">
+<button onclick="switchTab('section-accueil')">Accueil</button>
+<button onclick="switchTab('section-rentree')">Rentrée scolaire</button>
+<button onclick="switchTab('section-suivi')">Suivre ma commande</button>
+<button onclick="switchTab('section-contact-location')">Localisation</button>
+</div>
+</section>
+<section class="elq-footer-column">
+<h3>Nos produits</h3>
+<div class="elq-footer-links">
+<button>Fourniture scolaire</button>
+<button>Fourniture bureautique</button>
+<button>Fourniture informatique</button>
+<button>Le Saint Qoran</button>
+<button>Livre arabe</button>
+<button>Livre français</button>
+<button>Livre anglais</button>
+<button>Jeux &amp; loisir</button>
+<button>Beaux arts</button>
+<button>Cadeaux</button>
+</div>
+</section>
+<section class="elq-footer-column">
+<h3>Nos services</h3>
+<div class="elq-footer-links">
+<button data-service-category="Procédures administratives" data-service-image="inscription_fond.png" data-service-name="Inscription faculté">Inscriptions faculté</button>
+<button data-service-category="Procédures administratives" data-service-image="passport_fond.png" data-service-name="Renouvellement/demande passeport">Procédure administrative</button>
+<button data-service-category="Services informatiques" data-service-image="ordinateur_fond.png" data-service-name="Réparer un ordinateur">Réparer un ordinateur</button>
+<button data-service-category="Services informatiques" data-service-image="licence_fond.png" data-service-name="Acheter une licence">Acheter une licence</button>
+<button data-service-category="Autres services" data-service-image="impression_fond.png" data-service-name="Impression">Impressions</button>
+</div>
+</section>
+</div>
+</div>
+<div class="elq-footer-social">
+<span>Follow us :</span>
+<a aria-label="Facebook" data-social="facebook" hidden="" href="#" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M13.5 21v-8h2.7l.4-3.1h-3.1V7.9c0-.9.25-1.5 1.55-1.5H16.7V3.6c-.28-.04-1.24-.12-2.36-.12-2.33 0-3.93 1.42-3.93 4.03v2.37H7.7V13h2.71v8h3.09Z"></path></svg></a>
+<a aria-label="X" data-social="x" hidden="" href="#" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="m4 4 7.2 9.6L4.4 20h1.9l6-6.4 4.6 6.4H20l-7.5-10L19 4h-1.9l-5.6 6-4.3-6H4Z"></path></svg></a>
+<a aria-label="Instagram" data-social="instagram" hidden="" href="#" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><rect height="17" rx="5" width="17" x="3.5" y="3.5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.1" cy="6.9" fill="currentColor" r="1.1" stroke="none"></circle></svg></a>
+<a aria-label="YouTube" data-social="youtube" hidden="" href="#" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><rect height="12" rx="3.5" width="19" x="2.5" y="6"></rect><path d="M10.5 9.5v5l4.5-2.5-4.5-2.5Z" fill="currentColor" stroke="none"></path></svg></a>
+<a aria-label="LinkedIn" data-social="linkedin" hidden="" href="#" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><rect height="17" rx="3" width="17" x="3.5" y="3.5"></rect><circle cx="7.7" cy="8.2" fill="currentColor" r="1.15" stroke="none"></circle><path d="M7.7 11v6.2M11.5 17.2V13c0-1.4.9-2.2 2.1-2.2s2 .8 2 2.2v4.2"></path></svg></a>
+</div>
+</div>
+<div class="elq-footer-copyright">© 2026 Librairie Al Qods Berkane - Tous droits réservés.</div>
+</footer>
+<div class="elq-footer-credit">Pensé et Développée par Omar KASSMI.</div>
 <script>
+(function(){
+    const mobileToggle=document.getElementById('mobile-menu-toggle'),mobileDrawer=document.getElementById('mobile-menu-drawer'),mobileOverlay=document.getElementById('mobile-menu-overlay'),mobileClose=document.getElementById('mobile-menu-close');
+    function setMobileMenu(open){document.body.classList.toggle('mobile-menu-open',open);mobileToggle?.setAttribute('aria-expanded',String(open));mobileDrawer?.setAttribute('aria-hidden',String(!open));mobileOverlay?.setAttribute('aria-hidden',String(!open))}
+    mobileToggle?.addEventListener('click',()=>setMobileMenu(mobileToggle.getAttribute('aria-expanded')!=='true'));
+    mobileClose?.addEventListener('click',()=>setMobileMenu(false));
+    mobileOverlay?.addEventListener('click',()=>setMobileMenu(false));
+    mobileDrawer?.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>setMobileMenu(false)));
+    document.querySelectorAll('#main-header [data-target],#mobile-menu-drawer [data-target],footer.elq-footer [data-target]').forEach(button=>button.addEventListener('click',event=>{event.preventDefault();location.href='index.html?tab='+encodeURIComponent(button.dataset.target||'section-accueil')}));
+    document.querySelectorAll('#main-header .site-logo-link').forEach(logo=>logo.addEventListener('click',event=>{event.preventDefault();location.href='index.html'}));
+    window.addEventListener('resize',()=>{if(window.innerWidth>=768)setMobileMenu(false)});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')setMobileMenu(false)});
+
+    const successHeader=document.getElementById('main-header');
+    function updateSuccessHeader(){
+        const scrolled=window.scrollY>12;
+        successHeader?.classList.toggle('header-is-scrolled',scrolled);
+        successHeader?.classList.toggle('header-is-top',!scrolled);
+        successHeader?.classList.toggle('bg-white',scrolled);
+        successHeader?.classList.toggle('bg-transparent',!scrolled);
+    }
+    window.addEventListener('scroll',updateSuccessHeader,{passive:true});
+    updateSuccessHeader();
+
+    const langBtn=document.getElementById('lang-btn'),langDropdown=document.getElementById('lang-dropdown'),langFr=document.getElementById('lang-opt-fr'),langAr=document.getElementById('lang-opt-ar');
+    langBtn?.addEventListener('click',()=>langDropdown.classList.toggle('hidden'));
+    document.addEventListener('click',e=>{if(!e.target.closest('#lang-btn,#lang-dropdown'))langDropdown?.classList.add('hidden')});
+
+    const DICT={
+        'Merci':'شكراً','Votre commande a été enregistrée !':'تم تسجيل طلبيتكم!',
+        'Conservez la référence ou télécharger la facture pour suivre son avancement':'احتفظوا بالمرجع أو حمّلوا الفاتورة لتتبع تقدم طلبيتكم',
+        'Conservez votre référence et votre QR code':'احتفظوا بـرقم الطلبية ورمز الاستجابة السريعة',
+        'Suivez l’avancement depuis «':'تتبعوا التقدم من «','Suivre ma commande':'تتبع الطلبية','» avec la référence et le téléphone.':'» باستعمال المرجع ورقم الهاتف.',
+        'Attendez le statut «':'انتظروا الحالة «','Prête au retrait':'جاهز للاستلام','» avant de vous déplacer.':'» قبل التنقل.',
+        'Présentez le':'قدّموا','lors de la récupération en magasin.':'عند الاستلام بالمحل.',
+        'Pour une liste personnalisée, le':'بالنسبة للائحة الخاصة،','montant final':'المبلغ النهائي','sera confirmé':'سيتم تأكيده','après vérification':'بعد التحقق','.':'.',
+        'Présentez ce QR code lors de la récupération de votre commande. Télécharger la facture pour le retrait !':'احفظوا رمز الاستجابة السريعة الخاص بطلبيتكم أو حمّلوا الفاتورة لاستلام الطلبية.',
+        'Détails de ma commande':'تفاصيل طلبيتي','Télécharger ma commande':'تحميل طلبيتي','Retour à l’accueil':'العودة إلى الرئيسية',
+        'Chargement de la commande…':'جارٍ تحميل الطلبية…','Commande confirmée':'تم تأكيد الطلبية',
+        'Accueil':'الرئيسية','Rentrée scolaire':'الدخول المدرسي','Nos produits':'منتجاتنا','Nos services':'خدماتنا','Localisation':'الموقع','Commander':'اطلبوا الآن'
+    };
+    const CHROME_AR={
+      'Accueil':'الرئيسية','Rentrée scolaire':'الدخول المدرسي','Nos produits':'منتجاتنا','Suivre ma commande':'تتبع طلبيتي','Nos services':'خدماتنا','Commander':'اطلب الآن',
+      'Fournitures diverses':'لوازم متنوعة','Fourniture scolaire':'لوازم مدرسية','Fourniture bureautique':'لوازم مكتبية','Fourniture informatique':'لوازم معلوماتية',
+      'Culture':'الثقافة','Le Saint Qoran':'القرآن الكريم','Livre arabe':'كتاب عربي','Livre français':'كتاب فرنسي','Livre anglais':'كتاب إنجليزي','Autre':'أخرى',
+      'Divers':'متنوعات','Jeux et Loisirs':'ألعاب وترفيه','Beaux Arts':'فنون جميلة','Cadeaux':'هدايا',
+      'Procédures administratives':'إجراءات إدارية','Inscription faculté':'التسجيل بالكلية','Renouvellement/demande passeport':'تجديد أو طلب جواز السفر',
+      'Services informatiques':'خدمات معلوماتية','Réparer un ordinateur':'إصلاح حاسوب','Acheter une licence':'شراء ترخيص','Autres services':'خدمات أخرى','Impression':'الطباعة',
+      'Navigation':'التنقل','Localisation':'الموقع','Nos contacter':'اتصلوا بنا','Inscriptions faculté':'التسجيل بالكلية','Procédure administrative':'إجراء إداري','Impressions':'الطباعة',
+      'Avenue Hassan II, Berkane, Maroc':'شارع الحسن الثاني، بركان، المغرب','Téléphone & WhatsApp :':'الهاتف وواتساب:','E-mail :':'البريد الإلكتروني:',
+      'Follow us :':'تابعونا:','© 2026 Librairie Al Qods Berkane - Tous droits réservés.':'© 2026 مكتبة القدس بركان - جميع الحقوق محفوظة.','Pensé et Développée par Omar KASSMI.':'تصميم وتطوير عمر القاسمي.',
+      'Navigation mobile':'التنقل عبر الهاتف','Localisation & horaires':'الموقع وأوقات العمل','Ouvrir le menu':'فتح القائمة','Fermer le menu':'إغلاق القائمة',
+      'Jeux & loisir':'ألعاب وترفيه','Beaux arts':'فنون جميلة'
+    };
+    const chromeTextNodes=[];
+    document.querySelectorAll('#main-header,#mobile-menu-drawer,footer.elq-footer,.elq-footer-credit').forEach(root=>{
+      const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+      let node;
+      while((node=walker.nextNode())){
+        const fr=node.nodeValue.trim();
+        if(fr && CHROME_AR[fr]) chromeTextNodes.push({node,fr});
+      }
+    });
+    function applyChromeLanguage(ar){
+      chromeTextNodes.forEach(({node,fr})=>{
+        const lead=(node.nodeValue.match(/^\s*/)||[''])[0],trail=(node.nodeValue.match(/\s*$/)||[''])[0];
+        node.nodeValue=lead+(ar?CHROME_AR[fr]:fr)+trail;
+      });
+      document.querySelector('.products-mega-menu')?.setAttribute('aria-label',ar?'منتجاتنا':'Nos produits');
+      document.querySelector('.services-mega-menu')?.setAttribute('aria-label',ar?'خدماتنا':'Nos services');
+      document.getElementById('mobile-menu-toggle')?.setAttribute('aria-label',ar?'فتح القائمة':'Ouvrir le menu');
+      document.getElementById('mobile-menu-close')?.setAttribute('aria-label',ar?'إغلاق القائمة':'Fermer le menu');
+    }
+    const SUCCESS_RULES_FR=[
+      'Conservez votre référence et votre QR code.',
+      'Suivez l’avancement depuis « Suivre ma commande » avec la référence et le téléphone.',
+      'Attendez le statut « Prête au retrait » avant de vous déplacer.',
+      'Présentez le QR code lors de la récupération en magasin.',
+      'Pour une liste personnalisée, le montant final sera confirmé après vérification et sera affiché dans "suivre ma commande".'
+    ];
+    const SUCCESS_RULES_AR=[
+      'احتفظوا بـرقم الطلبية ورمز الاستجابة السريعة',
+      'تتبّع حالة الطلب عبر خيار "تتبّع طلبي" باستخدام رقم الطلبية ورقم الهاتف',
+      'انتظر حتى تظهر حالة "جاهز للاستلام" قبل التوجه لستلام الطلبية',
+      'قم بإظهار رمز الاستجابة السريعة عند استلام طلبك من المتجر',
+      'بالنسبة للقائمة المخصصة، سيتم تأكيد المبلغ النهائي بعد التحقق وسيتم عرضه في "تتبع طلبي"'
+    ];
+    function applyLanguage(lang){
+        const ar=lang==='AR';
+        document.documentElement.lang=ar?'ar':'fr';
+        document.documentElement.dir=ar?'rtl':'ltr';
+        langBtn.textContent=lang;
+        document.querySelectorAll('.rules li').forEach((li,index)=>{ li.textContent=(ar?SUCCESS_RULES_AR:SUCCESS_RULES_FR)[index]||li.textContent; });
+        applyChromeLanguage(ar);
+        langFr.classList.toggle('bg-[#E75C25]',!ar);langFr.classList.toggle('text-white',!ar);langFr.classList.toggle('text-[#E75C25]',ar);
+        langAr.classList.toggle('bg-[#E75C25]',ar);langAr.classList.toggle('text-white',ar);langAr.classList.toggle('text-[#E75C25]',!ar);
+        document.querySelectorAll('.main .copy, .main .subcopy, .rules li, #details, #download, .btn.white, #loading, #reference').forEach(el=>{
+            Array.from(el.childNodes).forEach(node=>{
+                if(node.nodeType!==3)return;
+                const key=node.textContent.trim();
+                if(DICT[key])node.textContent=node.textContent.replace(key,ar?DICT[key]:key);
+            });
+        });
+        const titleFr=document.querySelector('.main .title'),firstNode=titleFr?.childNodes[0];
+        if(firstNode&&firstNode.nodeType===3)firstNode.textContent=(ar?'شكراً ':'Merci ');
+        document.querySelectorAll('.note').forEach(el=>{el.textContent=ar?DICT['Présentez ce QR code lors de la récupération de votre commande. Télécharger la facture pour le retrait !']:'Présentez ce QR code lors de la récupération de votre commande. Télécharger la facture pour le retrait !';});
+        localStorage.setItem('elqods_client_language',lang);
+    }
+    langFr?.addEventListener('click',()=>{applyLanguage('FR');langDropdown.classList.add('hidden')});
+    langAr?.addEventListener('click',()=>{applyLanguage('AR');langDropdown.classList.add('hidden')});
+    if(localStorage.getItem('elqods_client_language')==='AR')applyLanguage('AR');
+})();
+
 const SUPABASE_URL='https://jgfkshsizrtwzqsdrhhp.supabase.co';
 const SUPABASE_ANON_KEY='sb_publishable_Rdn2yMULDq05BGBV-X-zCA_S934mdEh';
 const db=window.supabase?.createClient ? supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY) : null;
@@ -137,6 +603,8 @@ const params=new URLSearchParams(location.search);
 const orderReference=(params.get('order')||'').trim();
 const qrCode=(params.get('qr')||'').trim();
 const paramName=(params.get('name')||'').trim();
+const requestedLanguage=(params.get('lang')||'').toUpperCase();
+if(requestedLanguage==='AR'||requestedLanguage==='FR')localStorage.setItem('elqods_client_language',requestedLanguage);
 let order=null,items=[],history=[],payload='';
 const nameBox=document.getElementById('name');
 const referenceBox=document.getElementById('reference');
@@ -183,7 +651,7 @@ loadingBox.textContent='Chargement de la commande…';
 function closeDrawer(){document.getElementById('drawer')?.classList.remove('qd-open');document.documentElement.classList.remove('qd-lock');document.body.classList.remove('qd-lock');}
 window.closeDrawer=closeDrawer;
 function qdSuccessSupplyDetail(item){const parts=[];if(item?.supply_range)parts.push(String(item.supply_range).toLowerCase()==='quality'?'Qualité':'Standard');(Array.isArray(item?.supply_configuration)?item.supply_configuration:[]).forEach(choice=>{const value=choice?.value_label||choice?.value||choice?.label;if(value)parts.push(String(value))});return [...new Set(parts.filter(Boolean))].join(', ')}
-function showDetails(){if(!order){errorBox.style.display='block';errorBox.textContent='Les détails de la commande ne sont pas encore disponibles.';return;}let drawer=document.getElementById('drawer');if(!drawer){drawer=document.createElement('div');drawer.id='drawer';drawer.className='qd-overlay';drawer.innerHTML='<aside class="qd-panel" role="dialog" aria-modal="true"></aside>';document.body.appendChild(drawer);drawer.addEventListener('click',event=>{if(event.target===drawer)closeDrawer()});}const school=items.filter(item=>item.type!=='photo_upload'&&item.item_source!=='independent_supply'&&!item.supply_range),supplies=items.filter(item=>item.type!=='photo_upload'&&(item.item_source==='independent_supply'||Boolean(item.supply_range)));const rows=(list,type)=>list.length?list.map((item,index)=>{const rtl=/[\u0600-\u06FF]/.test(String(item.name||''));return `<div class="qd-row"><div class="qd-copy${rtl?' is-rtl':''}"><b dir="${rtl?'rtl':'ltr'}">${index+1}. ${qdSuccessEscape(item.name||'Article')}</b><small>${qdSuccessEscape(type==='supply'?(qdSuccessSupplyDetail(item)||'Standard'):(item.category||'Liste scolaire'))}</small></div><strong class="qd-price">${(Number(item.price)||0).toFixed(2)} DH</strong></div>`}).join(''):'<div class="qd-empty">Aucun article dans cette rubrique.</div>';const photoItem=items.find(item=>item.type==='photo_upload'||item.url||item.photo_url),photoUrl=order.google_drive_url||photoItem?.url||photoItem?.photo_url||'',photo=photoUrl?`<a class="qd-photo" href="${qdSuccessEscape(photoUrl)}" target="_blank" rel="noopener"><span>Ouvrir l’image de la liste</span><span>↗</span></a>`:'';drawer.querySelector('.qd-panel').innerHTML=`<header class="qd-head"><div><h2>#${qdSuccessEscape(order.numero_commande||orderReference||'-')}</h2><p>Détails de la commande</p></div><button type="button" class="qd-close" aria-label="Fermer">×</button></header><nav class="qd-tabs"><button type="button" class="qd-tab qd-active" data-qd-tab="school"><span class="qd-tab-num">01</span> Liste scolaire <span class="qd-badge">${school.length}</span></button><button type="button" class="qd-tab" data-qd-tab="supply"><span class="qd-tab-num">02</span> Fourniture <span class="qd-badge">${supplies.length}</span></button></nav><main class="qd-body"><section class="qd-pane qd-active" data-qd-pane="school"><div class="qd-pane-head"><h3>Liste scolaire</h3><span>${school.length} article(s)</span></div>${photo}<div class="qd-list">${rows(school,'school')}</div></section><section class="qd-pane" data-qd-pane="supply"><div class="qd-pane-head"><h3>Fourniture</h3><span>${supplies.length} article(s)</span></div><div class="qd-list">${rows(supplies,'supply')}</div></section></main>`;drawer.querySelector('.qd-close').addEventListener('click',closeDrawer);drawer.querySelectorAll('[data-qd-tab]').forEach(button=>button.addEventListener('click',()=>{const tab=button.dataset.qdTab;drawer.querySelectorAll('[data-qd-tab]').forEach(node=>node.classList.toggle('qd-active',node===button));drawer.querySelectorAll('[data-qd-pane]').forEach(pane=>pane.classList.toggle('qd-active',pane.dataset.qdPane===tab));}));drawer.classList.add('qd-open');document.documentElement.classList.add('qd-lock');document.body.classList.add('qd-lock');}
+function showDetails(){if(!order){errorBox.style.display='block';errorBox.textContent='Les détails de la commande ne sont pas encore disponibles.';return;}const ar=document.documentElement.lang==='ar';const t=(fr,arText)=>ar?arText:fr;let drawer=document.getElementById('drawer');if(!drawer){drawer=document.createElement('div');drawer.id='drawer';drawer.className='qd-overlay';drawer.innerHTML='<aside class="qd-panel" role="dialog" aria-modal="true"></aside>';document.body.appendChild(drawer);drawer.addEventListener('click',event=>{if(event.target===drawer)closeDrawer()});}drawer.querySelector('.qd-panel').setAttribute('dir',ar?'rtl':'ltr');const school=items.filter(item=>item.type!=='photo_upload'&&item.item_source!=='independent_supply'&&!item.supply_range),supplies=items.filter(item=>item.type!=='photo_upload'&&(item.item_source==='independent_supply'||Boolean(item.supply_range)));const currency=t('DH','درهم');const rows=(list,type)=>list.length?list.map((item,index)=>{const rtl=ar||/[\u0600-\u06FF]/.test(String(item.name||''));return `<div class="qd-row"><div class="qd-copy${rtl?' is-rtl':''}"><b dir="${rtl?'rtl':'ltr'}">${index+1}. ${qdSuccessEscape(item.name||t('Article','منتج'))}</b><small>${qdSuccessEscape(type==='supply'?(qdSuccessSupplyDetail(item)||t('Standard','عادي')):(item.category||t('Liste scolaire','الائحة المدرسية')))}</small></div><strong class="qd-price">${(Number(item.price)||0).toFixed(2)} ${currency}</strong></div>`}).join(''):`<div class="qd-empty">${t('Aucun article dans cette rubrique.','لا يوجد منتج في هذا القسم')}</div>`;const photoItem=items.find(item=>item.type==='photo_upload'||item.url||item.photo_url),photoUrl=order.google_drive_url||photoItem?.url||photoItem?.photo_url||'',photo=photoUrl?`<a class="qd-photo" href="${qdSuccessEscape(photoUrl)}" target="_blank" rel="noopener"><span>${t('Ouvrir l’image de la liste','فتح صورة اللائحة الخاصة')}</span><span>↗</span></a>`:'';drawer.querySelector('.qd-panel').innerHTML=`<header class="qd-head"><div><h2>#${qdSuccessEscape(order.numero_commande||orderReference||'-')}</h2><p>${t('Détails de la commande','تفاصيل طلبيتي')}</p></div><button type="button" class="qd-close" aria-label="Fermer">×</button></header><nav class="qd-tabs"><button type="button" class="qd-tab qd-active" data-qd-tab="school"><span class="qd-tab-num">01</span> ${t('Liste scolaire','الائحة المدرسية')} <span class="qd-badge">${school.length}</span></button><button type="button" class="qd-tab" data-qd-tab="supply"><span class="qd-tab-num">02</span> ${t('Fourniture','مستلزمات')} <span class="qd-badge">${supplies.length}</span></button></nav><main class="qd-body"><section class="qd-pane qd-active" data-qd-pane="school"><div class="qd-pane-head"><h3>${t('Liste scolaire','الائحة المدرسية')}</h3><span>${school.length} article(s)</span></div>${photo}<div class="qd-list">${rows(school,'school')}</div></section><section class="qd-pane" data-qd-pane="supply"><div class="qd-pane-head"><h3>${t('Fourniture','مستلزمات')}</h3><span>${supplies.length} article(s)</span></div><div class="qd-list">${rows(supplies,'supply')}</div></section></main>`;drawer.querySelector('.qd-close').addEventListener('click',closeDrawer);drawer.querySelectorAll('[data-qd-tab]').forEach(button=>button.addEventListener('click',()=>{const tab=button.dataset.qdTab;drawer.querySelectorAll('[data-qd-tab]').forEach(node=>node.classList.toggle('qd-active',node===button));drawer.querySelectorAll('[data-qd-pane]').forEach(pane=>pane.classList.toggle('qd-active',pane.dataset.qdPane===tab));}));drawer.classList.add('qd-open');document.documentElement.classList.add('qd-lock');document.body.classList.add('qd-lock');}
 async function makeData(url){const response=await fetch(url);const blob=await response.blob();return await new Promise(resolve=>{const reader=new FileReader();reader.onloadend=()=>resolve(reader.result);reader.readAsDataURL(blob)})}
 async function makeQrData(){
   if(window.QRCode&&typeof QRCode.toCanvas==='function'){const canvas=document.createElement('canvas');await QRCode.toCanvas(canvas,currentQrPayload(),{width:260,margin:2});return canvas.toDataURL('image/png')}
@@ -276,23 +744,55 @@ async function pdf(){
 }
 
 (async()=>{
-  if(!db||(!orderReference&&!qrCode))return;
+  // Le QR et les actions de base ne doivent jamais dépendre de Supabase.
+  payload=buildTrackingPayload(qrCode||orderReference);
+  if(paramName)nameBox.textContent=paramName.trim().split(/\s+/)[0]||'';
+  if(orderReference)referenceBox.textContent=orderReference;
+  if(payload){
+    try{await renderQr(payload)}catch(error){console.error('QR local indisponible',error)}
+  }
+  downloadButton.disabled=!payload;
+  downloadButton.onclick=pdf;
+  detailsButton.disabled=false;
+  detailsButton.onclick=()=>{
+    if(order)return showDetails();
+    const ar=localStorage.getItem('elqods_client_language')==='AR';
+    alert(ar?'تفاصيل الطلب قيد الاسترجاع. المرجع: '+(orderReference||qrCode):'Les détails sont en cours de récupération. Référence : '+(orderReference||qrCode));
+  };
+  if(!db||(!orderReference&&!qrCode)){
+    loadingBox.textContent='';
+    return;
+  }
   try{
-    let query=db.from('orders').select('*');
-    query=orderReference?query.eq('numero_commande',orderReference):query.eq('qr_code',qrCode);
-    const result=await query.maybeSingle();
-    if(result.error||!result.data){loadingBox.textContent='';errorBox.style.display='block';errorBox.textContent='Impossible de charger les détails de la commande.';return;}
+    let result=null;
+    if(orderReference){
+      result=await db.from('orders').select('*').eq('numero_commande',orderReference).maybeSingle();
+    }
+    if((!result||result.error||!result.data)&&qrCode){
+      result=await db.from('orders').select('*').eq('qr_code',qrCode).maybeSingle();
+    }
+    if(!result||result.error||!result.data){
+      loadingBox.textContent='';
+      errorBox.style.display='block';
+      errorBox.textContent=localStorage.getItem('elqods_client_language')==='AR'?'تعذر استرجاع تفاصيل الطلب، لكن رمز QR والتحميل متاحان.':'Impossible de charger les détails, mais le QR code et le téléchargement restent disponibles.';
+      return;
+    }
     order=result.data;items=parseItems(order.items);
     const historyResult=await db.from('order_history').select('*').eq('order_id',order.id).order('created_at',{ascending:true});history=historyResult.data||[];
     referenceBox.textContent=order.numero_commande||orderReference;
     nameBox.textContent=(order.client_name||paramName).trim().split(/\s+/)[0]||'';
-    payload=order.qr_payload||buildTrackingPayload(order.qr_code||qrCode);
+    payload=order.qr_payload||buildTrackingPayload(order.qr_code||qrCode||orderReference);
     await renderQr(payload);
     detailsButton.disabled=false;
     detailsButton.onclick=showDetails;
     downloadButton.disabled=false;
     downloadButton.onclick=pdf;
     loadingBox.textContent='';
-  }catch(error){console.warn('Détails Supabase indisponibles, référence et QR conservés depuis l’URL.',error)}
+  }catch(error){
+    console.warn('Détails Supabase indisponibles, QR conservé depuis URL.',error);
+    loadingBox.textContent='';
+    errorBox.style.display='block';
+    errorBox.textContent=localStorage.getItem('elqods_client_language')==='AR'?'تعذر استرجاع تفاصيل الطلب، لكن رمز QR والتحميل متاحان.':'Impossible de charger les détails, mais le QR code et le téléchargement restent disponibles.';
+  }
 })();
 </script></body></html>

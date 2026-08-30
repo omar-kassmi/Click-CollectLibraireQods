@@ -1,4 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Un changement de langue recharge une page DOM neuve, sans rejouer la splash page.
+    const languageReloadWithoutSplash = sessionStorage.getItem('elqods_language_reload') === '1';
+    if (languageReloadWithoutSplash) {
+        sessionStorage.removeItem('elqods_language_reload');
+        const splashOnLanguageReload = document.getElementById('splash-screen');
+        if (splashOnLanguageReload) {
+            splashOnLanguageReload.classList.add('hidden', 'opacity-0');
+            splashOnLanguageReload.setAttribute('aria-hidden', 'true');
+            splashOnLanguageReload.style.display = 'none';
+        }
+        window.scrollTo(0, 0);
+    }
 
     // ==========================================
     // 0. CONFIGURATION & MONTEUR SUPABASE
@@ -76,20 +88,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     const navButtons = document.querySelectorAll('.nav-tab-btn');
     const sections = document.querySelectorAll('.content-section');
+    let rentreePageEnabled = true;
 
     window.switchTab = function(targetId) {
+        if (targetId === 'section-rentree' && !rentreePageEnabled) targetId = 'section-accueil';
         sections.forEach(s => s.classList.add('hidden'));
         const targetSection = document.getElementById(targetId);
         if(targetSection) targetSection.classList.remove('hidden');
 
         navButtons.forEach(btn => {
-            if(btn.getAttribute('data-target') === targetId) {
-                btn.className = "nav-tab-btn font-bold text-[#E75C25] px-2";
-            } else {
-                btn.className = "nav-tab-btn font-medium hover:opacity-80 text-[#E75C25] px-2";
-            }
+            const isActive = btn.getAttribute('data-target') === targetId;
+            const isRentreeButton = btn.getAttribute('data-target') === 'section-rentree';
+            btn.classList.toggle('font-bold', isActive);
+            btn.classList.toggle('font-medium', !isActive);
+            btn.classList.toggle('hover:opacity-80', !isActive);
+            btn.classList.add('text-[#E75C25]', 'px-2');
+            btn.classList.toggle('hidden', isRentreeButton && !rentreePageEnabled);
         });
         document.body.classList.toggle('school-order-active', targetId === 'section-rentree');
+        document.body.classList.toggle('service-page-active', targetId === 'section-service-placeholder');
+        if (typeof syncMainHeaderAppearance === 'function') syncMainHeaderAppearance();
         requestAnimationFrame(syncSchoolProgressWithHeader);
         requestAnimationFrame(()=>setTimeout(syncHomeWhatsappFloat,0));
         if(targetId==='section-rentree'){
@@ -123,9 +141,62 @@ document.addEventListener('DOMContentLoaded', () => {
     mobileMenuToggle?.addEventListener('click',()=>setMobileMenu(mobileMenuToggle.getAttribute('aria-expanded')!=='true'));
     mobileMenuClose?.addEventListener('click',()=>setMobileMenu(false));
     mobileMenuOverlay?.addEventListener('click',()=>setMobileMenu(false));
-    mobileMenuDrawer?.querySelectorAll('button').forEach(button=>button.addEventListener('click',()=>setMobileMenu(false)));
+    const mobileServicesToggle=document.getElementById('mobile-services-toggle');
+    const mobileServicesList=document.getElementById('mobile-services-list');
+    mobileServicesToggle?.addEventListener('click',event=>{
+        event.stopPropagation();
+        const opening=mobileServicesList?.hidden!==false;
+        if(mobileServicesList) mobileServicesList.hidden=!opening;
+        mobileServicesToggle.setAttribute('aria-expanded',opening?'true':'false');
+    });
+    mobileMenuDrawer?.querySelectorAll('button:not(#mobile-services-toggle)').forEach(button=>button.addEventListener('click',()=>setMobileMenu(false)));
     window.addEventListener('resize',()=>{if(window.innerWidth>=768)setMobileMenu(false)});
     document.addEventListener('keydown',event=>{if(event.key==='Escape')setMobileMenu(false)});
+
+    const desktopProductsMenu=document.querySelector('.products-nav-menu'),desktopProductsTrigger=desktopProductsMenu?.querySelector('.products-nav-trigger');const setDesktopProductsMenu=open=>{document.getElementById('main-header')?.classList.toggle('products-menu-open',open);desktopProductsTrigger?.setAttribute('aria-expanded',String(open))};desktopProductsMenu?.addEventListener('mouseenter',()=>setDesktopProductsMenu(true));desktopProductsMenu?.addEventListener('mouseleave',()=>setDesktopProductsMenu(false));desktopProductsTrigger?.addEventListener('click',()=>setDesktopProductsMenu(!document.getElementById('main-header')?.classList.contains('products-menu-open')));desktopProductsMenu?.querySelectorAll('[data-target]').forEach(button=>button.addEventListener('click',()=>{switchTab(button.dataset.target);setDesktopProductsMenu(false)}));const mobileProductsToggle=document.getElementById('mobile-products-toggle'),mobileProductsMenu=document.getElementById('mobile-products-menu');mobileProductsToggle?.addEventListener('click',()=>{const open=mobileProductsMenu.hidden;mobileProductsMenu.hidden=!open;mobileProductsToggle.setAttribute('aria-expanded',String(open))});mobileProductsMenu?.querySelectorAll('[data-target]').forEach(button=>button.addEventListener('click',()=>{switchTab(button.dataset.target);mobileProductsMenu.hidden=true;setMobileMenu(false)}));
+    const desktopServicesMenu=document.querySelector('.services-nav-menu');
+    const desktopServicesTrigger=desktopServicesMenu?.querySelector('.services-nav-trigger');
+    function setDesktopServicesOpen(open){
+        const header=document.getElementById('main-header');
+        header?.classList.toggle('services-menu-open',Boolean(open));
+        desktopServicesTrigger?.setAttribute('aria-expanded',open?'true':'false');
+    }
+    desktopServicesMenu?.addEventListener('pointerenter',()=>setDesktopServicesOpen(true));
+    desktopServicesMenu?.addEventListener('pointerleave',()=>setDesktopServicesOpen(false));
+    desktopServicesMenu?.addEventListener('focusin',()=>setDesktopServicesOpen(true));
+    desktopServicesMenu?.addEventListener('focusout',event=>{
+        if(!desktopServicesMenu.contains(event.relatedTarget))setDesktopServicesOpen(false);
+    });
+
+    function applyServiceSelection(category, name, image, navigate = true) {
+        const section = document.getElementById('section-service-placeholder');
+        const categoryEl = document.getElementById('service-placeholder-category');
+        const nameEl = document.getElementById('service-placeholder-name');
+        const hero = document.querySelector('.service-placeholder-hero');
+        const translatedCategory = safeLanguage === 'AR' ? (SAFE_AR[category] || category) : category;
+        const translatedName = safeLanguage === 'AR' ? (SAFE_AR[name] || name) : name;
+        if (categoryEl) categoryEl.textContent = translatedCategory;
+        if (nameEl) nameEl.textContent = translatedName;
+        if (hero && image) hero.style.backgroundImage = `url('images/${image}')`;
+        if (section) {
+            section.dataset.selectedServiceCategory = category || '';
+            section.dataset.selectedServiceName = name || '';
+            section.dataset.selectedServiceImage = image || '';
+        }
+        setDesktopServicesOpen(false);
+        if (navigate) {
+            switchTab('section-service-placeholder');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+    document.querySelectorAll('[data-service-category]').forEach(button => {
+        button.addEventListener('click', () => applyServiceSelection(
+            button.dataset.serviceCategory,
+            button.dataset.serviceName,
+            button.dataset.serviceImage,
+            true
+        ));
+    });
 
     const homeWhatsappFloat=document.getElementById('home-whatsapp-float');
     function syncHomeWhatsappFloat(){
@@ -145,6 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!header) return;
         const bottom = Math.max(0, Math.round(header.getBoundingClientRect().bottom));
         document.documentElement.style.setProperty('--main-header-bottom', `${bottom}px`);
+        document.documentElement.style.setProperty('--services-menu-top', `${bottom}px`);
     }
     syncSchoolProgressWithHeader();
     window.addEventListener('resize', syncSchoolProgressWithHeader);
@@ -157,7 +229,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function applySiteSettings(settings) {
         const settingsMap = Object.fromEntries(settings.map(s => [s.key, s.value]));
         const rentreeEnabled = settingsMap.rentree_enabled !== 'false';
-        const rentreeTitle = settingsMap.rentree_title || 'Rentrée scolaire';
+        rentreePageEnabled = rentreeEnabled;
+        document.body.dataset.rentreeEnabled = rentreeEnabled ? 'true' : 'false';
+        const rentreeTitleFr = String(settingsMap.rentree_title || 'Rentrée scolaire').trim();
+        const rentreeTitleAr = String(settingsMap.rentree_title_ar || 'الدخول المدرسي').trim();
+        const rentreeTitle = safeLanguage === 'AR' ? rentreeTitleAr : rentreeTitleFr;
         const deliveryEnabled = ['true','1','yes','on','enabled'].includes(String(settingsMap.delivery_enabled ?? 'false').trim().toLowerCase());
         const deliveryChoice = document.getElementById('delivery-choice');
         const deliveryInput = deliveryChoice?.querySelector('input[name="fulfillment-method"][value="delivery"]');
@@ -172,11 +248,19 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('[data-target="section-rentree"]').forEach(btn => {
             btn.classList.toggle('hidden', !rentreeEnabled);
             btn.textContent = rentreeTitle;
+            btn.lang = safeLanguage === 'AR' ? 'ar' : 'fr';
+            btn.dir = safeLanguage === 'AR' ? 'rtl' : 'ltr';
         });
 
         document.querySelectorAll('[onclick*="section-rentree"]').forEach(btn => {
             btn.classList.toggle('hidden', !rentreeEnabled);
         });
+
+        const homeSchoolListBanner = document.getElementById('home-school-list-banner');
+        if (homeSchoolListBanner) {
+            homeSchoolListBanner.classList.toggle('hidden', !rentreeEnabled);
+            homeSchoolListBanner.setAttribute('aria-hidden', rentreeEnabled ? 'false' : 'true');
+        }
     }
 
     async function initClientData() {
@@ -185,7 +269,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (settings) {
                 applySiteSettings(settings);
                 settings.forEach(s => {
-                    if (s.key === 'contact_address') document.querySelectorAll('#info-address, [data-contact-address]').forEach(el => el.innerText = s.value);
+                    if (s.key === 'contact_address') window.elqodsContactAddressFr = s.value;
+                    if (s.key === 'contact_address_ar') window.elqodsContactAddressAr = s.value;
                     if (s.key === 'contact_phone') document.querySelectorAll('#info-phone, [data-contact-phone]').forEach(el => el.innerText = s.value);
                     if (s.key === 'contact_email') document.querySelectorAll('#info-email, [data-contact-email]').forEach(el => el.innerText = s.value);
                     if (s.key === 'contact_whatsapp') document.querySelectorAll('#link-whatsapp, [data-contact-whatsapp]').forEach(el => el.href = `https://wa.me/${s.value}`);
@@ -193,8 +278,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (s.key === 'opening_week_afternoon') document.querySelectorAll('#opening-week-afternoon').forEach(el => el.textContent = s.value || '15h00 - 20h00');
                     if (s.key === 'opening_saturday') document.querySelectorAll('#opening-saturday').forEach(el => el.textContent = s.value || '09h30 - 20h00');
                     if (s.key === 'opening_sunday') document.querySelectorAll('#opening-sunday').forEach(el => el.textContent = s.value || '11h00 - 14h00');
+                    if (s.key === 'contact_facebook') document.querySelectorAll('[data-social="facebook"]').forEach(el => { if (s.value) { el.href = s.value; el.hidden = false; } else { el.hidden = true; } });
+                    if (s.key === 'contact_x') document.querySelectorAll('[data-social="x"]').forEach(el => { if (s.value) { el.href = s.value; el.hidden = false; } else { el.hidden = true; } });
+                    if (s.key === 'contact_instagram') document.querySelectorAll('[data-social="instagram"]').forEach(el => { if (s.value) { el.href = s.value; el.hidden = false; } else { el.hidden = true; } });
+                    if (s.key === 'contact_youtube') document.querySelectorAll('[data-social="youtube"]').forEach(el => { if (s.value) { el.href = s.value; el.hidden = false; } else { el.hidden = true; } });
+                    if (s.key === 'contact_linkedin') document.querySelectorAll('[data-social="linkedin"]').forEach(el => { if (s.value) { el.href = s.value; el.hidden = false; } else { el.hidden = true; } });
                 });
                 const contactSettings = Object.fromEntries(settings.map(item => [item.key, item.value]));
+                window.elqodsContactAddressFr = contactSettings.contact_address || window.elqodsContactAddressFr || '';
+                window.elqodsContactAddressAr = contactSettings.contact_address_ar || window.elqodsContactAddressAr || '';
+                if(typeof applyLocalizedContactAddress==='function') applyLocalizedContactAddress();
                 const contactAddress = contactSettings.contact_address || 'Librairie El Qods, Berkane, Maroc';
                 const contactPhone = String(contactSettings.contact_phone || '').trim();
                 const contactEmail = String(contactSettings.contact_email || '').trim();
@@ -211,6 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const { data: lists } = await supabaseClient.from('school_lists').select('*');
             if (lists) {
                 allSchoolData = lists.filter(list => list.is_active !== false && list.school_is_active !== false);
+                await enrichSchoolListsWithArabicNames();
                 populateSchoolsDropdown();
             }
         } catch (err) {}
@@ -241,12 +335,12 @@ document.addEventListener('DOMContentLoaded', () => {
         menu.querySelectorAll('input').forEach(input=>input.onchange=event=>{event.stopPropagation();input.checked?selectedSupplyCategoryIds.add(String(input.value)):selectedSupplyCategoryIds.delete(String(input.value));updateSupplyCategoryTrigger();renderIndependentSupplyItems();menu.hidden=false;trigger.setAttribute('aria-expanded','true')});
         updateSupplyCategoryTrigger();menu.hidden=!wasOpen;
     }
-    function updateSupplyCategoryTrigger(){const label=document.querySelector('#supply-category-trigger span');if(!label)return;const count=selectedSupplyCategoryIds.size;label.textContent=count?`${count} catégorie${count>1?'s':''} sélectionnée${count>1?'s':''}`:'Toutes les catégories';}
-    function getSupplyUnitPrice(item,range=selectedSupplyRange){return Number.parseFloat(range==='quality'&&item.has_quality!==false?item.quality_price:item.standard_price)||0;}
+    function updateSupplyCategoryTrigger(){const label=document.querySelector('#supply-category-trigger span');if(!label)return;const count=selectedSupplyCategoryIds.size;label.textContent=count?(safeLanguage==='AR'?`${count} فئة مختارة`:`${count} catégorie${count>1?'s':''} sélectionnée${count>1?'s':''}`):(safeLanguage==='AR'?'جميع الفئات':'Toutes les catégories');}
+    function getSupplyUnitPrice(item,range=selectedSupplyRange){const r=range==='standard'?'entry':range==='quality'?'middle':range;return Number.parseFloat(r==='high'?(item.high_price??item.quality_price):r==='middle'?item.quality_price:item.standard_price)||0;}
     function renderIndependentSupplyItems(){const container=document.getElementById('independent-supply-items');if(!container)return;const items=allSupplyItems.filter(item=>!selectedSupplyCategoryIds.size||selectedSupplyCategoryIds.has(String(item.category_id)));container.innerHTML=items.length?items.map(item=>`<div class="step3-catalog-item"><span>${escapeHtmlAttribute(item.name||'Fourniture')}</span><button type="button" class="step3-add-supply" data-id="${item.id}" aria-label="Ajouter ${escapeHtmlAttribute(item.name)}">+</button></div>`).join(''):'<p class="flow-muted">Aucune fourniture dans cette catégorie.</p>';container.querySelectorAll('.step3-add-supply').forEach(button=>button.onclick=()=>openSupplyConfiguration(button.dataset.id,'official'));}
-    function configurationPrice(config){const item=allSupplyItems.find(x=>String(x.id)===String(config.itemId));if(!item)return 0;let total=getSupplyUnitPrice(item,config.range);(config.attributes||[]).forEach(choice=>{const attribute=item.attributes.find(a=>String(a.id)===String(choice.attributeId)),value=attribute?.supply_attribute_values.find(v=>String(v.id)===String(choice.valueId));if(attribute?.has_supplement&&value)total+=Number(config.range==='quality'?value.quality_supplement:value.standard_supplement)||0});return total;}
-    function openSupplyConfiguration(itemId,context='official'){activeSupplyContext=context;const item=allSupplyItems.find(x=>String(x.id)===String(itemId));if(!item)return;activeSupplyConfiguration={itemId:String(item.id),range:item.has_quality===false?'standard':'standard',attributes:item.attributes.map(a=>({attributeId:String(a.id),valueId:String(a.supply_attribute_values[0]?.id||'')}))};document.getElementById('supply-config-title').textContent=item.name||'Fourniture';document.getElementById('supply-config-category').textContent=supplyCategoryMap.get(String(item.category_id))?.name||item.category||'Fournitures';const range=document.getElementById('supply-config-range');range.innerHTML=item.has_quality===false?'':`<h4>Choisissez la gamme</h4><div class="supply-config-options"><label><input type="radio" name="modal-supply-range" value="standard" checked><span>Standard <b>${getSupplyUnitPrice(item,'standard').toFixed(2)} DH</b></span></label><label><input type="radio" name="modal-supply-range" value="quality"><span>Qualité <b>${getSupplyUnitPrice(item,'quality').toFixed(2)} DH</b></span></label></div>`;document.getElementById('supply-config-attributes').innerHTML=item.attributes.map(attribute=>`<div class="supply-config-block"><h4>${escapeHtmlAttribute(attribute.name)}</h4><div class="supply-config-options">${attribute.supply_attribute_values.map((value,index)=>{const standardSupplement=attribute.has_supplement?(Number(value.standard_supplement)||0):0,qualitySupplement=attribute.has_supplement?(Number(value.quality_supplement)||0):0;return `<label><input type="radio" name="supply-attribute-${attribute.id}" value="${value.id}" ${index===0?'checked':''}><span class="supply-config-value-copy">${escapeHtmlAttribute(value.label)}</span>${attribute.has_supplement?`<b class="supply-config-supplement-chip" data-standard-supplement="${standardSupplement}" data-quality-supplement="${qualitySupplement}"></b>`:''}</label>`}).join('')||'<p class="flow-muted">Aucune valeur disponible.</p>'}</div></div>`).join('');const modal=document.getElementById('supply-config-modal');modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');syncSupplyConfigurationPrice();modal.querySelectorAll('input').forEach(input=>input.onchange=syncSupplyConfigurationPrice);}
-    function syncSupplyConfigurationPrice(){if(!activeSupplyConfiguration)return;const item=allSupplyItems.find(x=>String(x.id)===String(activeSupplyConfiguration.itemId));if(!item)return;activeSupplyConfiguration.range=document.querySelector('input[name="modal-supply-range"]:checked')?.value||'standard';activeSupplyConfiguration.attributes=item.attributes.map(attribute=>({attributeId:String(attribute.id),valueId:document.querySelector(`input[name="supply-attribute-${attribute.id}"]:checked`)?.value||''}));document.getElementById('supply-config-price').textContent=`${configurationPrice(activeSupplyConfiguration).toFixed(2)} DH`;document.querySelectorAll('.supply-config-supplement-chip').forEach(chip=>{const supplement=Number(activeSupplyConfiguration.range==='quality'?chip.dataset.qualitySupplement:chip.dataset.standardSupplement)||0;chip.textContent=supplement>0?`+ ${supplement.toFixed(supplement%1?2:0)} DH`:'';chip.hidden=supplement<=0;});}
+    function configurationPrice(config){const item=allSupplyItems.find(x=>String(x.id)===String(config.itemId));if(!item)return 0;let total=getSupplyUnitPrice(item,config.range);(config.attributes||[]).forEach(choice=>{const attribute=item.attributes.find(a=>String(a.id)===String(choice.attributeId)),value=attribute?.supply_attribute_values.find(v=>String(v.id)===String(choice.valueId));if(attribute?.has_supplement&&value){const normalized=config.range==='standard'?'entry':config.range==='quality'?'middle':config.range;total+=Number(normalized==='high'?(value.high_supplement??value.quality_supplement):normalized==='middle'?value.quality_supplement:value.standard_supplement)||0}});return total;}
+    function openSupplyConfiguration(itemId,context='official'){activeSupplyContext=context;const item=allSupplyItems.find(x=>String(x.id)===String(itemId));if(!item)return;activeSupplyConfiguration={itemId:String(item.id),range:'entry',attributes:item.attributes.map(a=>({attributeId:String(a.id),valueId:String(a.supply_attribute_values[0]?.id||'')}))};document.getElementById('supply-config-title').textContent=item.name||'Fourniture';document.getElementById('supply-config-category').textContent=supplyCategoryMap.get(String(item.category_id))?.name||item.category||'Fournitures';const range=document.getElementById('supply-config-range');const currencyLabel=safeLanguage==='AR'?'درهم':'DH';const entryPrice=getSupplyUnitPrice(item,'entry'),middlePrice=getSupplyUnitPrice(item,'middle'),highPrice=getSupplyUnitPrice(item,'high');const middleDiff=middlePrice-entryPrice,highDiff=highPrice-entryPrice;const fmtDiff=d=>{const rounded=Math.round(d*100)/100,number=Number.isInteger(rounded)?String(rounded):rounded.toFixed(2).replace(/0+$/,'').replace(/\.$/,'');return `${rounded>0?'+':''}${number} ${currencyLabel}`};const diffChip=d=>Math.abs(d)<0.005?'':`<b class="supply-range-difference-chip">${fmtDiff(d)}</b>`;range.innerHTML=`<h4>Choisissez la gamme</h4><div class="supply-config-options supply-config-options-three"><label><input type="radio" name="modal-supply-range" value="entry" checked><span>Entrée de gamme</span></label><label><input type="radio" name="modal-supply-range" value="middle"><span>Moyenne gamme ${diffChip(middleDiff)}</span></label><label><input type="radio" name="modal-supply-range" value="high"><span>Haute de gamme ${diffChip(highDiff)}</span></label></div>`;document.getElementById('supply-config-attributes').innerHTML=item.attributes.map(attribute=>`<div class="supply-config-block"><h4>${escapeHtmlAttribute(attribute.name)}</h4><div class="supply-config-options">${attribute.supply_attribute_values.map((value,index)=>{const standardSupplement=attribute.has_supplement?(Number(value.standard_supplement)||0):0,qualitySupplement=attribute.has_supplement?(Number(value.quality_supplement)||0):0,highSupplement=attribute.has_supplement?(Number(value.high_supplement??value.quality_supplement)||0):0;return `<label><input type="radio" name="supply-attribute-${attribute.id}" value="${value.id}" ${index===0?'checked':''}><span class="supply-config-value-copy">${escapeHtmlAttribute(value.label)}</span>${attribute.has_supplement?`<b class="supply-config-supplement-chip" data-standard-supplement="${standardSupplement}" data-quality-supplement="${qualitySupplement}" data-high-supplement="${highSupplement}" data-high-supplement="${highSupplement}"></b>`:''}</label>`}).join('')||'<p class="flow-muted">Aucune valeur disponible.</p>'}</div></div>`).join('');const modal=document.getElementById('supply-config-modal');modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');syncSupplyConfigurationPrice();modal.querySelectorAll('input').forEach(input=>input.onchange=syncSupplyConfigurationPrice);}
+    function syncSupplyConfigurationPrice(){if(!activeSupplyConfiguration)return;const item=allSupplyItems.find(x=>String(x.id)===String(activeSupplyConfiguration.itemId));if(!item)return;activeSupplyConfiguration.range=document.querySelector('input[name="modal-supply-range"]:checked')?.value||'standard';activeSupplyConfiguration.attributes=item.attributes.map(attribute=>({attributeId:String(attribute.id),valueId:document.querySelector(`input[name="supply-attribute-${attribute.id}"]:checked`)?.value||''}));const syncCurrencyLabel=safeLanguage==='AR'?'درهم':'DH';document.getElementById('supply-config-price').textContent=`${configurationPrice(activeSupplyConfiguration).toFixed(2)} ${syncCurrencyLabel}`;document.querySelectorAll('.supply-config-supplement-chip').forEach(chip=>{const normalizedRange=activeSupplyConfiguration.range==='standard'?'entry':activeSupplyConfiguration.range==='quality'?'middle':activeSupplyConfiguration.range;const supplement=Number(normalizedRange==='high'?chip.dataset.highSupplement:normalizedRange==='middle'?chip.dataset.qualitySupplement:chip.dataset.standardSupplement)||0;chip.textContent=supplement>0?`+ ${supplement.toFixed(supplement%1?2:0)} ${syncCurrencyLabel}`:'';chip.hidden=supplement<=0;});}
     function closeSupplyConfiguration(){const modal=document.getElementById('supply-config-modal');modal?.classList.remove('is-open');modal?.setAttribute('aria-hidden','true');activeSupplyConfiguration=null;}
     function confirmSupplyConfiguration(){
         if(!activeSupplyConfiguration)return;
@@ -267,9 +361,9 @@ document.addEventListener('DOMContentLoaded', () => {
         updateFinalSummary();
         closeSupplyConfiguration();
     }
-    function selectedSupplyDescription(config){const item=allSupplyItems.find(x=>String(x.id)===String(config.itemId));const parts=[];if(item?.has_quality!==false)parts.push(config.range==='quality'?'Qualité':'Standard');(config.attributes||[]).forEach(choice=>{const attribute=item?.attributes.find(a=>String(a.id)===String(choice.attributeId)),value=attribute?.supply_attribute_values.find(v=>String(v.id)===String(choice.valueId));if(value)parts.push(value.label)});return parts.join(', ')||'Configuration standard';}
-    function renderSelectedSupplyItems(){const box=document.getElementById('selected-supply-items');if(!box)return;box.innerHTML=selectedConfiguredSupplies.length?selectedConfiguredSupplies.map(config=>{const item=allSupplyItems.find(x=>String(x.id)===String(config.itemId));return `<div class="step3-selected-item"><input type="checkbox" class="supply-item-checkbox" checked hidden data-id="${item.id}" data-key="${config.key}" data-price="${config.price}"><div><b>${escapeHtmlAttribute(item.name)}</b><small>${escapeHtmlAttribute(selectedSupplyDescription(config))}</small></div><span>${Number(config.price).toFixed(2)} DH</span><button type="button" class="step3-remove-supply" data-key="${config.key}" aria-label="Supprimer">−</button></div>`}).join(''):'<p class="step3-empty-selection">Aucune fourniture ajoutée</p>';box.querySelectorAll('.step3-remove-supply').forEach(button=>button.onclick=()=>{selectedConfiguredSupplies=selectedConfiguredSupplies.filter(x=>x.key!==button.dataset.key);renderSelectedSupplyItems();updateSupplyTotal();updateFinalSummary()});}
-    function updateSupplyTotal(){const total=selectedConfiguredSupplies.reduce((sum,item)=>sum+Number(item.price||0),0),box=document.getElementById('supply-total-price');if(box)box.textContent=`${total.toFixed(2)} DH`;}
+    function selectedSupplyDescription(config){const item=allSupplyItems.find(x=>String(x.id)===String(config.itemId));const parts=[];if(item?.has_quality!==false)parts.push(config.range==='high'?'Haute de gamme':(config.range==='middle'||config.range==='quality')?'Moyenne gamme':'Entrée de gamme');(config.attributes||[]).forEach(choice=>{const attribute=item?.attributes.find(a=>String(a.id)===String(choice.attributeId)),value=attribute?.supply_attribute_values.find(v=>String(v.id)===String(choice.valueId));if(value)parts.push(value.label)});return parts.join(', ')||'Configuration standard';}
+    function renderSelectedSupplyItems(){const box=document.getElementById('selected-supply-items');if(!box)return;const currencyLabel=safeLanguage==='AR'?'درهم':'DH';box.innerHTML=selectedConfiguredSupplies.length?selectedConfiguredSupplies.map(config=>{const item=allSupplyItems.find(x=>String(x.id)===String(config.itemId));return `<div class="step3-selected-item"><input type="checkbox" class="supply-item-checkbox" checked hidden data-id="${item.id}" data-key="${config.key}" data-price="${config.price}"><div><b>${escapeHtmlAttribute(item.name)}</b><small>${escapeHtmlAttribute(selectedSupplyDescription(config))}</small></div><span>${Number(config.price).toFixed(2)} ${currencyLabel}</span><button type="button" class="step3-remove-supply" data-key="${config.key}" aria-label="Supprimer">−</button></div>`}).join(''):'<p class="step3-empty-selection">Aucune fourniture ajoutée</p>';box.querySelectorAll('.step3-remove-supply').forEach(button=>button.onclick=()=>{selectedConfiguredSupplies=selectedConfiguredSupplies.filter(x=>x.key!==button.dataset.key);renderSelectedSupplyItems();updateSupplyTotal();updateFinalSummary()});}
+    function updateSupplyTotal(){const total=selectedConfiguredSupplies.reduce((sum,item)=>sum+Number(item.price||0),0),box=document.getElementById('supply-total-price');if(box)box.textContent=`${total.toFixed(2)} ${safeLanguage==='AR'?'درهم':'DH'}`;}
     document.getElementById('supply-category-trigger')?.addEventListener('click',event=>{event.stopPropagation();const menu=document.getElementById('supply-category-menu'),trigger=event.currentTarget,opening=menu.hidden;menu.hidden=!opening;trigger.setAttribute('aria-expanded',opening?'true':'false')});document.getElementById('supply-category-menu')?.addEventListener('click',event=>event.stopPropagation());document.addEventListener('click',()=>{const menu=document.getElementById('supply-category-menu'),trigger=document.getElementById('supply-category-trigger');if(menu)menu.hidden=true;trigger?.setAttribute('aria-expanded','false');const personalMenu=document.getElementById('personal-supply-category-menu'),personalTrigger=document.getElementById('personal-supply-category-trigger');if(personalMenu)personalMenu.hidden=true;personalTrigger?.setAttribute('aria-expanded','false')});document.getElementById('supply-reset-filter')?.addEventListener('click',()=>{selectedSupplyCategoryIds.clear();renderSupplyCategoryFilter();renderIndependentSupplyItems()});document.getElementById('supply-config-close')?.addEventListener('click',closeSupplyConfiguration);document.getElementById('supply-config-cancel')?.addEventListener('click',closeSupplyConfiguration);document.getElementById('supply-config-confirm')?.addEventListener('click',confirmSupplyConfiguration);document.getElementById('supply-config-modal')?.addEventListener('click',event=>{if(event.target.id==='supply-config-modal')closeSupplyConfiguration()});
     function renderPersonalSupplyCategoryFilter(){
         const menu=document.getElementById('personal-supply-category-menu');
@@ -293,7 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updatePersonalSupplyCategoryTrigger(){
         const label=document.querySelector('#personal-supply-category-trigger span');if(!label)return;
         const count=selectedPersonalSupplyCategoryIds.size;
-        label.textContent=count?`${count} catégorie${count>1?'s':''} sélectionnée${count>1?'s':''}`:'Toutes les catégories';
+        label.textContent=count?(safeLanguage==='AR'?`${count} فئة مختارة`:`${count} catégorie${count>1?'s':''} sélectionnée${count>1?'s':''}`):(safeLanguage==='AR'?'جميع الفئات':'Toutes les catégories');
     }
     function renderPersonalSupplyItems(){
         const container=document.getElementById('personal-independent-supply-items');if(!container)return;
@@ -303,10 +397,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function renderPersonalSelectedSupplyItems(){
         const box=document.getElementById('personal-selected-supply-items');if(!box)return;
+        const currencyLabel=safeLanguage==='AR'?'درهم':'DH';
         box.innerHTML=selectedPersonalConfiguredSupplies.length?selectedPersonalConfiguredSupplies.map(config=>{
             const item=allSupplyItems.find(x=>String(x.id)===String(config.itemId));
             if(!item)return '';
-            return `<div class="step3-selected-item"><div><b>${escapeHtmlAttribute(item.name)}</b><small>${escapeHtmlAttribute(selectedSupplyDescription(config))}</small></div><span>${Number(config.price).toFixed(2)} DH</span><button type="button" class="step3-remove-supply" data-key="${config.key}" aria-label="Supprimer">−</button></div>`;
+            return `<div class="step3-selected-item"><div><b>${escapeHtmlAttribute(item.name)}</b><small>${escapeHtmlAttribute(selectedSupplyDescription(config))}</small></div><span>${Number(config.price).toFixed(2)} ${currencyLabel}</span><button type="button" class="step3-remove-supply" data-key="${config.key}" aria-label="Supprimer">−</button></div>`;
         }).join(''):'<p class="step3-empty-selection">Aucune fourniture ajoutée</p>';
         box.querySelectorAll('.step3-remove-supply').forEach(button=>button.onclick=()=>{
             selectedPersonalConfiguredSupplies=selectedPersonalConfiguredSupplies.filter(x=>x.key!==button.dataset.key);
@@ -323,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function updatePersonalSupplyTotal(){
         const total=getSelectedPersonalSupplies().reduce((sum,item)=>sum+Number(item.price||0),0);
-        const box=document.getElementById('personal-supply-total-price');if(box)box.textContent=`${total.toFixed(2)} DH`;
+        const box=document.getElementById('personal-supply-total-price');if(box)box.textContent=`${total.toFixed(2)} ${safeLanguage==='AR'?'درهم':'DH'}`;
     }
     document.getElementById('personal-supply-category-trigger')?.addEventListener('click',event=>{
         event.stopPropagation();
@@ -345,40 +440,100 @@ document.addEventListener('DOMContentLoaded', () => {
         return String(value || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
+    async function enrichSchoolListsWithArabicNames() {
+        try {
+            const [schoolsResult,levelsResult]=await Promise.all([
+                supabaseClient.from('schools').select('name,name_ar'),
+                supabaseClient.from('school_levels').select('name,name_ar,cycle')
+            ]);
+            const schoolArabic=new Map((schoolsResult.data||[]).map(item=>[String(item.name),item.name_ar||'']));
+            const levelMeta=new Map((levelsResult.data||[]).map(item=>[String(item.name),{name_ar:item.name_ar||'',cycle:item.cycle||'autre'}]));
+            allSchoolData=allSchoolData.map(item=>{const meta=levelMeta.get(String(item.level))||{};return {...item,school_name_ar:item.school_name_ar||schoolArabic.get(String(item.school_name))||'',level_ar:item.level_ar||meta.name_ar||'',cycle:item.cycle||meta.cycle||'autre'};});
+        } catch(error) { console.warn('Noms arabes écoles/niveaux indisponibles :',error); }
+    }
+    function localizedSchoolName(item){return safeLanguage==='AR'&&(item?.school_name_ar||'').trim()?item.school_name_ar:item?.school_name||'';}
+    function localizedLevelName(item){return safeLanguage==='AR'&&(item?.level_ar||'').trim()?item.level_ar:item?.level||'';}
+    function schoolCycleKey(item) {
+        const explicit=String(item?.cycle||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+        if (['prescolaire','primaire','college','lycee','autre'].includes(explicit)) return explicit;
+        const value=`${item?.level||''} ${item?.level_ar||''}`.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+        if (/prescol|matern|روضي|تمهيدي/.test(value)) return 'prescolaire';
+        if (/primair|ابتدائي/.test(value)) return 'primaire';
+        if (/college|collège|اعدادي|إعدادي/.test(value)) return 'college';
+        if (/lycee|lycée|ثانوي/.test(value)) return 'lycee';
+        return 'autre';
+    }
+    const SCHOOL_CYCLES=[
+        {key:'prescolaire',fr:'Préscolaire',ar:'التعليم الأولي'},
+        {key:'primaire',fr:'Primaire',ar:'الابتدائي'},
+        {key:'college',fr:'Collège',ar:'الإعدادي'},
+        {key:'lycee',fr:'Lycée',ar:'الثانوي'},
+        {key:'autre',fr:'Autre',ar:'أخرى'}
+    ];
+    function installSchoolLevelCardsStyle() {
+        if (document.getElementById('school-level-cards-style')) return;
+        const style=document.createElement('style');style.id='school-level-cards-style';style.textContent=`
+        #school-level-block{margin-top:34px!important;padding-top:31px!important;border-top:1px solid #eee8e4!important}
+        #school-level-buttons{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:20px!important;align-items:start!important;margin-top:0!important;width:100%!important}
+        .school-cycle-column{display:flex!important;flex-direction:column!important;gap:13px!important;min-width:0!important}
+        .school-cycle-title{position:relative!important;isolation:isolate;display:flex!important;align-items:center!important;justify-content:center!important;min-height:46px!important;margin:0 0 2px!important;padding:10px 18px!important;border-radius:999px!important;overflow:hidden!important;color:#fff!important;background:linear-gradient(135deg,var(--cycle-a),var(--cycle-b))!important;font-size:18px!important;line-height:1!important;font-weight:950!important;text-align:center!important;text-transform:uppercase!important;letter-spacing:.01em!important;box-shadow:none!important}
+        .school-cycle-title:after{content:'';position:absolute;z-index:-1;right:12px;top:6px;width:64px;height:32px;border-radius:50%;background:rgba(255,255,255,.12);transform:rotate(-12deg)}
+        .school-cycle-column[data-cycle-column="prescolaire"]{--cycle-a:#62b478;--cycle-b:#458d5c}.school-cycle-column[data-cycle-column="primaire"]{--cycle-a:#35b9ee;--cycle-b:#477cf0}.school-cycle-column[data-cycle-column="college"]{--cycle-a:#ead49a;--cycle-b:#d9b860}.school-cycle-column[data-cycle-column="lycee"]{--cycle-a:#efbd94;--cycle-b:#e99a67}.school-cycle-column[data-cycle-column="autre"]{--cycle-a:#8c6cac;--cycle-b:#665080}
+        .school-level-button{--cycle-a:#64748b;--cycle-b:#475569;position:relative!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;gap:7px!important;width:100%!important;min-width:0!important;min-height:70px!important;margin:0!important;padding:14px 38px 13px 14px!important;border:0!important;border-radius:20px!important;overflow:hidden!important;color:#fff!important;text-align:start!important;background:linear-gradient(135deg,var(--cycle-a),var(--cycle-b))!important;box-shadow:none!important;transform:none!important;transition:opacity .2s ease,filter .2s ease!important}
+        .school-level-button:before{content:'';position:absolute;width:96px;height:96px;border-radius:50%;right:-31px;top:-42px;background:rgba(255,255,255,.12)}
+        .school-level-button:after{content:'';position:absolute;top:12px;right:12px;width:20px;height:20px;border-radius:50%;background:#fff;border:4px solid rgba(255,255,255,.35);box-shadow:0 1px 5px rgba(0,0,0,.08);box-sizing:border-box}
+        .school-level-button[data-cycle="prescolaire"]{--cycle-a:#acd5b6;--cycle-b:#8fc39d}.school-level-button[data-cycle="primaire"]{--cycle-a:#70ccec;--cycle-b:#8eaef1}.school-level-button[data-cycle="college"]{--cycle-a:#ead7a4;--cycle-b:#e2c77b}.school-level-button[data-cycle="lycee"]{--cycle-a:#efc6a8;--cycle-b:#ecac83}.school-level-button[data-cycle="autre"]{--cycle-a:#b39dc3;--cycle-b:#907ba4}
+        .school-level-name-fr,.school-level-name-ar{position:relative;z-index:1;display:block;width:100%;overflow-wrap:anywhere;color:#fff!important;font-weight:900!important;line-height:1.25!important}
+        .school-level-name-fr{font-size:11px!important}.school-level-name-ar{font-size:13px!important;font-family:Tahoma,Arial,sans-serif!important;direction:rtl!important;text-align:right!important}
+        #school-level-buttons:not(.has-selection) .school-level-button{opacity:1!important;filter:none!important}
+        #school-level-buttons.has-selection .school-level-button:not(.is-selected){opacity:.42!important;filter:saturate(.55)!important}
+        #school-level-buttons.has-selection .school-level-button.is-selected{opacity:1!important;filter:none!important;transform:none!important;box-shadow:none!important;background:linear-gradient(135deg,var(--cycle-a),var(--cycle-b))!important;color:#fff!important}
+        
+        .school-level-button.is-selected:after{opacity:1!important;visibility:visible!important;background:radial-gradient(circle at center,#e75c25 0 4px,#fff 4.5px 100%)!important;border:0!important}
+        .school-cycle-empty{display:flex!important;align-items:center!important;justify-content:center!important;min-height:70px!important;width:100%!important;padding:14px!important;border:1.5px dashed #6b7280!important;border-radius:20px!important;background:#fff!important;color:#57534e!important;font-size:13px!important;font-weight:500!important;line-height:1.35!important;text-align:center!important;box-shadow:none!important;opacity:1!important}
+        #school-level-validation-row{display:flex!important;width:100%!important;justify-content:flex-end!important;clear:both!important;margin-top:28px!important}
+        html[dir="rtl"] #school-level-validation-row{direction:ltr!important;justify-content:flex-start!important}
+        html[dir="rtl"] #school-level-validation-row #btn-load-pack{direction:rtl!important}
+        #section-rentree #btn-load-pack.school-level-validate{display:inline-flex!important;visibility:visible!important;align-items:center!important;justify-content:center!important;min-width:84px!important;min-height:44px!important;margin:0!important;padding:12px 20px!important;border:0!important;border-radius:12px!important;background:#e75c25!important;color:#fff!important;font-size:12px!important;font-weight:950!important;float:none!important;box-shadow:none!important}
+        #section-rentree #btn-load-pack.school-level-validate:disabled{opacity:.45!important;cursor:not-allowed!important}
+        html[dir="rtl"] .school-level-button{padding:14px 14px 13px 38px!important;align-items:flex-end!important;text-align:end!important}html[dir="rtl"] .school-level-button:before{right:auto!important;left:-31px!important}html[dir="rtl"] .school-level-button:after{right:auto!important;left:12px!important}
+        @media(max-width:1100px){#school-level-buttons{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+        @media(max-width:720px){#school-level-buttons{grid-template-columns:1fr 1fr!important;gap:13px!important}.school-level-button{min-height:72px!important;border-radius:18px!important}.school-cycle-title{font-size:15px!important}}
+        @media(max-width:430px){#school-level-buttons{grid-template-columns:1fr!important}}
+        `;document.head.appendChild(style);
+    }
+    installSchoolLevelCardsStyle();
     function populateSchoolsDropdown() {
         const selectEcole = document.getElementById('select-ecole');
         const buttonsBox = document.getElementById('school-logo-buttons');
         if (!selectEcole) return;
-        selectEcole.innerHTML = '<option value="">-- Choisir une école --</option>';
+        selectEcole.innerHTML = `<option value="">${safeLanguage==='AR'?'-- اختر المدرسة --':'-- Choisir une école --'}</option>`;
         const schoolMap = new Map();
         allSchoolData.forEach(item => {
             if (!item.school_name) return;
-            if (!schoolMap.has(item.school_name)) schoolMap.set(item.school_name, item.school_logo_url || '');
-            if (!schoolMap.get(item.school_name) && item.school_logo_url) schoolMap.set(item.school_name, item.school_logo_url);
+            if (!schoolMap.has(item.school_name)) schoolMap.set(item.school_name,{logo:item.school_logo_url||'',name_ar:item.school_name_ar||''});
+            const current=schoolMap.get(item.school_name);
+            if(!current.logo&&item.school_logo_url)current.logo=item.school_logo_url;
+            if(!current.name_ar&&item.school_name_ar)current.name_ar=item.school_name_ar;
         });
-        [...schoolMap.keys()].forEach(school => {
+        [...schoolMap.entries()].forEach(([school,meta]) => {
             const opt = document.createElement('option');
-            opt.value = school; opt.innerText = school;
+            opt.value = school; opt.innerText = safeLanguage==='AR'&&meta.name_ar?meta.name_ar:school;
             selectEcole.appendChild(opt);
         });
         if (!buttonsBox) return;
-        buttonsBox.innerHTML = [...schoolMap.entries()].map(([school, logo]) => {
-            const initial = String(school).trim().charAt(0).toUpperCase() || 'E';
-            const logoSrc = normalizeSchoolLogoUrl(logo);
+        buttonsBox.innerHTML = [...schoolMap.entries()].map(([school, meta]) => {
+            const initial = String(safeLanguage==='AR'&&meta.name_ar?meta.name_ar:school).trim().charAt(0).toUpperCase() || 'E';
+            const logoSrc = normalizeSchoolLogoUrl(meta.logo);
             const safeSchool = escapeHtmlAttribute(school);
+            const displaySchool=escapeHtmlAttribute(safeLanguage==='AR'&&meta.name_ar?meta.name_ar:school);
             const visual = logoSrc
-                ? `<img src="${escapeHtmlAttribute(logoSrc)}" alt="Logo ${safeSchool}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="school-logo-fallback" style="display:none">${escapeHtmlAttribute(initial)}</span>`
+                ? `<img src="${escapeHtmlAttribute(logoSrc)}" alt="Logo ${displaySchool}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="school-logo-fallback" style="display:none">${escapeHtmlAttribute(initial)}</span>`
                 : `<span class="school-logo-fallback">${escapeHtmlAttribute(initial)}</span>`;
-            return `<button type="button" class="school-logo-button" data-school="${safeSchool}">
-                <span class="school-logo-visual">${visual}</span>
-                <strong>${safeSchool}</strong>
-            </button>`;
-        }).join('') || '<p class="flow-muted">Aucun établissement configuré.</p>';
-        buttonsBox.querySelectorAll('.school-logo-button').forEach(button => {
-            button.addEventListener('click', () => selectSchoolFromButton(button.dataset.school));
-        });
+            return `<button type="button" class="school-logo-button" data-school="${safeSchool}"><span class="school-logo-visual">${visual}</span><strong>${displaySchool}</strong></button>`;
+        }).join('') || `<p class="flow-muted">${safeLanguage==='AR'?'لا توجد مؤسسة مهيأة.':'Aucun établissement configuré.'}</p>`;
+        buttonsBox.querySelectorAll('.school-logo-button').forEach(button => button.addEventListener('click', () => selectSchoolFromButton(button.dataset.school)));
     }
-
     function selectSchoolFromButton(schoolName) {
         const selectEcole = document.getElementById('select-ecole');
         const selectNiveau = document.getElementById('select-niveau');
@@ -390,27 +545,55 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedSchoolName = schoolName;
         selectedSchoolLevel = null;
         document.querySelectorAll('.school-logo-button').forEach(btn => btn.classList.toggle('is-selected', btn.dataset.school === schoolName));
-        selectNiveau.innerHTML = '<option value="">-- Choisir le niveau --</option>';
+        selectNiveau.innerHTML = `<option value="">${safeLanguage==='AR'?'-- اختر المستوى --':'-- Choisir le niveau --'}</option>`;
         const lists = allSchoolData.filter(item => item.school_name === schoolName && item.level);
-        lists.forEach(list => {
-            const opt = document.createElement('option');
-            opt.value = list.id; opt.innerText = list.level;
-            selectNiveau.appendChild(opt);
-        });
+        lists.forEach(list => { const opt=document.createElement('option');opt.value=list.id;opt.innerText=localizedLevelName(list);selectNiveau.appendChild(opt); });
         selectNiveau.disabled = false;
-        levelBox.innerHTML = lists.map(list => `<button type="button" class="school-level-button" data-list-id="${list.id}" data-level="${list.level.replace(/"/g, '&quot;')}">${list.level}</button>`).join('');
+        levelBox.classList.remove('has-selection');
+        levelBox.innerHTML = SCHOOL_CYCLES.map(cycle => {
+            const cycleLists=lists.filter(list=>schoolCycleKey(list)===cycle.key);
+            const cards=cycleLists.map(list => `<button type="button" class="school-level-button" data-cycle="${cycle.key}" data-list-id="${list.id}" data-level="${escapeHtmlAttribute(list.level)}" aria-pressed="false"><span class="school-level-name-fr">${escapeHtmlAttribute(list.level||'')}</span><span class="school-level-name-ar" lang="ar" dir="rtl">${escapeHtmlAttribute(list.level_ar||list.level||'')}</span></button>`).join('');
+            return `<section class="school-cycle-column" data-cycle-column="${cycle.key}"><h4 class="school-cycle-title">${safeLanguage==='AR'?cycle.ar:cycle.fr}</h4>${cards||`<div class="school-cycle-empty">${safeLanguage==='AR'?'لا يوجد مستوى':'Pas de niveau'}</div>`}</section>`;
+        }).join('');
+        if (btnLoadPack) {
+            btnLoadPack.textContent=safeLanguage==='AR'?'تأكيد':'Valider';
+            btnLoadPack.classList.add('school-level-validate');
+            btnLoadPack.classList.remove('hidden');
+            btnLoadPack.disabled=true;
+            let validationRow=document.getElementById('school-level-validation-row');
+            if (!validationRow) { validationRow=document.createElement('div');validationRow.id='school-level-validation-row';levelBox.insertAdjacentElement('afterend',validationRow); }
+            validationRow.appendChild(btnLoadPack);
+        }
         levelBox.querySelectorAll('.school-level-button').forEach(button => button.addEventListener('click', () => {
+            const isAlreadySelected = button.classList.contains('is-selected');
+            if (isAlreadySelected) {
+                selectNiveau.value = '';
+                selectedSchoolLevel = null;
+                levelBox.classList.remove('has-selection');
+                levelBox.querySelectorAll('.school-level-button').forEach(btn => {
+                    btn.classList.remove('is-selected');
+                    btn.setAttribute('aria-pressed','false');
+                });
+                if (btnLoadPack) {
+                    btnLoadPack.classList.remove('hidden');
+                    btnLoadPack.disabled = true;
+                }
+                return;
+            }
             const listId = button.dataset.listId;
             selectNiveau.value = listId;
             selectedSchoolLevel = button.dataset.level;
-            levelBox.querySelectorAll('.school-level-button').forEach(btn => btn.classList.toggle('is-selected', btn === button));
-            btnLoadPack?.classList.remove('hidden');
-            setTimeout(() => btnLoadPack?.click(), 180);
+            levelBox.classList.add('has-selection');
+            levelBox.querySelectorAll('.school-level-button').forEach(btn => {
+                const selected = btn === button;
+                btn.classList.toggle('is-selected', selected);
+                btn.setAttribute('aria-pressed', String(selected));
+            });
+            if (btnLoadPack) { btnLoadPack.classList.remove('hidden');btnLoadPack.disabled=false; }
         }));
         levelBlock?.classList.remove('hidden');
-        btnLoadPack?.classList.add('hidden');
+        if (btnLoadPack) { btnLoadPack.classList.remove('hidden');btnLoadPack.disabled=true; }
     }
-
     document.getElementById('select-ecole').addEventListener('change', (e) => {
         const schoolName = e.target.value;
         if (schoolName && !document.querySelector('.school-logo-button.is-selected')) { selectSchoolFromButton(schoolName); return; }
@@ -434,11 +617,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('select-niveau').addEventListener('change', (e) => {
         const packId = e.target.value;
-        document.querySelectorAll('.school-level-button').forEach(btn => btn.classList.toggle('is-selected', String(btn.dataset.listId) === String(packId)));
+        document.querySelectorAll('.school-level-button').forEach(btn => {const selected=String(btn.dataset.listId) === String(packId);btn.classList.toggle('is-selected',selected);btn.setAttribute('aria-pressed',String(selected));});
+        document.getElementById('school-level-buttons')?.classList.toggle('has-selection',Boolean(packId));
         const btnLoadPack = document.getElementById('btn-load-pack');
         if (btnLoadPack) {
-            if (packId) btnLoadPack.classList.remove('hidden');
-            else btnLoadPack.classList.add('hidden');
+            btnLoadPack.classList.remove('hidden');
+            btnLoadPack.disabled=!packId;
         }
     });
 
@@ -466,7 +650,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const supplySubtotal = Number.parseFloat(document.getElementById('supply-total-price')?.innerText || '0') || 0;
         const grandTotal = schoolSubtotal + supplySubtotal;
 
-        const countLabel = (count) => `${count} article${count > 1 ? 's' : ''}`;
+        const currencyLabel = safeLanguage === 'AR' ? 'درهم' : 'DH';
+        const countLabel = (count) => safeLanguage === 'AR' ? `${count} ${count > 1 ? 'منتجات' : 'منتج'}` : `${count} article${count > 1 ? 's' : ''}`;
         const details = isPhotoOrder
             ? ''
             : `<div class="summary-row"><span>École</span><b>${selectedSchoolName || '-'}</b></div>
@@ -478,9 +663,9 @@ document.addEventListener('DOMContentLoaded', () => {
             : `<div class="summary-row summary-count-row"><span>Articles de la liste</span><b>${countLabel(schoolCount)}</b></div>
                <div class="summary-row summary-count-row"><span>Fournitures choisies</span><b>${countLabel(supplyCount)}</b></div>`;
         const subtotals = isPhotoOrder
-            ? `<div class="summary-row summary-subtotal-row"><span>Liste importée</span><b>Sur devis</b></div><div class="summary-row summary-subtotal-row"><span>Sous-total fournitures</span><b>${personalSupplySubtotal.toFixed(2)} DH</b></div>`
-            : `<div class="summary-row summary-subtotal-row"><span>Sous-total liste</span><b>${schoolSubtotal.toFixed(2)} DH</b></div>
-               <div class="summary-row summary-subtotal-row"><span>Sous-total fournitures</span><b>${supplySubtotal.toFixed(2)} DH</b></div>`;
+            ? `<div class="summary-row summary-subtotal-row"><span>Liste importée</span><b>Sur devis</b></div><div class="summary-row summary-subtotal-row"><span>Sous-total fournitures</span><b>${personalSupplySubtotal.toFixed(2)} ${currencyLabel}</b></div>`
+            : `<div class="summary-row summary-subtotal-row"><span>Sous-total liste</span><b>${schoolSubtotal.toFixed(2)} ${currencyLabel}</b></div>
+               <div class="summary-row summary-subtotal-row"><span>Sous-total fournitures</span><b>${supplySubtotal.toFixed(2)} ${currencyLabel}</b></div>`;
 
         lines.innerHTML = `
             <div class="summary-group summary-order-info">
@@ -491,7 +676,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="summary-group summary-quantities">${quantities}</div>
             <div class="summary-group summary-subtotals">${subtotals}</div>
         `;
-        total.innerText = isPhotoOrder ? (personalSupplySubtotal ? `${personalSupplySubtotal.toFixed(2)} DH + liste sur devis` : 'Sur devis') : `${grandTotal.toFixed(2)} DH`;
+        total.innerText = isPhotoOrder ? (personalSupplySubtotal ? `${personalSupplySubtotal.toFixed(2)} ${currencyLabel}${safeLanguage==='AR'?' + اللائحة حسب الطلب':' + liste sur devis'}` : (safeLanguage==='AR'?'حسب الطلب':'Sur devis')) : `${grandTotal.toFixed(2)} ${currencyLabel}`;
     }
     const orderFlowPages = ['options-container', 'school-selection-view', 'pack-details-view', 'personal-upload-view', 'personal-supplies-view', 'checkout-form-container'];
 
@@ -584,7 +769,7 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedPhotoFile=file;
         const preview=document.getElementById('personal-upload-preview'),drop=document.getElementById('personal-upload-dropzone'),button=document.getElementById('personal-upload-continue'),thumb=document.getElementById('personal-upload-thumb');
         document.getElementById('personal-upload-name').textContent=file.name;
-        document.getElementById('personal-upload-size').textContent=`${(file.size/1024/1024).toFixed(2)} Mo · ${file.type==='application/pdf'?'PDF':'Image'}`;
+        document.getElementById('personal-upload-size').textContent=`${(file.size/1024/1024).toFixed(2)} Mo · ${file.type==='application/pdf'?'PDF':(safeLanguage==='AR'?'صورة':'Image')}`;
         if(personalPreviewUrl)URL.revokeObjectURL(personalPreviewUrl);
         if(file.type.startsWith('image/')){personalPreviewUrl=URL.createObjectURL(file);thumb.innerHTML=`<img src="${personalPreviewUrl}" alt="Aperçu de la liste">`;}else thumb.textContent='PDF';
         preview.hidden=false;drop.classList.add('is-valid');button.disabled=false;personalUploadMessage('','');
@@ -605,7 +790,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(!APP_SCRIPT_UPLOAD_WEBAPP_URL||APP_SCRIPT_UPLOAD_WEBAPP_URL.includes('PASTE_APPS_SCRIPT'))throw new Error('URL Apps Script non configurée.');
         personalUploadMessage('loading','Enregistrement sécurisé du document dans Google Drive…');
         const fileData=await fileToDataUrl(selectedPhotoFile);
-        const successUrl=new URL('success.html',window.location.href);successUrl.searchParams.set('order',orderData.numero_commande||'');successUrl.searchParams.set('name',clientName||'');successUrl.searchParams.set('qr',orderData.qr_code||'');
+        const successUrl=new URL('success.html',window.location.href);successUrl.searchParams.set('order',orderData.numero_commande||'');successUrl.searchParams.set('name',clientName||'');successUrl.searchParams.set('qr',orderData.qr_code||orderData.numero_commande||'');successUrl.searchParams.set('lang',localStorage.getItem('elqods_client_language')||'FR');
         const channel=`elqods-upload-${Date.now()}-${Math.random().toString(36).slice(2)}`;
         return await new Promise((resolve,reject)=>{
             const iframe=document.createElement('iframe');iframe.name=channel;iframe.hidden=true;iframe.setAttribute('aria-hidden','true');
@@ -650,8 +835,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!selectedPack) return;
 
             const schoolDisplay=document.getElementById('display-school-name'),levelDisplay=document.getElementById('display-level-name'),schoolLogo=document.getElementById('display-school-logo'),schoolLogoFallback=document.getElementById('display-school-logo-fallback');
-            if(schoolDisplay)schoolDisplay.innerText=selectedPack.school_name;
-            if(levelDisplay)levelDisplay.innerText=selectedPack.level;
+            if(schoolDisplay)schoolDisplay.innerText=localizedSchoolName(selectedPack);
+            if(levelDisplay)levelDisplay.innerText=localizedLevelName(selectedPack);
             const selectedSchoolLogo=normalizeSchoolLogoUrl(selectedPack.school_logo_url||'');
             if(schoolLogo&&schoolLogoFallback){if(selectedSchoolLogo){schoolLogo.src=selectedSchoolLogo;schoolLogo.hidden=false;schoolLogoFallback.hidden=true;schoolLogo.onerror=()=>{schoolLogo.hidden=true;schoolLogoFallback.hidden=false;schoolLogoFallback.textContent=String(selectedPack.school_name||'E').charAt(0).toUpperCase()};}else{schoolLogo.hidden=true;schoolLogoFallback.hidden=false;schoolLogoFallback.textContent=String(selectedPack.school_name||'E').charAt(0).toUpperCase();}}
 
@@ -803,7 +988,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!APP_SCRIPT_UPLOAD_WEBAPP_URL || APP_SCRIPT_UPLOAD_WEBAPP_URL.includes('PASTE_APPS_SCRIPT')) {
             throw new Error("URL Apps Script Web App non configurée dans app.js.");
         }
-        const successUrl = new URL('success.html', window.location.href);
+        const successUrl = new URL('success.html', window.location.href); successUrl.searchParams.set('lang', localStorage.getItem('elqods_client_language') || 'FR');
         successUrl.searchParams.set('order', orderData.numero_commande || '');
         successUrl.searchParams.set('name', clientName || '');
         successUrl.searchParams.set('qr', orderData.qr_code || '');
@@ -939,7 +1124,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (submitButton) {
                 submitButton.disabled = true;
-                submitButton.textContent = "⏳ Envoi en cours...";
+                submitButton.textContent = safeLanguage === 'AR' ? 'جاري الإرسال' : '⏳ Envoi en cours...';
                 submitButton.classList.add('opacity-70', 'cursor-not-allowed');
             }
 
@@ -1032,9 +1217,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     const orderReference = data.numero_commande;
                     const encodedName = encodeURIComponent(clientName);
                     const encodedQr = encodeURIComponent(data.qr_code || qrCodeValue);
-                    window.location.href = `success.html?order=${orderReference}&name=${encodedName}&qr=${encodedQr}`;
+                    window.location.href = `success.html?order=${orderReference}&name=${encodedName}&qr=${encodedQr || encodeURIComponent(orderReference)}&lang=${encodeURIComponent(localStorage.getItem('elqods_client_language') || 'FR')}`;
                 } else {
-                    window.location.href = 'success.html';
+                    { const u=new URL('success.html',window.location.href); u.searchParams.set('order',orderReference||''); u.searchParams.set('qr',orderReference||''); u.searchParams.set('lang',localStorage.getItem('elqods_client_language')||'FR'); window.location.href=u.toString(); }
                 }
 
             } catch (err) {
@@ -1472,16 +1657,50 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // SAFE ARABIC TRANSLATION - texte uniquement, aucun style structurel injecté
     const SAFE_AR = {
-      'Berkane, Maroc':'بركان - المغرب','Librairie & Papeterie':'مكتبة و وراقة','El Qods':'القدس','Commandez vos packs officiels ou déposez la photo de votre liste scolaire en arabe.':'مكتبة، وراقة، ولوازم مكتبية: كل ما تحتاجه بالقرب منك في بركان','Accueil':'الرئيسية','Rentrée scolaire':'الدخول المدرسي','Autres produits':'منتجات أخرى','Suivre ma commande':'تتبع طلبي','Plan & Rayons':'الخريطة والأقسام','Commander':'اطلب الآن','Navigation':'التنقل','Localisation & horaires':'الموقع والمواعيد','Localisation magasin':'موقع متجركم','Librairie & Papeterie El Qods':'مكتبة ووراقة القدس','Téléphone & WhatsApp :':'الهاتف / واتساب :','E-mail :':'البريد الإلكتروني :','Horaires d’ouverture':'أوقات العمل','Du lundi au vendredi :':'من الإثنين إلى الجمعة :','Samedi :':'السبت :','Dimanche :':'الأحد :',
-      'Bonjour':'مرحباً','Choisissez parmi des catégories inspirantes :':'اختاروا من بين فئاتنا المتنوعة:','Livre':'كتب','Fournitures':'لوازم مدرسية','Cadeaux':'هدايا','Jouets et jeux':'ألعاب','Bureautique':'مستلزمات مكتبية','Quran':'القرآن الكريم','High tech':'تقنيات حديثة','Nos marques':'علاماتنا التجارية','Nos Grands Rayons':'أقسامنا الرئيسية في الكتب','Parcourez nos univers thématiques sélectionnés avec soin.':'تصفح عوالمنا الموضوعية المختارة بعناية.',
+      'Berkane, Maroc':'بركان - المغرب','Librairie, papeterie et fournitures de bureau : tout ce dont vous avez besoin, tout près de chez vous à Berkane.':'مكتبة، وراقة، ولوازم مكتبية: كل ما تحتاجه بالقرب منك في بركان','Librairie & Papeterie':'مكتبة و وراقة','El Qods':'القدس','Commandez vos packs officiels ou déposez la photo de votre liste scolaire en arabe.':'مكتبة، وراقة، ولوازم مكتبية: كل ما تحتاجه بالقرب منك في بركان','Accueil':'الرئيسية','Rentrée scolaire':'الدخول المدرسي','Nos produits':'منتجاتنا','Suivre ma commande':'تتبع طلبي','Plan & Rayons':'الخريطة والأقسام','Nos services':'خدماتنا','Procédures administratives':'الإجراءات الإدارية','Inscription faculté':'التسجيل في الكلية','Renouvellement/demande passeport':'تجديد أو طلب جواز السفر','Services informatiques':'الخدمات المعلوماتية','Réparer un ordinateur':'إصلاح الحاسوب','Acheter une licence':'شراء ترخيص','Autres services':'خدمات أخرى','Impression':'الطباعة','Commander':'اطلب الآن','Navigation':'التنقل','Localisation & horaires':'الموقع والمواعيد','Localisation magasin':'موقع متجركم','Librairie & Papeterie El Qods':'مكتبة ووراقة القدس','Téléphone & WhatsApp :':'الهاتف / واتساب :','E-mail :':'البريد الإلكتروني :','Horaires d’ouverture':'أوقات العمل','Du lundi au vendredi :':'من الإثنين إلى الجمعة :','Samedi :':'السبت :','Dimanche :':'الأحد :',
+      'Bonjour':'مرحباً','Choisissez parmi des catégories inspirantes :':'اختاروا من بين فئاتنا المتنوعة:','Livre':'كتب','Fournitures':'لوازم مدرسية','Cadeaux':'هدايا','Jouets et jeux':'ألعاب','Bureautique':'مستلزمات مكتبية','Quran':'القرآن الكريم','High tech':'تقنيات حديثة','Nos marques':'علاماتنا التجارية','Fournitures diverses':'لوازم متنوعة','Fourniture scolaire':'لوازم مدرسية','Fourniture bureautique':'مستلزمات مكتبة','Fourniture informatique':'معدات تكنولوجيا المعلومات','Culture':'ثقافة','Le Saint Qoran':'القرآن الكريم','Livre arabe':'كتب للمطالعة عربية','Livre français':'كتب للمطالعة فرنسية','Livre anglais':'كتب للمطالعة إنجليزية','Autre':'أخرى','Divers':'متنوعات','Jeux et Loisirs':'ألعاب','Beaux Arts':'مستلزمات الفنون التشكيلة','Cadeaux':'هدايا','Nos GrandsRayons Livre':'أقسامنا الرئيسية للكتب','Parcourez nos univers thématiques sélectionnés avec soin.':'تصفح عوالمنا الموضوعية المختارة بعناية.',
       'Je choisis mon mode de retrait et ma liste':'أختار طريقة الاستلام ونوع اللائحة','Choisissez d’abord la réception, puis le type de liste.':'اختاروا أولاً طريقة الاستلام ثم نوع اللائحة.','Je choisis le mode de retrait':'أختار طريقة الاستلام','Retrait au magasin':'الاستلام من المتجر','Livraison':'التوصيل','Je choisis le type de liste':'أختار نوع اللائحة','Liste officielle du site':'اللائحة الرسمية للموقع','Ma propre liste':'لائحتي الخاصة',
       'Je choisis mon établissement et mon niveau':'أختار المؤسسة والمستوى','Sélectionnez votre établissement, puis votre niveau scolaire.':'اختاروا المؤسسة ثم المستوى الدراسي.','Continuer avec cette liste':'متابعة بهذه اللائحة','Je personnalise ma liste et mes fournitures':'أخصص لائحتي ولوازمي','Je complète ma liste scolaire':'أكمل لائحتي المدرسية','Continuer vers mes informations':'متابعة إلى معلوماتي',
-      'Mes informations et le récapitulatif':'معلوماتي وملخص الطلب','Vérifiez la commande puis confirmez la réservation.':'تحققوا من الطلب ثم أكدوا الحجز.','Nom et prénom':'الاسم الكامل','Numéro WhatsApp':'رقم واتساب','Adresse e-mail':'البريد الإلكتروني','Consignes pour la commande':'ملاحظات الطلب','Confirmer et réserver ma commande':'تأكيد وحجز طلبي','Récapitulatif de la commande':'ملخص الطلب','Mode de retrait':'طريقة الاستلام','Type de liste':'نوع اللائحة','École':'المؤسسة','Niveau':'المستوى','Articles de la liste':'عناصر اللائحة','Fournitures choisies':'اللوازم المختارة','Sous-total liste':'المجموع الفرعي للائحة','Sous-total fournitures':'المجموع الفرعي للوازم','Total estimé':'المجموع التقديري','Toutes les catégories':'جميع الفئات','Réinitialiser':'إعادة الضبط','Passer cette étape':'تخطي هذه الخطوة','Annuler':'إلغاء','Fermer':'إغلاق','Suivre ma commande':'تتبع الطلبية','Retrouvez les détails, le montant à régler et l’avancement de votre commande.':'اطلع على التفاصيل والمبلغ الواجب سداده وحالة تقدم طلبك.','Rechercher':'بحث','Bonjour':'مرحبا','Merci pour votre confiance ! Retrouvez les détails de votre commande':'نشكركم على ثقتكم، إليكم تفاصيل طلبيكم :','Téléphone':'الهاتف','Présentez ce QR code lors de la récupération de votre commande. Télécharger la facture pour le retrait !':'احفظ رمز الاستجابة السريعة الخاص بطلبكم أو قموا بتنزيل الفاتورة لاستلام الطلب.','Détails de ma commande':'نفاصيل طلبيتي','Télécharger ma commande':'تحميل طلبيتي','Annuler ma commande':'إلغاء طلبيتي','Prix à payer':'الواجب أداءه','article':'منتج','articles':'منتجات','commande':'طلبية','Préparation':'التحضير','Prêt au retrait':'جاهز للاستلام','Annulé':'مُلغى','Récupéré':'تم الإستلام','Ma commande':'طلبيتي','Status de ma commande':'حالة طلبيتي','Commande personnalisée':'لائحة خاصة','Image de la liste':'صورة الائحة','Cette action n’est pas réversible.':'يرجي التؤكد، لا يمكن التراجع عن هذا الإجراء','Non, garder':'لا، احتفظ به','Oui, annuler':'نعم، إلغاء','Liste scolaire':'الائحة المدرسية','Fourniture':'مستلزمات','Aucun article dans cette rubrique.':'لا يوجد منتج في هذا القسم','Détails de la commande':'تفاصيل طلبيتي','Ouvrir l’image de la liste':'فتح صورة اللائحة الخاصة','DH':'درهم','Commande':'تم تقديم الطلب','Recherche de votre commande...':'جاري البحث عن طلبك...'
+      'Mes informations et le récapitulatif':'معلوماتي وملخص الطلب','Vérifiez la commande puis confirmez la réservation.':'تحققوا من الطلب ثم أكدوا الحجز.','Nom et prénom':'الاسم الكامل','Numéro WhatsApp':'رقم واتساب','Adresse e-mail':'البريد الإلكتروني','Consignes pour la commande':'ملاحظات الطلب','Confirmer et réserver ma commande':'تأكيد وحجز طلبي','Récapitulatif de la commande':'ملخص الطلب','Mode de retrait':'طريقة الاستلام','Type de liste':'نوع اللائحة','École':'المؤسسة','Niveau':'المستوى','Articles de la liste':'عناصر اللائحة','Fournitures choisies':'اللوازم المختارة','Sous-total liste':'المجموع الفرعي للائحة','Sous-total liste scolaire':'المجموع الفرعي للائحة المدرسية','Sous-total fournitures':'المجموع الفرعي للوازم','Total estimé':'المجموع التقديري','Toutes les catégories':'جميع الفئات','Réinitialiser':'إعادة الضبط','Passer cette étape':'تخطي هذه الخطوة','Annuler':'إلغاء','Fermer':'إغلاق',
+      'Je récupère la commande à la librairie.':'أستلم طلبيتي من المكتبة.','Je renseignerai mon adresse à la dernière étape.':'سأدخل عنواني في الخطوة الأخيرة.','Option momentanément indisponible':'هذا الخيار غير متوفر حالياً','Je fournis une photo de ma liste après la validation.':'أرسل صورة لائحتي بعد التأكيد.','Chargement des établissements…':'جارٍ تحميل المؤسسات…','-- Choisir une école --':'-- اختر مؤسسة --','-- Choisir le niveau --':'-- اختر المستوى --','Aucun établissement configuré.':'لا توجد أي مؤسسة مُدرجة حالياً.','Je choisis mes':'أختار من بين','fournitures parmi':'اللوازم التالية','Chargement des fournitures…':'جارٍ تحميل اللوازم…','La liste des fournitures est momentanément indisponible.':'قائمة اللوازم غير متوفرة حالياً.','Aucune fourniture dans cette catégorie.':'لا توجد لوازم في هذه الفئة.','Aucune catégorie active':'لا توجد فئة متاحة','Mes fournitures choisies':'اللوازم التي اخترتها','Aucune fourniture ajoutée':'لم تتم إضافة أي لوازم بعد','Aucune valeur disponible.':'لا توجد قيمة متاحة.','Configurer l’article':'إعداد المنتج','Prix de l’article':'ثمن المنتج','Choisissez la gamme':'اختاروا الفئة','Standard':'عادي','Qualité':'ممتاز','J’importe ma liste scolaire':'أستورد لائحتي المدرسية','Ajoutez une photo claire ou un fichier PDF de votre liste personnelle.':'أضيفوا صورة واضحة أو ملف PDF للائحتكم الخاصة.','Déposez votre liste ici':'أفلتوا لائحتكم هنا','Cliquez pour sélectionner un fichier':'اضغطوا لاختيار ملف','ou faites glisser le document dans cette zone.':'أو اسحبوا الملف إلى هذه المنطقة.','Le document est utilisé uniquement pour préparer votre commande. Taille maximale : strictement inférieure à 10 Mo.':'يُستعمل هذا الملف فقط لتحضير طلبيتكم. الحجم الأقصى: أقل من 10 ميغا بايت.','Adresse de livraison':'عنوان التوصيل','Ville / quartier':'المدينة / الحي','Complément d\'adresse':'معلومات إضافية عن العنوان','Instructions de livraison':'تعليمات التوصيل','Facultatif - 1 000 caractères maximum':'اختياري - 1000 حرف كحد أقصى','Rue, numéro, résidence':'الشارع، الرقم، الإقامة','Berkane':'بركان','Étage, appartement…':'الطابق، الشقة…','Informations facultatives':'معلومات اختيارية','Ex. Merci de m’appeler avant la préparation, préférence de marque, précision particulière…':'مثال: يرجى الاتصال بي قبل التحضير، تفضيل علامة معينة، أو أي توضيح آخر…','Ahmed Alami':'أحمد العلمي','Document ajouté':'تم إضافة الملف','Sur devis':'حسب الطلب','Liste importée':'اللائحة المستوردة','Liste personnelle':'اللائحة الخاصة','Suivre ma commande':'تتبع الطلبية','Retrouvez les détails, le montant à régler et l’avancement de votre commande.':'اطلع على التفاصيل والمبلغ الواجب سداده وحالة تقدم طلبك.','Rechercher':'بحث','Bonjour':'مرحبا','Merci pour votre confiance ! Retrouvez les détails de votre commande':'نشكركم على ثقتكم، إليكم تفاصيل طلبيكم :','Téléphone':'الهاتف','Présentez ce QR code lors de la récupération de votre commande. Télécharger la facture pour le retrait !':'احفظ رمز الاستجابة السريعة الخاص بطلبكم أو قموا بتنزيل الفاتورة لاستلام الطلب.','Détails de ma commande':'نفاصيل طلبيتي','Télécharger ma commande':'تحميل طلبيتي','Annuler ma commande':'إلغاء طلبيتي','Prix à payer':'الواجب أداءه','article':'منتج','articles':'منتجات','commande':'طلبية','Préparation':'التحضير','Prêt au retrait':'جاهز للاستلام','Annulé':'مُلغى','Récupéré':'تم الإستلام','Ma commande':'طلبيتي','Status de ma commande':'حالة طلبيتي','Commande personnalisée':'لائحة خاصة','Image de la liste':'صورة الائحة','Cette action n’est pas réversible.':'يرجي التؤكد، لا يمكن التراجع عن هذا الإجراء','Non, garder':'لا، احتفظ به','Oui, annuler':'نعم، إلغاء','Liste scolaire':'الائحة المدرسية','Fourniture':'مستلزمات','Aucun article dans cette rubrique.':'لا يوجد منتج في هذا القسم','Détails de la commande':'تفاصيل طلبيتي','Ouvrir l’image de la liste':'فتح صورة اللائحة الخاصة','DH':'درهم','Commande':'تم تقديم الطلب','Recherche de votre commande...':'جاري البحث عن طلبك...','Je choisis mon établissement et mon niveau':'أختار مستواي ومؤسستي التعليمية','Je personnalise ma liste scolaire':'أُخصِّصُ قائمتي المدرسية','Adaptez la liste officielle, puis ajoutez les fournitures de votre choix.':'قموا بتعديل القائمة الرسمية، ثم أضفوا المستلزمات أخرى حسب اختياركم'
     };
     const safeOriginalText=new WeakMap(),safeOriginalAttr=new WeakMap();let safeLanguage='FR',safeBusy=false;
+
+    Object.assign(SAFE_AR, {
+      'Navigation':'القائمة الرئيسية',
+      'Beaux arts':'مستلزمات الفنون التشكيلية',
+      'Jeux & loisir':'ألعاب',
+      'Jeux & Loisir':'ألعاب',
+      'Impressions':'الطباعة',
+      'Impression':'الطباعة',
+      'Inscriptions faculté':'تسجيل في الكلية',
+      'Inscription faculté':'تسجيل في الكلية',
+      'Procédure administrative':'الإجراءات الإدارية',
+      'Procédures administratives':'الإجراءات الإدارية',
+      'Localisation':'موقعنا',
+      'Follow us :':'تابعنا',
+      'Follow us':'تابعنا',
+      '© 2026 Librairie Al Qods Berkane - Tous droits réservés.':'© 2026 مكتبة القدس بركان - جميع الحقوق محفوظة.',
+      'Pensé et Développée par Omar KASSMI.':'من ابتكار وتطوير عمر قاسمي.'
+    });
     const trTracking=(fr)=>safeLanguage==='AR'?(SAFE_AR[fr]||fr):fr;
     function safeTranslate(root,toArabic){const host=root===document?document.body:root;if(!host)return;const els=host.nodeType===1?[host,...host.querySelectorAll('*')]:[...host.querySelectorAll('*')];els.forEach(el=>['placeholder','title','aria-label'].forEach(attr=>{if(!el.hasAttribute(attr))return;const saved=safeOriginalAttr.get(el)||{};if(!(attr in saved))saved[attr]=el.getAttribute(attr);safeOriginalAttr.set(el,saved);const value=saved[attr];el.setAttribute(attr,toArabic?(SAFE_AR[value]||value):value)}));const walker=document.createTreeWalker(host,NodeFilter.SHOW_TEXT),nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);nodes.forEach(node=>{const parent=node.parentElement;if(!parent||parent.closest('script,style,noscript,.school-banner-fr,.school-banner-ar')||!node.nodeValue.trim())return;if(!safeOriginalText.has(node))safeOriginalText.set(node,node.nodeValue);const original=safeOriginalText.get(node),key=original.trim();node.nodeValue=toArabic&&SAFE_AR[key]?original.replace(key,SAFE_AR[key]):original})}
-    function safeApplyLanguage(lang){safeLanguage=lang==='AR'?'AR':'FR';const ar=safeLanguage==='AR';document.documentElement.lang=ar?'ar':'fr';document.documentElement.dir=ar?'rtl':'ltr';document.body.dir=ar?'rtl':'ltr';safeBusy=true;safeTranslate(document,ar);safeBusy=false;localStorage.setItem('elqods_client_language',safeLanguage)}
+    function applyLocalizedContactAddress(){const address=safeLanguage==='AR'?(window.elqodsContactAddressAr||window.elqodsContactAddressFr):(window.elqodsContactAddressFr||window.elqodsContactAddressAr);if(address)document.querySelectorAll('#info-address, [data-contact-address]').forEach(el=>{el.textContent=address;el.lang=safeLanguage==='AR'?'ar':'fr';el.dir=safeLanguage==='AR'?'rtl':'ltr';});}
+    function safeApplyLanguage(lang){safeLanguage=lang==='AR'?'AR':'FR';const ar=safeLanguage==='AR';document.documentElement.lang=ar?'ar':'fr';document.documentElement.dir=ar?'rtl':'ltr';document.body.dir=ar?'rtl':'ltr';safeBusy=true;safeTranslate(document,ar);safeBusy=false;applyLocalizedContactAddress();localStorage.setItem('elqods_client_language',safeLanguage)}
+
+    Object.assign(SAFE_AR, {
+        'Je sélectionne mon établissement puis mon niveau scolaire.':'أختار مدرستي و مستواي الدراسي',
+        'Je selectionne mon établissement et mon niveau scolaire':'أختار مدرستي و مستواي الدراسي',
+        'Entrée de gamme':'فئة  إقتصادية',
+        'Moyenne gamme':'فئة متوسطة',
+        'Haute de gamme':'فئة فاخرة',
+        'OK':'تثبيت',
+        'Envoi en cours':'جاري الإرسال',
+        'Envoi en cours...':'جاري الإرسال',
+        'Je choisis mes fournitures parmi':'أختار مستلزماتي',
+        'Ajoutez les fournitures de votre choix à votre liste personnelle.':'أضف المستلزمات إضافية  إلى قائمتي الشخصية',
+        'Nous contacter':'اتصل بنا'
+});
     const safeObserver=new MutationObserver(records=>{if(safeLanguage!=='AR'||safeBusy)return;safeBusy=true;records.forEach(r=>r.addedNodes.forEach(n=>{if(n.nodeType===1)safeTranslate(n,true)}));safeBusy=false});safeObserver.observe(document.body,{childList:true,subtree:true});
 
     // MENU CHANGER LA LANGUE
@@ -1506,16 +1725,70 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    window.switchLanguage = function(lang) {
-        if (langBtn) langBtn.innerText = lang;
+    function captureLanguageNavigationState() {
+        const activeSection = Array.from(document.querySelectorAll('.content-section')).find(section => !section.classList.contains('hidden'));
+        const controls = {};
+        document.querySelectorAll('input[id], select[id], textarea[id]').forEach(control => {
+            if (control.type === 'file' || control.type === 'password') return;
+            controls[control.id] = control.type === 'checkbox' || control.type === 'radio'
+                ? { checked: control.checked, value: control.value }
+                : { value: control.value };
+        });
+        const activeButtons = Array.from(document.querySelectorAll('[data-zone].is-active,[data-category].is-active,[data-filter].is-active,[aria-pressed="true"]'))
+            .map(button => ({ id: button.id || '', zone: button.dataset.zone || '', category: button.dataset.category || '', filter: button.dataset.filter || '' }));
+        const serviceSection = document.getElementById('section-service-placeholder');
+        const service = serviceSection ? {
+            category: serviceSection.dataset.selectedServiceCategory || '',
+            name: serviceSection.dataset.selectedServiceName || '',
+            image: serviceSection.dataset.selectedServiceImage || ''
+        } : null;
+        return { sectionId: activeSection?.id || 'section-accueil', controls, activeButtons, service, scrollY: window.scrollY || 0 };
+    }
+    function restoreLanguageNavigationState() {
+        const raw = sessionStorage.getItem('elqods_language_navigation_state');
+        if (!raw) return;
+        let state;
+        try { state = JSON.parse(raw); } catch { sessionStorage.removeItem('elqods_language_navigation_state'); return; }
+        if (state.sectionId && document.getElementById(state.sectionId)) switchTab(state.sectionId);
+        Object.entries(state.controls || {}).forEach(([id, saved]) => {
+            const control = document.getElementById(id);
+            if (!control || control.type === 'file') return;
+            if ('checked' in saved) control.checked = Boolean(saved.checked);
+            if ('value' in saved && Array.from(control.options || []).some(option => option.value === saved.value) || !control.options) control.value = saved.value;
+            control.dispatchEvent(new Event('change', { bubbles: true }));
+            control.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+        if (state.service?.name) {
+            applyServiceSelection(state.service.category, state.service.name, state.service.image, false);
+        }
+        (state.activeButtons || []).forEach(saved => {
+            const selector = saved.id ? `#${CSS.escape(saved.id)}` : saved.zone ? `[data-zone="${CSS.escape(saved.zone)}"]` : saved.category ? `[data-category="${CSS.escape(saved.category)}"]` : saved.filter ? `[data-filter="${CSS.escape(saved.filter)}"]` : '';
+            const button = selector ? document.querySelector(selector) : null;
+            if (button && !button.classList.contains('is-active') && button.getAttribute('aria-pressed') !== 'true') button.click();
+        });
+        window.scrollTo({ top: Number(state.scrollY) || 0, behavior: 'auto' });
+    }
+    window.switchLanguage = function(lang, isInitialization = false) {
+        const requestedLanguage = lang === 'AR' ? 'AR' : 'FR';
+        const storedLanguage = localStorage.getItem('elqods_client_language') === 'AR' ? 'AR' : 'FR';
+        const languageReallyChanges = requestedLanguage !== storedLanguage;
+        const isSuccessPage = /(?:^|\/)success(?:\.html)?$/i.test(window.location.pathname);
+        if (languageReallyChanges || (isSuccessPage && !isInitialization)) {
+            localStorage.setItem('elqods_client_language', requestedLanguage);
+            sessionStorage.setItem('elqods_language_reload', '1');
+            sessionStorage.setItem('elqods_language_navigation_state', JSON.stringify(captureLanguageNavigationState()));
+            window.location.reload();
+            return;
+        }
+        if (langBtn) langBtn.innerText = requestedLanguage;
         Object.keys(langOptions).forEach(key => {
             if (langOptions[key]) langOptions[key].className = "text-[#E75C25] hover:bg-orange-50 rounded-full w-[34px] h-[34px] flex items-center justify-center font-black text-xs font-header focus:outline-none";
         });
-        if (langOptions[lang]) langOptions[lang].className = "bg-[#E75C25] text-white rounded-full w-[34px] h-[34px] flex items-center justify-center font-black text-xs font-header focus:outline-none";
-        safeApplyLanguage(lang);
+        if (langOptions[requestedLanguage]) langOptions[requestedLanguage].className = "bg-[#E75C25] text-white rounded-full w-[34px] h-[34px] flex items-center justify-center font-black text-xs font-header focus:outline-none";
+        safeApplyLanguage(requestedLanguage);
         if (langDropdown) langDropdown.classList.add('hidden');
     };
-    if(localStorage.getItem('elqods_client_language')==='AR')window.switchLanguage('AR');
+    if(localStorage.getItem('elqods_client_language')==='AR')window.switchLanguage('AR', true);
 
     const urlParams = new URLSearchParams(window.location.search);
     const tabParam = urlParams.get('tab');
@@ -1544,6 +1817,130 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.store-zone-btn').forEach(btn => btn.addEventListener('click', () => setStoreZone(btn.dataset.zone)));
     setStoreZone('accueil');
 
-    initClientData();
+    function initEssentialsCarousel() {
+        const track = document.getElementById('home-essentials-track');
+        const dotsBox = document.getElementById('home-essentials-dots');
+        const prevBtn = document.getElementById('essentials-prev');
+        const nextBtn = document.getElementById('essentials-next');
+        if (!track || !dotsBox) return;
+        const cards = Array.from(track.children).filter(el => el.tagName === 'A');
+        if (!cards.length) return;
+
+        function cardStep() {
+            const style = getComputedStyle(track);
+            const gap = parseFloat(style.columnGap || style.gap || '0') || 0;
+            return cards[0].getBoundingClientRect().width + gap;
+        }
+        function visibleCount() {
+            return Math.max(1, Math.round(track.clientWidth / cardStep()));
+        }
+        function pageCount() {
+            return Math.max(1, Math.ceil(cards.length / visibleCount()));
+        }
+        function renderDots() {
+            const pages = pageCount();
+            dotsBox.innerHTML = pages > 1
+                ? Array.from({ length: pages }).map((_, i) => `<button type="button" class="home-essentials-dot" data-page="${i}" aria-label="Page ${i + 1}"></button>`).join('')
+                : '';
+            dotsBox.querySelectorAll('.home-essentials-dot').forEach(dot => dot.addEventListener('click', () => {
+                const page = Number(dot.dataset.page);
+                const amount = cardStep() * visibleCount() * page;
+                track.scrollTo({ left: safeLanguage === 'AR' ? -amount : amount, behavior: 'smooth' });
+            }));
+            updateActiveDot();
+        }
+        function updateActiveDot() {
+            const dots = dotsBox.querySelectorAll('.home-essentials-dot');
+            if (!dots.length) return;
+            const maxScroll = track.scrollWidth - track.clientWidth;
+            const ratio = maxScroll > 0 ? Math.abs(track.scrollLeft) / Math.abs(maxScroll) : 0;
+            const activeIndex = Math.min(dots.length - 1, Math.round(ratio * (dots.length - 1)));
+            dots.forEach((dot, i) => dot.classList.toggle('is-active', i === activeIndex));
+        }
+        let scrollTimer;
+        track.addEventListener('scroll', () => { clearTimeout(scrollTimer); scrollTimer = setTimeout(updateActiveDot, 80); });
+        prevBtn?.addEventListener('click', () => track.scrollBy({ left: -cardStep(), behavior: 'smooth' }));
+        nextBtn?.addEventListener('click', () => track.scrollBy({ left: cardStep(), behavior: 'smooth' }));
+        let resizeTimer;
+        window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(renderDots, 150); });
+        renderDots();
+    }
+    initEssentialsCarousel();
+
+    function ensureFooterOnMainClientPages() {
+        const sourceSection = document.getElementById('section-accueil');
+        const sourceFooter = sourceSection?.querySelector(':scope > footer.elq-footer');
+        const sourceCredit = sourceSection?.querySelector(':scope > .elq-footer-credit');
+        if (!sourceFooter) return;
+        ['section-rentree', 'section-service-placeholder', 'section-autres'].forEach(sectionId => {
+            const section = document.getElementById(sectionId);
+            if (!section) return;
+            section.querySelectorAll(':scope > footer.elq-footer, :scope > .elq-footer-credit').forEach(node => node.remove());
+            const footer = sourceFooter.cloneNode(true);
+            footer.dataset.footerCloneFor = sectionId;
+            footer.dir = safeLanguage === 'AR' ? 'rtl' : 'ltr';
+            section.appendChild(footer);
+            if (sourceCredit) {
+                const credit = sourceCredit.cloneNode(true);
+                credit.dataset.footerCloneFor = sectionId;
+                credit.dir = safeLanguage === 'AR' ? 'rtl' : 'ltr';
+                section.appendChild(credit);
+            }
+        });
+    }
+    ensureFooterOnMainClientPages();
+
+    initClientData().finally(() => {
+        ensureFooterOnMainClientPages();
+        if (languageReloadWithoutSplash) {
+            restoreLanguageNavigationState();
+            requestAnimationFrame(() => {
+                document.documentElement.classList.remove('language-refresh-pending');
+            });
+            setTimeout(restoreLanguageNavigationState, 350);
+            setTimeout(() => { restoreLanguageNavigationState(); sessionStorage.removeItem('elqods_language_navigation_state'); }, 1200);
+        } else {
+            document.documentElement.classList.remove('language-refresh-pending');
+        }
+    });
     updateStepper(1);
+    const requestedTab = new URLSearchParams(window.location.search).get('tab');
+    if (requestedTab && document.getElementById(requestedTab)) switchTab(requestedTab);
 });
+
+// NOS MARQUES - defilement continu, sans vide, synchronise avec la langue.
+(function initInfiniteBrandsMarquee(){
+    const start=()=>{
+        const track=document.querySelector('#section-partenaires .partners-marquee-track');
+        if(!track)return;
+        const original=track.querySelector('.partners-marquee-group');
+        if(!original)return;
+        // Reconstruit deux copies strictement identiques pour garantir une boucle sans rupture.
+        [...track.querySelectorAll('.partners-marquee-group')].slice(1).forEach(group=>group.remove());
+        const clone=original.cloneNode(true);
+        clone.setAttribute('aria-hidden','true');
+        track.appendChild(clone);
+        track.querySelectorAll('img').forEach(img=>{img.loading='eager';img.decoding='async';img.style.visibility='visible';img.style.opacity='1'});
+        let animation=null,resizeTimer=null;
+        const run=()=>{
+            animation?.cancel();
+            track.style.transform='translate3d(0,0,0)';
+            const distance=original.getBoundingClientRect().width;
+            if(!distance)return;
+            const arabic=document.documentElement.dir==='rtl';
+            const from=arabic?-distance:0;
+            const to=arabic?0:-distance;
+            track.style.transform=`translate3d(${from}px,0,0)`;
+            animation=track.animate(
+                [{transform:`translate3d(${from}px,0,0)`},{transform:`translate3d(${to}px,0,0)`}],
+                {duration:30000,iterations:Infinity,easing:'linear'}
+            );
+        };
+        const schedule=()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(run,60)};
+        requestAnimationFrame(run);
+        window.addEventListener('resize',schedule,{passive:true});
+        track.querySelectorAll('img').forEach(img=>{if(!img.complete)img.addEventListener('load',schedule,{once:true})});
+        new MutationObserver(schedule).observe(document.documentElement,{attributes:true,attributeFilter:['dir','lang']});
+    };
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();

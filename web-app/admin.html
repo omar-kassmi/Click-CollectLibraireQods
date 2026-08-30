@@ -29,6 +29,60 @@
             #admin-main{margin-left:54px!important}
         }
     </style>
+
+<style id="supply-spec-three-ranges-style">
+.spec-legends-three,.spec-row-three{grid-template-columns:minmax(220px,1fr) repeat(3,minmax(92px,126px)) 42px 42px 42px!important}
+.spec-legends-three span{white-space:normal!important;text-align:center!important;line-height:1.15!important}
+@media(max-width:900px){.spec-legends-three,.spec-row-three{grid-template-columns:minmax(170px,1fr) repeat(3,minmax(76px,1fr)) 36px 36px 36px!important}}
+</style>
+<style id="three-supply-ranges-admin">.spec-legends-three,.spec-row-three{display:grid!important;grid-template-columns:minmax(220px,1fr) repeat(3,minmax(95px,126px)) 42px 42px 42px!important;gap:14px!important;align-items:center!important}.spec-legends-three span{text-align:center!important;white-space:normal!important;line-height:1.1!important}</style><style id="levels-pencil-v4">
+.catalog-master-row.catalog-level-row{grid-template-columns:auto minmax(0,1fr) 58px!important}
+.catalog-master-row .catalog-row-actions{width:58px!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:7px!important}
+.catalog-master-row .catalog-row-actions button{position:static!important;display:grid!important;visibility:visible!important;opacity:1!important;flex:0 0 22px!important}
+.catalog-master-row .catalog-row-actions .catalog-level-edit{background:#fff2e9!important;color:#ef571d!important;border:1px solid #ef571d!important}
+.catalog-master-row .catalog-row-actions .catalog-level-edit svg{display:block!important;width:13px!important;height:13px!important;fill:none!important;stroke:currentColor!important;stroke-width:2!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+.catalog-master-row b small{display:block;margin-top:3px;color:#9a938d;font-family:Tahoma,Arial,sans-serif;font-size:10px;font-weight:600;line-height:1.2;direction:rtl;text-align:left}
+</style>
+<style id="level-cycle-dropdown-v7">
+.catalog-dialog-field select{width:100%;height:44px;padding:0 12px;border:1px solid #e7e5e4;border-radius:11px;background:#fff;color:#292524;font:inherit;outline:none}.catalog-dialog-field select:focus{border-color:#ef571d;box-shadow:0 0 0 3px rgba(239,87,29,.12)}
+</style>
+<style id="cycle-visible-v8">
+.catalog-cycle-field{padding:12px!important;border:2px solid #ef571d!important;border-radius:14px!important;background:#fff4ed!important}.catalog-cycle-field>span{color:#ef571d!important;font-size:12px!important;font-weight:950!important}.catalog-cycle-field>span b{color:#ef571d}.catalog-cycle-field select{display:block!important;visibility:visible!important;opacity:1!important;width:100%!important;height:48px!important;margin-top:7px!important;padding:0 14px!important;border:1px solid #ef571d!important;border-radius:11px!important;background:#fff!important;color:#292524!important;font-size:13px!important;font-weight:800!important}
+</style>
+<style id="cycle-dropdown-simple-v10">
+/* Uniquement les 2 dropdowns Cycle des popups Ajouter/Modifier un niveau */
+#catalog-level-cycle,
+#level-edit-cycle {
+  display: block !important;
+  width: 100% !important;
+  height: 64px !important;
+  margin: 0 !important;
+  padding: 0 52px 0 26px !important;
+  border: 1px solid #dedede !important;
+  border-radius: 18px !important;
+  background: #fff !important;
+  color: #111827 !important;
+  font: 500 16px/1.2 inherit !important;
+  box-shadow: none !important;
+  outline: none !important;
+  appearance: auto !important;
+  -webkit-appearance: menulist !important;
+}
+#catalog-level-cycle:focus,
+#level-edit-cycle:focus {
+  border-color: #d6d3d1 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+/* Annule seulement l'encadre orange autour de ces deux selects */
+.catalog-cycle-field:has(#catalog-level-cycle),
+.catalog-cycle-field:has(#level-edit-cycle) {
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+</style>
 </head>
 <body class="bg-[#F3F6FB] text-gray-900 min-h-screen">
 
@@ -290,7 +344,7 @@
 
                 <section id="existing-supplies-section" class="admin-kanban-widget supply-kanban-section">
                     <div class="supply-widget-heading"><div><h3>Fournitures diverses</h3><p id="existing-supplies-count">Chargement…</p></div><div class="supply-widget-actions"><button id="btn-reset-supply-filters" type="button" disabled>Réinitialiser</button><button id="btn-add-supply-direct" type="button">+ Ajouter</button></div></div>
-                    <div class="supply-kanban-filters grid grid-cols-1 sm:grid-cols-2 gap-3 bg-white border border-gray-200 rounded-2xl p-3 shadow-sm"><label class="block"><span class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5">Filtrer par catégorie</span><select id="filter-supply-category" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white focus:border-[#E75C25]"><option value="">Toutes les catégories</option></select></label><label class="block"><span class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5">Filtrer spécificité et gamme</span><select id="filter-supply-feature" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white focus:border-[#E75C25]"><option value="">Toutes les fournitures</option><option value="specs">Avec spécificités</option><option value="no-specs">Sans spécificité</option><option value="quality-2">Deux gammes</option><option value="quality-1">Une gamme</option></select></label></div>
+                    <div class="supply-kanban-filters grid grid-cols-1 sm:grid-cols-2 gap-3 bg-white border border-gray-200 rounded-2xl p-3 shadow-sm"><label class="block"><span class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5">Filtrer par catégorie</span><select id="filter-supply-category" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white focus:border-[#E75C25]"><option value="">Toutes les catégories</option></select></label><label class="block"><span class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5">Filtrer spécificité et gamme</span><select id="filter-supply-feature" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white focus:border-[#E75C25]"><option value="">Toutes les fournitures</option><option value="specs">Avec spécificités</option><option value="no-specs">Sans spécificité</option><option value="quality-3">Trois gammes</option></select></label></div>
                     <div id="existing-supplies-list" class="supply-kanban-board"><p>Chargement…</p></div>
                 </section>
                 <div id="supply-editor-source" class="supply-editor-source">
@@ -303,10 +357,20 @@
                             <input type="hidden" id="supply-item-id">
                             <div><label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Nom</label><input id="supply-item-name" required class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E75C25]" placeholder="Ex : Ensemble stylo"></div><div class="supply-category-field"><label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Catégorie</label><select id="supply-item-category-id" required><option value="">Sélectionner une catégorie</option></select></div>
                             <div class="supply-mode-grid">
-                                <label class="supply-mode-card"><input id="supply-has-quality" type="checkbox" checked><i aria-hidden="true"></i><span><b>Deux qualités</b></span></label>
+                                <div id="supply-range-selector" class="supply-range-selector">
+  <span class="supply-range-label">Gammes proposées</span>
+  <button id="supply-range-trigger" type="button" class="supply-range-trigger" aria-expanded="false" aria-controls="supply-range-menu">
+    <span id="supply-range-summary">3 gammes sélectionnées</span><b aria-hidden="true">⌄</b>
+  </button>
+  <div id="supply-range-menu" class="supply-range-menu" hidden>
+    <label><input type="checkbox" value="entry" checked><i></i><span>Entrée de gamme</span></label>
+    <label><input type="checkbox" value="middle" checked><i></i><span>Moyenne gamme</span></label>
+    <label><input type="checkbox" value="high" checked><i></i><span>Haute de gamme</span></label>
+  </div>
+</div>
                                 <label class="supply-mode-card"><input id="supply-has-specs" type="checkbox"><i aria-hidden="true"></i><span><b>Avec spécificités</b></span></label>
                             </div>
-                            <div id="supply-base-prices" class="grid grid-cols-2 gap-3"><div><label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Prix standard</label><input id="supply-item-standard" required type="number" min="0" step="0.01" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none" placeholder="0.00"></div><div id="supply-quality-field"><label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Prix qualité</label><input id="supply-item-quality" type="number" min="0" step="0.01" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none" placeholder="0.00"></div></div>
+                            <div id="supply-base-prices" class="grid grid-cols-1 sm:grid-cols-3 gap-3"><div><label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Prix entrée de gamme</label><input id="supply-item-standard" required type="number" min="0" step="0.01" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none" placeholder="0.00"></div><div id="supply-quality-field"><label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Prix moyenne gamme</label><input id="supply-item-quality" required type="number" min="0" step="0.01" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none" placeholder="0.00"></div><div id="supply-high-field"><label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Prix haute de gamme</label><input id="supply-item-high" required type="number" min="0" step="0.01" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none" placeholder="0.00"></div></div>
                             <label class="supply-mode-card supply-site-toggle"><input id="supply-item-active" type="checkbox" checked><i aria-hidden="true"></i><span><b>Afficher sur le site</b></span></label>
                             <section id="supply-spec-editor"><div class="supply-spec-toolbar"><div><b>Spécificités</b><small>Configurez les choix proposés au client.</small></div><button id="add-supply-spec" type="button">+ Spécificité</button></div><div id="supply-spec-list"></div></section>
                             <div class="flex gap-2"><button type="submit" class="flex-1 bg-[#E75C25] text-white rounded-xl py-3 text-xs font-black hover:bg-[#CE4E1D]">Enregistrer</button><button id="cancel-supply-edit" type="button" class="hidden px-4 border border-gray-200 rounded-xl text-xs font-black">Annuler</button></div>
@@ -371,6 +435,11 @@
                             <label class="block text-xs font-bold text-gray-500 mb-1">Adresse Physique de la boutique</label>
                             <input type="text" id="set-contact-address" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white">
                         </div>
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Adresse physique de la boutique — arabe</label>
+                            <input type="text" id="set-contact-address-ar" lang="ar" dir="rtl" required placeholder="مثال: شارع الحسن الثاني، بركان، المغرب" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:bg-white text-right">
+                            <p class="text-[10px] text-gray-400 mt-1.5">Cette adresse sera affichée dans le footer et sur la page Localisation lorsque le site est en arabe.</p>
+                        </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-500 mb-1">Adresse Mail (Pro)</label>
                             <input type="email" id="set-contact-email" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white">
@@ -400,8 +469,16 @@
                             <input type="url" id="set-contact-facebook" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white">
                         </div>
                         <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">X (Twitter) URL</label>
+                            <input type="url" id="set-contact-x" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white">
+                        </div>
+                        <div>
                             <label class="block text-xs font-bold text-gray-500 mb-1">Instagram URL</label>
                             <input type="url" id="set-contact-instagram" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">YouTube URL</label>
+                            <input type="url" id="set-contact-youtube" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:bg-white">
                         </div>
                         <div class="sm:col-span-2">
                             <label class="block text-xs font-bold text-gray-500 mb-1">LinkedIn URL</label>
@@ -419,6 +496,6 @@
     </div>
     </div>
     </div>
-    <script src="admin.js?v=cumulative-restore-v1"></script>
+    <script src="admin.js?v=cycle-dropdown-simple-v10-20260811"></script>
 </body>
 </html>

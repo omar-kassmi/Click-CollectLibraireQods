@@ -1,6 +1,20 @@
 <!DOCTYPE html>
 <html lang="fr" class="scroll-smooth">
 <head>
+<script id="language-refresh-prepaint">
+(function(){
+  try {
+    if (sessionStorage.getItem('elqods_language_reload') === '1') {
+      document.documentElement.classList.add('language-refresh-pending');
+    }
+  } catch (error) {}
+})();
+</script>
+<style id="language-refresh-prepaint-style">
+html.language-refresh-pending body { visibility: hidden !important; }
+html.language-refresh-pending #splash-screen { display: none !important; visibility: hidden !important; opacity: 0 !important; }
+</style>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Librairie & Papeterie El Qods — Berkane</title>
@@ -11,6 +25,12 @@
                 document.documentElement.dir = 'rtl';
             }
         } catch (e) {}
+        try {
+            if (sessionStorage.getItem('elq_skip_splash_once') === '1') {
+                sessionStorage.removeItem('elq_skip_splash_once');
+                document.documentElement.classList.add('skip-splash-once');
+            }
+        } catch (e) {}
     </script>
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -18,7 +38,7 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
     <link href="https://fonts.googleapis.com.rproxy.goskope.com/css2?family=Noto+Naskh+Arabic:wght@400;500&family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=cancel-popup-ar-v14">
+    <link rel="stylesheet" href="styles.css?v=services-footer-layout-v16">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .font-header { font-family: 'Inter', sans-serif; }
@@ -1124,10 +1144,497 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
             unicode-bidi: isolate !important;
         }
 </style>
+<style id="three-supply-ranges-client">.supply-config-options-three{grid-template-columns:repeat(3,minmax(0,1fr))!important}@media(max-width:640px){.supply-config-options-three{grid-template-columns:1fr!important}}</style>
+<style id="supply-range-difference-chip-style">
+.supply-config-options-three label span{display:flex!important;align-items:center!important;gap:7px!important;flex-wrap:wrap!important}
+.supply-range-difference-chip{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:20px!important;padding:2px 7px!important;border-radius:999px!important;background:#e9f8f1!important;color:#008b63!important;font-size:10px!important;font-weight:900!important;line-height:1!important;white-space:nowrap!important}
+</style>
+<style id="footer-emergency-fix">
+/* Footer final verrouille : fond noir, groupes espaces, sous-colonnes compactes. */
+.site-footer-full.elq-footer{
+  display:block!important; position:relative!important; box-sizing:border-box!important;
+  width:100vw!important; max-width:100vw!important;
+  margin:0 calc(50% - 50vw)!important; padding:0!important;
+  background:#111!important; color:#858585!important; overflow:visible!important;
+  border:0!important; border-top:3px solid #E75C25!important; text-align:left!important;
+}
+.site-footer-full.elq-footer .elq-footer-shell{
+  box-sizing:border-box!important; width:min(1280px,calc(100vw - 96px))!important;
+  max-width:none!important; margin:0 auto!important; padding:56px 0 26px!important;
+}
+.site-footer-full.elq-footer .elq-footer-main{
+  box-sizing:border-box!important; width:100%!important; margin:0!important; padding:0 0 30px!important;
+  background:transparent!important; color:#858585!important;
+  display:grid!important; grid-template-columns:240px minmax(0,1fr)!important;
+  column-gap:40px!important; align-items:start!important;
+}
+.site-footer-full.elq-footer .elq-footer-brand{
+  min-width:0!important; display:flex!important; flex-direction:column!important;
+  align-items:flex-start!important; gap:14px!important; text-align:left!important;
+}
+.site-footer-full.elq-footer .elq-footer-logo{
+  display:block!important; width:auto!important; height:110px!important;
+  max-width:150px!important; margin:0 0 4px -8px!important; object-fit:contain!important;
+  object-position:left center!important;
+  filter:grayscale(1) brightness(2.2)!important;
+}
+.site-footer-full.elq-footer .elq-footer-contact{
+  display:flex!important; flex-direction:column!important; gap:6px!important;
+  margin:0!important; color:#a3a09d!important; font-size:12.5px!important;
+  line-height:1.5!important; text-align:left!important;
+}
+.site-footer-full.elq-footer .elq-footer-contact-btn{
+  display:inline-block!important; margin-top:8px!important; padding:12px 22px!important;
+  border:0!important; border-radius:12px!important; background:#E75C25!important;
+  color:#fff!important; font-size:11.5px!important; font-weight:800!important;
+  letter-spacing:.03em!important; text-transform:uppercase!important; text-decoration:none!important;
+  cursor:pointer!important; transition:background .15s!important;
+}
+.site-footer-full.elq-footer .elq-footer-contact-btn:hover{background:#CE4E1D!important}
+.site-footer-full.elq-footer .elq-footer-columns{
+  display:grid!important; grid-template-columns:repeat(3,minmax(0,max-content))!important;
+  justify-content:start!important; align-items:start!important;
+  column-gap:90px!important; row-gap:28px!important; width:100%!important; min-width:0!important; margin:0!important;
+}
+.site-footer-full.elq-footer .elq-footer-column{
+  min-width:0!important; display:flex!important; flex-direction:column!important;
+  align-items:flex-start!important; text-align:left!important;transform: translateX(-80px)!important
+}
+.site-footer-full.elq-footer .elq-footer-column h3{
+  display:block!important; width:auto!important; margin:0 0 16px!important;
+  padding:0!important; border:0!important;
+  background:transparent!important; color:#E75C25!important;
+  font-size:12.5px!important; font-weight:900!important; line-height:1!important;
+  text-align:left!important; text-transform:uppercase!important; letter-spacing:.02em!important;
+  white-space:nowrap!important;
+}
+.site-footer-full.elq-footer .elq-footer-links{
+  display:flex!important; flex-direction:column!important; align-items:flex-start!important;
+  gap:13px!important; width:100%!important; margin:0!important;
+}
+.site-footer-full.elq-footer .elq-footer-column button{
+  display:block!important; width:auto!important; max-width:100%!important;
+  margin:0!important; padding:0!important; border:0!important;
+  background:transparent!important; color:#c7c4c1!important;
+  font-size:13px!important; font-weight:600!important; line-height:1.3!important;
+  text-align:left!important; text-transform:none!important; white-space:nowrap!important;
+  cursor:pointer!important; transition:color .15s!important;
+}
+.site-footer-full.elq-footer .elq-footer-column button:hover{color:#E75C25!important}
+.site-footer-full.elq-footer .elq-footer-social{
+  display:flex!important; align-items:center!important; justify-content:flex-start!important;
+  gap:22px!important; width:100%!important; margin:0!important;
+  padding:22px 0 0!important; border-top:1px solid #232323!important;
+  color:#a3a09d!important; font-size:14px!important; text-align:left!important;
+}
+.site-footer-full.elq-footer .elq-footer-social span{color:#a3a09d!important}
+.site-footer-full.elq-footer .elq-footer-social a{
+  display:inline-flex!important; align-items:center!important; justify-content:center!important;
+  width:22px!important; height:22px!important; color:#82807d!important; transition:color .15s!important;
+}
+.site-footer-full.elq-footer .elq-footer-social a svg{
+  width:100%!important; height:100%!important; fill:none!important; stroke:currentColor!important;
+  stroke-width:1.6!important; stroke-linecap:round!important; stroke-linejoin:round!important;
+}
+.site-footer-full.elq-footer .elq-footer-social a:hover{color:#E75C25!important}
+.site-footer-full.elq-footer .elq-footer-copyright{
+  display:flex!important; align-items:center!important; justify-content:center!important;
+  position:static!important; inset:auto!important; transform:none!important;
+  box-sizing:border-box!important; width:100%!important; max-width:none!important;
+  min-height:0!important; margin:0!important; padding:18px 20px!important;
+  border:0!important; border-top:1px solid #262626!important; background:#111!important; color:#78766f!important;
+  box-shadow:none!important; clip-path:none!important;
+  font-size:11.5px!important; line-height:1.3!important; text-align:center!important;
+  text-indent:0!important; white-space:normal!important;
+}
+.elq-footer-credit{
+  display:flex!important; align-items:center!important; justify-content:center!important;
+  box-sizing:border-box!important; width:100vw!important; max-width:100vw!important;
+  margin:0 calc(50% - 50vw)!important; padding:14px 20px!important;
+  background:#fff!important; color:#78716c!important; font-size:11px!important;
+  font-weight:600!important; text-align:center!important;
+}
+
+/* ---- Version arabe (RTL) ---- */
+html[dir="rtl"] .site-footer-full.elq-footer{text-align:right!important}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-main{direction:rtl!important}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-brand{align-items:flex-end!important;text-align:right!important;}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-logo{margin:0 -8px 4px 0!important;object-position:right center!important; transform: translateX(130px)!important}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-contact{align-items:flex-end!important;text-align:right!important;transform: translateX(-80px)!important}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-contact span{text-align:right!important;direction:rtl!important;transform: translateX(80px)!important}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-columns{direction:rtl!important;justify-content:start!important;transform: translateX(-100px)!important}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-column{align-items:flex-end!important;text-align:right!important;transform: translateX(-100px)!important}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-column h3{text-align:right!important;width:100%!important}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-links{align-items:flex-end!important;width:100%!important}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-column button{text-align:right!important;width:100%!important}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-social{justify-content:flex-end!important;text-align:right!important}
+html[dir="rtl"] .elq-footer-credit{direction:rtl!important}
+
+@media(max-width:1024px){
+  .site-footer-full.elq-footer .elq-footer-main{grid-template-columns:1fr!important;row-gap:36px!important}
+  .site-footer-full.elq-footer .elq-footer-columns{grid-template-columns:repeat(3,minmax(0,1fr))!important;column-gap:32px!important}
+}
+@media(max-width:640px){
+  .site-footer-full.elq-footer .elq-footer-columns{grid-template-columns:1fr!important;row-gap:28px!important}
+  .site-footer-full.elq-footer .elq-footer-column button{white-space:normal!important}
+}
+
+
+@media(max-width:1024px){
+ .site-footer-full.elq-footer .elq-footer-main{flex-wrap:wrap!important; row-gap:36px!important}
+ .site-footer-full.elq-footer .elq-footer-columns{gap:28px 48px!important}
+}
+@media(max-width:700px){
+ .site-footer-full.elq-footer .elq-footer-shell{width:calc(100vw - 32px)!important; padding:40px 0 20px!important}
+ .site-footer-full.elq-footer .elq-footer-logo{height:90px!important}
+ .site-footer-full.elq-footer .elq-footer-main{flex-direction:column!important; gap:32px!important}
+ .site-footer-full.elq-footer .elq-footer-columns{flex-direction:column!important; gap:26px!important}
+}
+</style>
+
+<style id="footer-final-adjustments-v6">
+/* Footer final : alignements FR/AR, colonnes, social et bouton */
+@media (min-width: 901px){
+  html[dir="ltr"] .site-footer-full.elq-footer .elq-footer-columns{transform:translateX(72px)!important;}
+  html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-columns{transform:translateX(-72px)!important;}
+}
+html[dir="ltr"] .site-footer-full.elq-footer .elq-footer-contact-btn{border-radius:0!important}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-contact-btn{border-radius:0!important;transform: translateX(95px)!important}
+.site-footer-full.elq-footer .elq-footer-social{
+  width:100%!important;max-width:none!important;margin:28px auto 0!important;padding:0!important;
+  display:flex!important;justify-content:center!important;align-items:center!important;text-align:center!important;
+  border-top:0!important;border-bottom:0!important;box-shadow:none!important;
+}
+.site-footer-full.elq-footer .elq-footer-social:before,
+.site-footer-full.elq-footer .elq-footer-social:after{content:none!important;display:none!important;}
+html[dir="ltr"] .site-footer-full.elq-footer .elq-footer-brand,
+html[dir="ltr"] .site-footer-full.elq-footer .elq-footer-contact{align-items:flex-end!important;text-align:right!important;}
+html[dir="ltr"] .site-footer-full.elq-footer .elq-footer-contact span{width:100%!important;text-align:right!important;}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-brand,
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-contact{align-items:flex-start!important;text-align:left!important;}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-contact span{width:100%!important;text-align:left!important;direction:rtl!important;}
+.site-footer-full.elq-footer .elq-footer-logo{align-self:center!important;margin-left:auto!important;margin-right:auto!important;object-position:center!important;}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-columns{direction:rtl!important;}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-column{align-items:flex-start!important;text-align:left!important;}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-column h3,
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-links,
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-column button{align-items:flex-start!important;text-align:left!important;}
+</style>
+<style id="footer-language-alignment-fix">
+/* Footer: placement adapte a la langue sur desktop. */
+@media (min-width: 901px) {
+  html:not([dir="rtl"]) .site-footer-full.elq-footer .elq-footer-columns {
+    justify-content: end !important;
+  }
+
+  html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-columns {
+    justify-content: start !important;
+    direction: rtl !important;
+  }
+
+  html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-column,
+  html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-column h3,
+  html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-column button {
+    align-items: flex-end !important;
+    text-align: right !important;
+  }
+
+  html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-links {
+    align-items: flex-end !important;
+  }
+}
+
+/* En arabe, le libelle et les icones des reseaux sociaux restent centres. */
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-social {
+  width: 100% !important;
+  justify-content: center !important;
+  text-align: center !important;
+  direction: rtl !important;
+}
+</style>
+
+
+<style id="elq-footer-brand-reference-v2">
+/* Correctif final du bloc logo / coordonnées / contact. */
+.site-footer-full.elq-footer .elq-footer-brand{
+  box-sizing:border-box!important;
+  width:max-content!important;
+  min-width:340px!important;
+  max-width:none!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  gap:0!important;
+  text-align:left!important;
+  direction:ltr!important;
+}
+.site-footer-full.elq-footer .elq-footer-logo{
+  display:block!important;
+  width:180px!important;
+  max-width:180px!important;
+  height:145px!important;
+  margin:0 0 24px 0!important;
+  object-fit:contain!important;
+  object-position:left center!important;
+  align-self:flex-start!important;
+  filter:none!important;
+}
+.site-footer-full.elq-footer .elq-footer-contact{
+  width:max-content!important;
+  max-width:none!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  gap:0!important;
+  margin:0!important;
+  color:#858585!important;
+  font-family:Arial,Helvetica,sans-serif!important;
+  font-size:15px!important;
+  font-style:normal!important;
+  font-weight:400!important;
+  line-height:1.35!important;
+  text-align:left!important;
+  direction:ltr!important;
+}
+.site-footer-full.elq-footer .elq-footer-contact>span{
+  display:block!important;
+  width:max-content!important;
+  max-width:none!important;
+  min-height:30px!important;
+  color:#858585!important;
+  font:inherit!important;
+  font-weight:400!important;
+  text-align:left!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+}
+.site-footer-full.elq-footer .elq-footer-contact [data-contact-address],
+.site-footer-full.elq-footer .elq-footer-contact [data-contact-phone],
+.site-footer-full.elq-footer .elq-footer-contact [data-contact-email]{
+  display:inline!important;
+  width:auto!important;
+  max-width:none!important;
+  color:inherit!important;
+  font:inherit!important;
+  font-weight:400!important;
+  white-space:nowrap!important;
+}
+
+.site-footer-full.elq-footer .elq-footer-contact-btn{
+  width:205px!important;
+  min-width:205px!important;
+  height:44px!important;
+  min-height:44px!important;
+  margin:21px 0 0 0!important;
+  padding:0 18px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  align-self:flex-start!important;
+  border:0!important;
+  border-radius:0!important;
+  background:#ef4423!important;
+  color:#fff!important;
+  font-size:14px!important;
+  font-weight:900!important;
+  line-height:1!important;
+  text-align:center!important;
+  text-transform:uppercase!important;
+}
+/* En arabe uniquement : bord droit commun pour le logo, les coordonnees et le bouton. */
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-brand{
+  align-items:flex-end!important;
+  text-align:right!important;
+  direction:rtl!important;
+}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-logo{
+  align-self:flex-end!important;
+  margin:0 0 24px 0!important;
+  object-position:right center!important;
+}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-contact{
+  align-items:flex-end!important;
+  text-align:right!important;
+  direction:rtl!important;
+}
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-contact>span{
+  align-self:flex-end!important;
+  text-align:right!important;
+  direction:rtl!important;
+}
+
+html[dir="rtl"] .site-footer-full.elq-footer .elq-footer-contact-btn{
+  align-self:flex-end!important;
+  margin:21px 0 0 0!important;
+  direction:rtl!important;
+  text-transform:none!important;
+}
+@media(max-width:700px){
+  .site-footer-full.elq-footer .elq-footer-brand{min-width:0!important;max-width:100%!important}
+  .site-footer-full.elq-footer .elq-footer-contact{max-width:100%!important;overflow-x:auto!important}
+}
+</style>
+
+<style id="personal-step3-arabic-photo-layout">
+/* Etape 3 - liste personnalisee arabe : positions conformes a la maquette fournie. */
+html[dir="rtl"] #personal-supplies-view {
+  position: relative !important;
+}
+html[dir="rtl"] #personal-supplies-view .personal-supplies-head {
+  width: 100% !important;
+  margin: 0 !important;
+  position: relative !important;
+  padding-left: 118px !important;
+}
+html[dir="rtl"] #personal-supplies-view .personal-supplies-skip-top {
+  position: absolute !important;
+  left: 0 !important;
+  right: auto !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  margin: 0 !important;
+  justify-self: auto !important;
+  direction: rtl !important;
+}
+html[dir="rtl"] #personal-supplies-view .personal-supply-section,
+html[dir="rtl"] #personal-supplies-view .personal-supplies-actions {
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+html[dir="rtl"] #personal-supplies-view .personal-supplies-actions {
+  display: flex !important;
+  justify-content: flex-start !important;
+  direction: ltr !important;
+  margin-top: 17px !important;
+}
+html[dir="rtl"] #personal-supplies-view #personal-supplies-continue {
+  margin: 0 !important;
+  transform: none !important;
+  direction: rtl !important;
+}
+@media (max-width: 700px) {
+  html[dir="rtl"] #personal-supplies-view .personal-supplies-head {
+    padding-left: 0 !important;
+  }
+  html[dir="rtl"] #personal-supplies-view .personal-supplies-skip-top {
+    position: static !important;
+    transform: none !important;
+    grid-column: 1 / -1 !important;
+    justify-self: start !important;
+    margin-top: 10px !important;
+  }
+  html[dir="rtl"] #personal-supplies-view #personal-supplies-continue {
+    width: auto !important;
+  }
+}
+</style>
+
+<style id="personal-step3-skip-absolute-left-fix">
+html[dir="rtl"] #personal-supplies-view{position:relative!important}
+html[dir="rtl"] #personal-supplies-view .personal-supplies-head{position:static!important;padding-left:0!important}
+html[dir="rtl"] #personal-supplies-view #personal-supplies-skip{position:absolute!important;left:0!important;right:auto!important;top:0!important;transform:none!important;margin:0!important;z-index:5!important}
+@media(max-width:700px){html[dir="rtl"] #personal-supplies-view .personal-supplies-head{position:relative!important}html[dir="rtl"] #personal-supplies-view #personal-supplies-skip{position:static!important;grid-column:1/-1!important;justify-self:start!important;margin-top:10px!important}}
+</style>
+
+<style id="personal-step3-final-exact-layout-v2">
+/* Correctif final exact - Etape 3 liste personnalisee. */
+@media (min-width: 701px) {
+  /* AR : garder la zone de l'etape comme repere de positionnement. */
+  html[dir="rtl"] #personal-supplies-view {
+    position: relative !important;
+  }
+
+  /* AR : le bouton skip reste au bord gauche global, comme sur la capture. */
+  html[dir="rtl"] #personal-supplies-view #personal-supplies-skip,
+  html[dir="rtl"] #personal-supplies-view .personal-supplies-skip-top {
+    position: absolute !important;
+    left: 0 !important;
+    right: auto !important;
+    top: 25px !important;
+    transform: none !important;
+    margin: 0 !important;
+    z-index: 20 !important;
+    direction: rtl !important;
+  }
+
+  /* AR : espace vertical entre titre/sous-titre et widget fournitures. */
+  html[dir="rtl"] #personal-supplies-view .personal-supplies-head {
+    position: static !important;
+    padding-left: 124px !important;
+    margin-bottom: 24px !important;
+  }
+
+  /* AR : le widget reste pleine largeur, comme sur la capture. */
+  html[dir="rtl"] #personal-supplies-view .personal-supply-section,
+  html[dir="rtl"] #personal-supplies-view .personal-supplies-actions {
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* FR : largeur identique au widget, bouton colle au bord droit du widget. */
+  html:not([dir="rtl"]) #personal-supplies-view .personal-supplies-actions,
+  html[dir="ltr"] #personal-supplies-view .personal-supplies-actions {
+    width: min(100%, 590px) !important;
+    max-width: 590px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    direction: ltr !important;
+  }
+  html:not([dir="rtl"]) #personal-supplies-view #personal-supplies-continue,
+  html[dir="ltr"] #personal-supplies-view #personal-supplies-continue {
+    margin-left: auto !important;
+    margin-right: 0 !important;
+  }
+}
+
+@media (max-width: 700px) {
+  html[dir="rtl"] #personal-supplies-view #personal-supplies-skip,
+  html[dir="rtl"] #personal-supplies-view .personal-supplies-skip-top {
+    position: static !important;
+    transform: none !important;
+    grid-column: 1 / -1 !important;
+    justify-self: start !important;
+    margin-top: 10px !important;
+  }
+}
+</style>
+
+<style id="personal-step3-continue-right-like-subtotal">
+/* Etape 3 - liste personnalisee : bouton Continuer aligne a droite sous le sous-total. */
+@media (min-width: 701px) {
+  html:not([dir="rtl"]) #personal-supplies-view .personal-supplies-actions,
+  html[dir="ltr"] #personal-supplies-view .personal-supplies-actions {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 22px 0 0 0 !important;
+    padding: 0 12px 0 0 !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    direction: ltr !important;
+  }
+
+  html:not([dir="rtl"]) #personal-supplies-view #personal-supplies-continue,
+  html[dir="ltr"] #personal-supplies-view #personal-supplies-continue {
+    margin-left: auto !important;
+    margin-right: 0 !important;
+    transform: none !important;
+  }
+}
+</style>
 </head>
 <body class="bg-white text-gray-900 min-h-screen flex flex-col justify-between antialiased">
 
     <button id="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-6 right-6 z-50 bg-[#E75C25] hover:bg-[#CE4E1D] text-white p-3.5 rounded-xl shadow-xl shadow-orange-600/20 transition-all duration-300 transform opacity-0 translate-y-10 pointer-events-none hover:scale-105 flex items-center justify-center">
+
         <svg class="w-5 h-5 stroke-current fill-none stroke-[2.5]" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="18 15 12 9 6 15"></polyline>
         </svg>
@@ -1139,23 +1646,6 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
                 <img src="images/splash-animation-2.gif" alt="Animation du logo Al Qods" class="splash-logo">
             </div>
             <h1 class="splash-title">LIBRAIRIE &amp; PAPETERIE <strong>AL QODS</strong></h1>
-        </div>
-        <div class="splash-waves" aria-hidden="true">
-            <svg viewBox="0 0 1440 150" preserveAspectRatio="none">
-                <path fill="#e2a45d" d="M0,42 C90,70 178,22 285,42 C420,68 500,8 660,35 C820,63 930,86 1080,35 C1200,-5 1290,72 1440,47 L1440,150 L0,150 Z"/>
-                <path fill="#f3d5b2" d="M0,52 C120,92 210,38 340,55 C500,75 590,19 760,50 C935,82 1030,58 1160,46 C1280,35 1355,83 1440,66 L1440,150 L0,150 Z"/>
-                <path fill="#f6e4cc" d="M0,69 C145,116 250,53 405,69 C570,88 670,51 830,73 C1000,96 1135,53 1260,67 C1340,77 1394,91 1440,83 L1440,150 L0,150 Z"/>
-                <path fill="#d48627" d="M0,82 C150,144 245,80 405,82 C555,84 620,119 790,93 C980,64 1090,89 1235,94 C1325,97 1385,104 1440,99 L1440,150 L0,150 Z"/>
-            </svg>
-        </div>
-        <div class="splash-category-bar" aria-hidden="true">
-            <span class="splash-category"><svg viewBox="0 0 32 32"><path d="M6 26 25 7m-4-1 5 5M4 28l5-2-3-3-2 5Z"/></svg></span>
-            <span class="splash-category"><svg viewBox="0 0 32 32"><path d="M7 8h18v18H7zM10 4h12v7H10zM10 21h12M10 24h12M22 15h5v5h-5"/></svg></span>
-            <span class="splash-category"><svg viewBox="0 0 32 32"><path d="m5 9 11-4 11 4-11 4L5 9Zm0 6 11 4 11-4M5 21l11 4 11-4"/></svg></span>
-            <span class="splash-category"><svg viewBox="0 0 32 32"><path d="M7 9h18v5H7zm2 5v12m14-12v12M6 20h20M12 4l14-3v5L12 9z"/></svg></span>
-            <span class="splash-category"><svg viewBox="0 0 32 32"><rect x="4" y="7" width="19" height="14" rx="1"/><path d="M10 25h7m-3-4v4M25 9h4v16h-7v-2"/></svg></span>
-            <span class="splash-category"><svg viewBox="0 0 32 32"><path d="M5 13h22v13H5zM8 18h8M18 18h6M9 13V9h5v4M21 13V7h3v6M12 7l2-3 2 3-2 2-2-2Z"/></svg></span>
-            <span class="splash-category"><svg viewBox="0 0 32 32"><path d="M5 5h8v22H5zm14 3h8v19h-8zM8 9h2m-2 4h2m-2 10h2m12-11h2m-2 4h2M13 18h6v9h-6z"/></svg></span>
         </div>
     </div>
     <script>
@@ -1173,12 +1663,35 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
             <div class="site-logo-link flex items-center cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
                 <img src="images/logo.png" alt="Logo" class="h-11 w-auto object-contain">
             </div>
-            <nav class="hidden md:flex space-x-8 text-[14px] font-medium text-[#E75C25]">
+            <nav class="desktop-main-nav hidden md:flex space-x-8 text-[14px] font-medium text-[#E75C25]">
                 <button data-target="section-accueil" class="nav-tab-btn font-bold">Accueil</button>
                 <button data-target="section-rentree" class="nav-tab-btn font-medium hover:opacity-80">Rentrée scolaire</button>
-                <button data-target="section-autres" class="nav-tab-btn font-medium hover:opacity-80">Autres produits</button>
+                <div class="products-nav-menu"><button type="button" class="products-nav-trigger font-medium" aria-haspopup="true" aria-expanded="false"><span>Nos produits</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5.5 7.5 4.5 4.5 4.5-4.5"/></svg></button><div class="products-mega-menu" role="menu" aria-label="Nos produits"><div class="products-mega-inner"><section class="products-mega-column"><h3>Fournitures diverses</h3><button type="button" data-target="section-autres"><span>Fourniture scolaire</span></button><button type="button" data-target="section-autres"><span>Fourniture bureautique</span></button><button type="button" data-target="section-autres"><span>Fourniture informatique</span></button></section><section class="products-mega-column"><h3>Culture</h3><button type="button" data-target="section-autres"><span>Le Saint Qoran</span></button><button type="button" data-target="section-autres"><span>Livre arabe</span></button><button type="button" data-target="section-autres"><span>Livre français</span></button><button type="button" data-target="section-autres"><span>Livre anglais</span></button><button type="button" data-target="section-autres"><span>Autre</span></button></section><section class="products-mega-column"><h3>Divers</h3><button type="button" data-target="section-autres"><span>Jeux et Loisirs</span></button><button type="button" data-target="section-autres"><span>Beaux Arts</span></button><button type="button" data-target="section-autres"><span>Cadeaux</span></button></section></div></div></div>
                 <button data-target="section-suivi" class="nav-tab-btn font-medium hover:opacity-80">Suivre ma commande</button>
-                <button data-target="section-plan-magasin" class="nav-tab-btn font-medium hover:opacity-80">Plan & Rayons</button>
+                <div class="services-nav-menu">
+                    <button type="button" class="services-nav-trigger font-medium" aria-haspopup="true" aria-expanded="false">
+                        <span>Nos services</span>
+                        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5.5 7.5 4.5 4.5 4.5-4.5"/></svg>
+                    </button>
+                    <div class="services-mega-menu" role="menu" aria-label="Nos services">
+                        <div class="services-mega-inner">
+                            <section class="services-mega-column">
+                                <h3>Procédures administratives</h3>
+                                <button type="button" role="menuitem" data-service-category="Procédures administratives" data-service-name="Inscription faculté" data-service-image="inscription_fond.png"><span>Inscription faculté</span><i>›</i></button>
+                                <button type="button" role="menuitem" data-service-category="Procédures administratives" data-service-name="Renouvellement/demande passeport" data-service-image="passport_fond.png"><span>Renouvellement/demande passeport</span><i>›</i></button>
+                            </section>
+                            <section class="services-mega-column">
+                                <h3>Services informatiques</h3>
+                                <button type="button" role="menuitem" data-service-category="Services informatiques" data-service-name="Réparer un ordinateur" data-service-image="ordinateur_fond.png"><span>Réparer un ordinateur</span><i>›</i></button>
+                                <button type="button" role="menuitem" data-service-category="Services informatiques" data-service-name="Acheter une licence" data-service-image="licence_fond.png"><span>Acheter une licence</span><i>›</i></button>
+                            </section>
+                            <section class="services-mega-column">
+                                <h3>Autres services</h3>
+                                <button type="button" role="menuitem" data-service-category="Autres services" data-service-name="Impression" data-service-image="impression_fond.png"><span>Impression</span><i>›</i></button>
+                            </section>
+                        </div>
+                    </div>
+                </div>
             </nav>
             
             <div class="flex items-center space-x-3.5 text-[14px]">
@@ -1208,9 +1721,21 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
         <nav aria-label="Navigation mobile">
             <button data-target="section-accueil" class="nav-tab-btn font-bold"><span>Accueil</span><b>01</b></button>
             <button data-target="section-rentree" class="nav-tab-btn"><span>Rentrée scolaire</span><b>02</b></button>
-            <button data-target="section-autres" class="nav-tab-btn"><span>Autres produits</span><b>03</b></button>
+            <div class="mobile-products-group"><button type="button" id="mobile-products-toggle" class="mobile-products-toggle" aria-expanded="false"><span>Nos produits</span><b>03</b></button><div id="mobile-products-menu" class="mobile-products-menu" hidden><section><h3>Fournitures diverses</h3><button data-target="section-autres">Fourniture scolaire</button><button data-target="section-autres">Fourniture bureautique</button><button data-target="section-autres">Fourniture informatique</button></section><section><h3>Culture</h3><button data-target="section-autres">Le Saint Qoran</button><button data-target="section-autres">Livre arabe</button><button data-target="section-autres">Livre français</button><button data-target="section-autres">Livre anglais</button><button data-target="section-autres">Autre</button></section><section><h3>Divers</h3><button data-target="section-autres">Jeux et Loisirs</button><button data-target="section-autres">Beaux Arts</button><button data-target="section-autres">Cadeaux</button></section></div></div>
             <button data-target="section-suivi" class="nav-tab-btn"><span>Suivre ma commande</span><b>04</b></button>
-            <button data-target="section-plan-magasin" class="nav-tab-btn"><span>Plan &amp; Rayons</span><b>05</b></button>
+            <div class="mobile-services-group">
+                <button type="button" id="mobile-services-toggle" class="mobile-services-toggle" aria-expanded="false"><span>Nos services</span><b>05</b></button>
+                <div id="mobile-services-list" class="mobile-services-list" hidden>
+                    <h3>Procédures administratives</h3>
+                    <button type="button" data-service-category="Procédures administratives" data-service-name="Inscription faculté" data-service-image="inscription_fond.png">Inscription faculté</button>
+                    <button type="button" data-service-category="Procédures administratives" data-service-name="Renouvellement/demande passeport" data-service-image="passport_fond.png">Renouvellement/demande passeport</button>
+                    <h3>Services informatiques</h3>
+                    <button type="button" data-service-category="Services informatiques" data-service-name="Réparer un ordinateur" data-service-image="ordinateur_fond.png">Réparer un ordinateur</button>
+                    <button type="button" data-service-category="Services informatiques" data-service-name="Acheter une licence" data-service-image="licence_fond.png">Acheter une licence</button>
+                    <h3>Autres services</h3>
+                    <button type="button" data-service-category="Autres services" data-service-name="Impression" data-service-image="impression_fond.png">Impression</button>
+                </div>
+            </div>
             <button type="button" class="mobile-location-link" onclick="switchTab('section-contact-location')"><span>Localisation &amp; horaires</span><b>06</b></button>
         </nav>
     </aside>
@@ -1228,7 +1753,7 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
                     <div id="home-hero-copy" class="max-w-2xl space-y-5 text-left text-white">
                         <span id="home-hero-location" class="reveal inline-block bg-orange-500/20 text-[#FF844B] border border-orange-500/30 font-bold text-[11px] px-3 py-1 rounded-full uppercase tracking-widest">Berkane, Maroc</span>
                         <h2 id="home-hero-title" class="reveal delay-100 text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight text-white">Librairie & Papeterie <br><span class="text-[#E75C25]">El Qods</span></h2>
-                        <p class="reveal delay-200 text-gray-200 text-sm sm:text-base max-w-lg">Commandez vos packs officiels ou déposez la photo de votre liste scolaire en arabe.</p>
+                        <p id="home-hero-description" class="reveal delay-200 text-gray-200 text-sm sm:text-base max-w-lg">Librairie, papeterie et fournitures de bureau : tout ce dont vous avez besoin, tout près de chez vous à Berkane.</p>
                     </div>
                 </div>
                 <button type="button" class="home-mouse-scroll" aria-label="Faire défiler vers le contenu" onclick="document.querySelector('#section-accueil .home-content-start')?.scrollIntoView({behavior:'smooth', block:'start'})">
@@ -1242,24 +1767,7 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
                 </button>
             </div>
 
-            <div class="home-content-start max-w-7xl mx-auto px-6 md:px-12 pt-20 bg-white text-gray-900 w-full overflow-hidden">
-                <div id="home-category-heading" class="text-left mb-10 space-y-2 reveal">
-
-                    <h3 class="text-3xl font-black text-[#E75C25] tracking-tight font-header">Bonjour</h3>
-                    <p class="text-base font-black text-[#E75C25] tracking-tight font-header">Choisissez parmi des catégories inspirantes :</p>
-                </div>
-                <div class="flex overflow-x-auto space-x-8 md:space-x-12 pb-6 scroll-smooth snap-x snap-mandatory hide-scrollbar cursor-grab active:cursor-grabbing">
-                    <div class="flex flex-col items-center space-y-4 flex-shrink-0 snap-center w-36 md:w-40 reveal delay-100"><div class="w-36 h-36 md:w-40 md:h-40 rounded-full overflow-hidden flex items-center justify-center border bg-stone-50 shadow-md"><img src="images/livre.png" class="w-full h-full object-cover"></div><span class="font-header font-bold text-sm text-[#E75C25]">Livre</span></div>
-                    <div class="flex flex-col items-center space-y-4 flex-shrink-0 snap-center w-36 md:w-40 reveal delay-200"><div class="w-36 h-36 md:w-40 md:h-40 rounded-full overflow-hidden flex items-center justify-center border bg-stone-50 shadow-md"><img src="images/fourniture.png" class="w-full h-full object-cover"></div><span class="font-header font-bold text-sm text-[#E75C25]">Fournitures</span></div>
-                    <div class="flex flex-col items-center space-y-4 flex-shrink-0 snap-center w-36 md:w-40 reveal delay-300"><div class="w-36 h-36 md:w-40 md:h-40 rounded-full overflow-hidden flex items-center justify-center border bg-stone-50 shadow-md"><img src="images/cadeaux.png" class="w-full h-full object-cover"></div><span class="font-header font-bold text-sm text-[#E75C25]">Cadeaux</span></div>
-                    <div class="flex flex-col items-center space-y-4 flex-shrink-0 snap-center w-44 md:w-48 reveal delay-400"><div class="w-36 h-36 md:w-40 md:h-40 rounded-full overflow-hidden flex items-center justify-center border bg-stone-50 shadow-md"><img src="images/jouets.png" class="w-full h-full object-cover"></div><span class="font-header font-bold text-sm text-[#E75C25] text-center px-1">Jouets et jeux</span></div>
-                    <div class="flex flex-col items-center space-y-4 flex-shrink-0 snap-center w-36 md:w-40 reveal delay-500"><div class="w-36 h-36 md:w-40 md:h-40 rounded-full overflow-hidden flex items-center justify-center border bg-stone-50 shadow-md"><img src="images/bureatique.png" class="w-full h-full object-cover"></div><span class="font-header font-bold text-sm text-[#E75C25]">Bureautique</span></div>
-                    <div class="flex flex-col items-center space-y-4 flex-shrink-0 snap-center w-36 md:w-40 reveal delay-600"><div class="w-36 h-36 md:w-40 md:h-40 rounded-full overflow-hidden flex items-center justify-center border bg-stone-50 shadow-md"><img src="images/quran.png" class="w-full h-full object-cover"></div><span class="font-header font-bold text-sm text-[#E75C25]">Quran</span></div>
-                    <div class="flex flex-col items-center space-y-4 flex-shrink-0 snap-center w-36 md:w-40 reveal delay-700"><div class="w-36 h-36 md:w-40 md:h-40 rounded-full overflow-hidden flex items-center justify-center border bg-stone-50 shadow-md"><img src="images/high_tech.png" class="w-full h-full object-cover"></div><span class="font-header font-bold text-sm text-[#E75C25]">High tech</span></div>
-                </div>
-            </div>
-
-            <div class="max-w-7xl mx-auto px-6 md:px-12 py-16 bg-white w-full overflow-hidden">
+            <div id="home-school-list-banner" class="max-w-7xl mx-auto px-6 md:px-12 py-5 md:py-6 bg-white w-full overflow-hidden">
                 <div class="w-full bg-[url('images/image_27be9b.png')] bg-cover bg-center rounded-xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-stone-900/10 reveal">
                     <div class="flex items-center gap-5 w-full md:w-auto">
                         <div class="text-white"><svg class="w-11 h-11 stroke-current fill-none stroke-[1.5]" viewBox="0 0 24 24"><path d="M16 20V7a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v13" /><rect x="8" y="9" width="8" height="7" rx="1" /><path d="M16 14h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2M8 14H6a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2" /><path d="M9 5V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" /></svg></div>
@@ -1280,12 +1788,77 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
                 </div>
             </div>
 
+            <div class="home-content-start max-w-7xl mx-auto px-6 md:px-12 pt-5 md:pt-6 bg-white text-gray-900 w-full overflow-hidden">
+                <div id="home-category-heading" class="text-left mb-0 space-y-2 reveal">
+
+                    <h3 class="text-3xl font-black text-[#E75C25] tracking-tight font-header">Bonjour</h3>
+                    <p class="text-base font-black text-[#E75C25] tracking-tight font-header">Choisissez parmi des catégories inspirantes :</p>
+                </div>
+                <div class="flex overflow-x-auto space-x-8 md:space-x-12 pb-6 scroll-smooth snap-x snap-mandatory hide-scrollbar cursor-grab active:cursor-grabbing">
+                    <div class="flex flex-col items-center space-y-4 flex-shrink-0 snap-center w-36 md:w-40 reveal delay-100"><div class="w-36 h-36 md:w-40 md:h-40 rounded-full overflow-hidden flex items-center justify-center border bg-stone-50 shadow-md"><img src="images/livre.png" class="w-full h-full object-cover"></div><span class="font-header font-bold text-sm text-[#E75C25]">Livre</span></div>
+                    <div class="flex flex-col items-center space-y-4 flex-shrink-0 snap-center w-36 md:w-40 reveal delay-200"><div class="w-36 h-36 md:w-40 md:h-40 rounded-full overflow-hidden flex items-center justify-center border bg-stone-50 shadow-md"><img src="images/fourniture.png" class="w-full h-full object-cover"></div><span class="font-header font-bold text-sm text-[#E75C25]">Fournitures</span></div>
+                    <div class="flex flex-col items-center space-y-4 flex-shrink-0 snap-center w-36 md:w-40 reveal delay-300"><div class="w-36 h-36 md:w-40 md:h-40 rounded-full overflow-hidden flex items-center justify-center border bg-stone-50 shadow-md"><img src="images/cadeaux.png" class="w-full h-full object-cover"></div><span class="font-header font-bold text-sm text-[#E75C25]">Cadeaux</span></div>
+                    <div class="flex flex-col items-center space-y-4 flex-shrink-0 snap-center w-44 md:w-48 reveal delay-400"><div class="w-36 h-36 md:w-40 md:h-40 rounded-full overflow-hidden flex items-center justify-center border bg-stone-50 shadow-md"><img src="images/jouets.png" class="w-full h-full object-cover"></div><span class="font-header font-bold text-sm text-[#E75C25] text-center px-1">Jouets et jeux</span></div>
+                    <div class="flex flex-col items-center space-y-4 flex-shrink-0 snap-center w-36 md:w-40 reveal delay-500"><div class="w-36 h-36 md:w-40 md:h-40 rounded-full overflow-hidden flex items-center justify-center border bg-stone-50 shadow-md"><img src="images/bureatique.png" class="w-full h-full object-cover"></div><span class="font-header font-bold text-sm text-[#E75C25]">Bureautique</span></div>
+                    <div class="flex flex-col items-center space-y-4 flex-shrink-0 snap-center w-36 md:w-40 reveal delay-600"><div class="w-36 h-36 md:w-40 md:h-40 rounded-full overflow-hidden flex items-center justify-center border bg-stone-50 shadow-md"><img src="images/quran.png" class="w-full h-full object-cover"></div><span class="font-header font-bold text-sm text-[#E75C25]">Quran</span></div>
+                    <div class="flex flex-col items-center space-y-4 flex-shrink-0 snap-center w-36 md:w-40 reveal delay-700"><div class="w-36 h-36 md:w-40 md:h-40 rounded-full overflow-hidden flex items-center justify-center border bg-stone-50 shadow-md"><img src="images/high_tech.png" class="w-full h-full object-cover"></div><span class="font-header font-bold text-sm text-[#E75C25]">High tech</span></div>
+                </div>
+            </div>
+
+
+            <div id="home-essentials" class="max-w-7xl mx-auto px-6 md:px-12 pt-8 md:pt-10 pb-10 md:pb-14 w-full bg-white">
+                <div class="flex items-center justify-between mb-7 md:mb-9 reveal">
+                    <h3 class="text-2xl md:text-3xl font-black text-[#D19A38] tracking-tight font-header">
+                        <span class="school-banner-fr">Les indispensables de l’année scolaire !</span>
+                        <span class="school-banner-ar" lang="ar" dir="rtl">أساسيات الموسم الدراسي !</span>
+                    </h3>
+                    <div class="home-essentials-arrows">
+                        <button type="button" id="essentials-prev" class="home-essentials-arrow" aria-label="Précédent"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+                        <button type="button" id="essentials-next" class="home-essentials-arrow" aria-label="Suivant"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+                    </div>
+                </div>
+                <div id="home-essentials-track" class="home-essentials-track">
+                    <!-- Widget 1 -->
+                    <a href="#" onclick="switchTab('section-autres');return false;" class="home-essentials-card reveal delay-100">
+                        <img class="school-banner-fr" src="images/annee_scolaire_fr_1.png" alt="Cahiers de vacances">
+                        <img class="school-banner-ar" lang="ar" dir="rtl" src="images/annee_scolaire_ar_1.png" alt="دفاتر الإجازات">
+                    </a>
+                    <a href="#" onclick="switchTab('section-autres');return false;" class="home-essentials-card reveal delay-200">
+                            <img class="school-banner-fr" src="images/annee_scolaire_fr_2.png" alt="">
+                            <img class="school-banner-ar" lang="ar" dir="rtl" src="images/annee_scolaire_ar_2.png" alt="">
+                    </a>
+                    <a href="#" onclick="switchTab('section-autres');return false;" class="home-essentials-card reveal delay-200">
+                            <img class="school-banner-fr" src="images/annee_scolaire_fr_3.png" alt="">
+                            <img class="school-banner-ar" lang="ar" dir="rtl" src="images/annee_scolaire_ar_3.png" alt="">
+                    </a>
+                    <a href="#" onclick="switchTab('section-autres');return false;" class="home-essentials-card reveal delay-200">
+                            <img class="school-banner-fr" src="images/annee_scolaire_fr_4.png" alt="">
+                            <img class="school-banner-ar" lang="ar" dir="rtl" src="images/annee_scolaire_ar_4.png" alt="">
+                    </a>
+                    <a href="#" onclick="switchTab('section-autres');return false;" class="home-essentials-card reveal delay-200">
+                            <img class="school-banner-fr" src="images/annee_scolaire_fr_4.png" alt="">
+                            <img class="school-banner-ar" lang="ar" dir="rtl" src="images/annee_scolaire_ar_4.png" alt="">
+                    </a>
+                                        <a href="#" onclick="switchTab('section-autres');return false;" class="home-essentials-card reveal delay-200">
+                            <img class="school-banner-fr" src="images/annee_scolaire_fr_5.png" alt="">
+                            <img class="school-banner-ar" lang="ar" dir="rtl" src="images/annee_scolaire_ar_5.png" alt="">
+                    </a>
+                                        <a href="#" onclick="switchTab('section-autres');return false;" class="home-essentials-card reveal delay-200">
+                            <img class="school-banner-fr" src="images/annee_scolaire_fr_6.png" alt="">
+                            <img class="school-banner-ar" lang="ar" dir="rtl" src="images/annee_scolaire_ar_6.png" alt="">
+                    </a>
+                    
+
+                </div>
+                <div id="home-essentials-dots" class="home-essentials-dots"></div>
+            </div>
+
 
             <section id="section-grands-rayons" class="home-departments" aria-labelledby="home-departments-title">
                 <div class="home-departments-shell">
                     <header class="home-departments-header reveal">
                         <div>
-                            <h3 id="home-departments-title">Nos Grands Rayons</h3>
+                            <h3 id="home-departments-title">Nos GrandsRayons Livre</h3>
                             <span class="home-departments-title-line" aria-hidden="true"></span>
                         </div>
                         <p>Parcourez nos univers thématiques sélectionnés avec soin.</p>
@@ -1329,67 +1902,109 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
                 <div class="partners-bg-shape partners-bg-shape-top"></div>
                 <div class="partners-bg-shape partners-bg-shape-bottom"></div>
                 <div class="partners-inner mx-auto px-6 md:px-12 relative z-10">
-                    <div id="home-brands-heading" class="mb-7 reveal text-left">
-                        <h3 class="text-2xl md:text-3xl font-black text-[#E75C25] tracking-tight font-header">Nos marques</h3>
+                    <div id="home-brands-heading" class="mb-3 reveal text-left">
+                        <h3 class="text-2xl md:text-3xl font-black text-white tracking-tight font-header">Nos marques</h3>
                     </div>
                     <div class="partners-marquee-wrapper reveal delay-100" aria-label="Logos de nos marques">
                         <div class="partners-marquee-track">
-                            <div class="partner-logo-card"><img src="images/commune_berkane.png" alt="Commune de Berkane"></div>
-                            <div class="partner-logo-card"><img src="images/ministere_education.png" alt="Ministère de l'Éducation"></div>
-                            <div class="partner-logo-card"><img src="images/librairie_nationale.png" alt="Librairie Nationale"></div>
-                            <div class="partner-logo-card"><img src="images/bic.png" alt="BIC"></div>
-                            <div class="partner-logo-card"><img src="images/maped.png" alt="Maped"></div>
-                            <div class="partner-logo-card"><img src="images/logo.png" alt="Librairie El Qods"></div>
-                            <div class="partner-logo-card"><img src="images/commune_berkane.png" alt="Commune de Berkane"></div>
-                            <div class="partner-logo-card"><img src="images/ministere_education.png" alt="Ministère de l'Éducation"></div>
-                            <div class="partner-logo-card"><img src="images/librairie_nationale.png" alt="Librairie Nationale"></div>
-                            <div class="partner-logo-card"><img src="images/bic.png" alt="BIC"></div>
-                            <div class="partner-logo-card"><img src="images/maped.png" alt="Maped"></div>
-                            <div class="partner-logo-card"><img src="images/logo.png" alt="Librairie El Qods"></div>
+                          <div class="partners-marquee-group">
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/canson.png" alt="Canson"></div>
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/casio.png" alt="Casio"></div>
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/librairie_nationale.png" alt="Librairie Nationale"></div>
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/bic.png" alt="BIC"></div>
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/maped.png" alt="Maped"></div>
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/clairefontaine.png" alt="Clairefontaine"></div>
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/eastpak.png" alt="Eastpak"></div>
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/milan.png" alt="Milan"></div>
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/oxford.png" alt="Oxford"></div>
+                          </div>
+                          <div class="partners-marquee-group" aria-hidden="true">
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/canson.png" alt="Canson"></div>
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/casio.png" alt="Casio"></div>
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/librairie_nationale.png" alt="Librairie Nationale"></div>
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/bic.png" alt="BIC"></div>
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/maped.png" alt="Maped"></div>
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/clairefontaine.png" alt="Clairefontaine"></div>
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/eastpak.png" alt="Eastpak"></div>
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/milan.png" alt="Milan"></div>
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/oxford.png" alt="Oxford"></div>
+                          
+                          <div class="partners-marquee-group" aria-hidden="true">
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/canson.png" alt="Canson"></div>
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/casio.png" alt="Casio"></div>
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/librairie_nationale.png" alt="Librairie Nationale"></div>
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/bic.png" alt="BIC"></div>
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/maped.png" alt="Maped"></div>
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/clairefontaine.png" alt="Clairefontaine"></div>
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/eastpak.png" alt="Eastpak"></div>
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/milan.png" alt="Milan"></div>
+                            <div class="partner-logo-card"><img loading="eager" fetchpriority="high" decoding="async" src="images/images_marques/oxford.png" alt="Oxford"></div>
+                          </div>
                         </div>
                     </div>
                 </div>
             </section>
-            <footer class="site-footer-full bg-[#0D0D0D] text-stone-400 border-t border-white/10 w-full pt-16 pb-8 px-6 md:px-12 relative z-20 font-header overflow-hidden">
-                <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 border-b border-white/10 pb-16 items-start">
-                    <div class="md:col-span-4 space-y-5 reveal">
-                        <img src="images/logo.png" class="block mx-auto h-14 w-auto object-contain brightness-0 invert">
-                        <div class="space-y-1 text-sm font-light text-left">
-                            <h4 class="font-bold text-stone-400 tracking-wide text-xs uppercase mb-1">Librairie El Qods</h4>
-                            <p id="info-address" data-contact-address class="leading-relaxed pr-4">Chargement de l'adresse...</p>
-                            <p class="pt-2">T. Fixe : <span id="info-phone" data-contact-phone class="text-stone-400 font-normal">...</span></p>
-                            <p>E-mail : <span id="info-email" data-contact-email class="text-stone-400 font-normal">...</span></p>
-                        </div>
-                        <div class="pt-2 text-left">
-                            <a id="link-whatsapp" data-contact-whatsapp href="#" target="_blank" class="inline-block bg-[#E75C25] hover:bg-[#CE4E1D] text-white text-xs font-bold uppercase px-8 py-4 rounded-lg transition shadow-md">Nous Contacter</a>
-                        </div>
-                    </div>
-                    <div class="md:col-span-3 flex items-center justify-center relative reveal delay-100">
-                        <img src="images/map-maroc.png" class="w-full h-auto object-contain">
-                        <div class="absolute top-[12%] right-[22%] w-10 h-10 flex items-center justify-center">
-                            <div class="absolute w-12 h-12 bg-[#E75C25] rounded-full opacity-30 blur-md"></div>
-                            <div class="absolute w-6 h-6 bg-[#E75C25] rounded-full map-marker-pulse"></div>
-                            <div class="absolute w-2 h-2 bg-[#E75C25] rounded-full shadow shadow-black"></div>
-                        </div>
-                    </div>
-                    <div class="md:col-span-2 flex flex-col space-y-4 md:pl-8 pt-2 reveal delay-200">
-                        <button onclick="switchTab('section-rentree')" class="text-left font-bold text-sm tracking-wider hover:text-[#E75C25] transition uppercase">La Rentrée</button>
-                        <button onclick="switchTab('section-autres')" class="text-left font-bold text-sm tracking-wider hover:text-[#E75C25] transition uppercase">Librairie</button>
-                        <button onclick="switchTab('section-autres')" class="text-left font-bold text-sm tracking-wider hover:text-[#E75C25] transition uppercase">Papeterie</button>
-                    </div>
-                    <div class="md:col-span-3 space-y-5 md:pl-4 reveal delay-300">
-                        <h4 class="text-[11px] font-bold tracking-widest text-stone-400 uppercase text-left">PÔLE DE SERVICES EN LIGNE</h4>
-                        <div class="flex flex-col space-y-3.5 text-xs font-bold text-stone-400 uppercase">
-                            <button onclick="switchTab('section-rentree')" class="flex items-center gap-3 hover:text-[#E75C25] text-left">Formations & Packs</button>
-                            <button onclick="switchTab('section-suivi')" class="flex items-center gap-3 hover:text-[#E75C25] text-left">Suivre mon Pack</button>
-                            <button onclick="window.open('admin.html', '_blank')" class="flex items-center gap-3 hover:text-[#E75C25] text-left">Accès Gestion</button>
-                        </div>
-                    </div>
+            <footer class="site-footer-full elq-footer">
+    <div class="elq-footer-shell">
+        <div class="elq-footer-main">
+            <div class="elq-footer-brand">
+                <img src="images/logo_noir_blanc.png" class="elq-footer-logo" alt="Librairie Al Qods">
+                <div class="elq-footer-contact">
+                    <span data-contact-address>Avenue Hassan II, Berkane, Maroc</span>
+                    <span>Téléphone &amp; WhatsApp : <span data-contact-phone dir="ltr">+212 5 36 60 00 00</span></span>
+                    <span>E-mail : <span data-contact-email dir="ltr">contact@papeterieberkane.ma</span></span>
                 </div>
-                <div class="max-w-7xl mx-auto pt-6 flex justify-center items-center text-center text-[11px] text-stone-500 font-light gap-2 reveal delay-400">
-                    <p>&copy; 2026 Librairie El Qods Berkane - Tous droits réservés.</p>
-                </div>
-            </footer>
+                <a href="#" data-contact-whatsapp target="_blank" rel="noopener" class="elq-footer-contact-btn">Nous contacter</a>
+            </div>
+            <div class="elq-footer-columns">
+                <section class="elq-footer-column">
+                    <h3>Navigation</h3>
+                    <div class="elq-footer-links">
+                        <button onclick="switchTab('section-accueil')">Accueil</button>
+                        <button onclick="switchTab('section-rentree')">Rentrée scolaire</button>
+                        <button onclick="switchTab('section-suivi')">Suivre ma commande</button>
+                        <button onclick="switchTab('section-contact-location')">Localisation</button>
+                    </div>
+                </section>
+                <section class="elq-footer-column">
+                    <h3>Nos produits</h3>
+                    <div class="elq-footer-links">
+                        <button>Fourniture scolaire</button>
+                        <button>Fourniture bureautique</button>
+                        <button>Fourniture informatique</button>
+                        <button>Le Saint Qoran</button>
+                        <button>Livre arabe</button>
+                        <button>Livre français</button>
+                        <button>Livre anglais</button>
+                        <button>Jeux &amp; loisir</button>
+                        <button>Beaux arts</button>
+                        <button>Cadeaux</button>
+                    </div>
+                </section>
+                <section class="elq-footer-column">
+                    <h3>Nos services</h3>
+                    <div class="elq-footer-links">
+                        <button data-service-category="Procédures administratives" data-service-name="Inscription faculté" data-service-image="inscription_fond.png">Inscriptions faculté</button>
+                        <button data-service-category="Procédures administratives" data-service-name="Renouvellement/demande passeport" data-service-image="passport_fond.png">Procédure administrative</button>
+                        <button data-service-category="Services informatiques" data-service-name="Réparer un ordinateur" data-service-image="ordinateur_fond.png">Réparer un ordinateur</button>
+                        <button data-service-category="Services informatiques" data-service-name="Acheter une licence" data-service-image="licence_fond.png">Acheter une licence</button>
+                        <button data-service-category="Autres services" data-service-name="Impression" data-service-image="impression_fond.png">Impressions</button>
+                    </div>
+                </section>
+            </div>
+        </div>
+        <div class="elq-footer-social">
+            <span>Follow us :</span>
+            <a href="#" data-social="facebook" target="_blank" rel="noopener" aria-label="Facebook" hidden><svg viewBox="0 0 24 24"><path d="M13.5 21v-8h2.7l.4-3.1h-3.1V7.9c0-.9.25-1.5 1.55-1.5H16.7V3.6c-.28-.04-1.24-.12-2.36-.12-2.33 0-3.93 1.42-3.93 4.03v2.37H7.7V13h2.71v8h3.09Z"/></svg></a>
+            <a href="#" data-social="x" target="_blank" rel="noopener" aria-label="X" hidden><svg viewBox="0 0 24 24"><path d="m4 4 7.2 9.6L4.4 20h1.9l6-6.4 4.6 6.4H20l-7.5-10L19 4h-1.9l-5.6 6-4.3-6H4Z"/></svg></a>
+            <a href="#" data-social="instagram" target="_blank" rel="noopener" aria-label="Instagram" hidden><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.1" cy="6.9" r="1.1" fill="currentColor" stroke="none"/></svg></a>
+            <a href="#" data-social="youtube" target="_blank" rel="noopener" aria-label="YouTube" hidden><svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="3.5"/><path d="M10.5 9.5v5l4.5-2.5-4.5-2.5Z" fill="currentColor" stroke="none"/></svg></a>
+            <a href="#" data-social="linkedin" target="_blank" rel="noopener" aria-label="LinkedIn" hidden><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><circle cx="7.7" cy="8.2" r="1.15" fill="currentColor" stroke="none"/><path d="M7.7 11v6.2M11.5 17.2V13c0-1.4.9-2.2 2.1-2.2s2 .8 2 2.2v4.2"/></svg></a>
+        </div>
+    </div>
+    <div class="elq-footer-copyright">© 2026 Librairie Al Qods Berkane - Tous droits réservés.</div>
+</footer>
+<div class="elq-footer-credit">Pensé et Développée par Omar KASSMI.</div>
         </section>
 
         <section id="section-rentree" data-flow-step="1" class="content-section hidden school-order-flow">
@@ -1571,6 +2186,27 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
         </section>
 
 
+        <section id="section-service-placeholder" class="content-section hidden service-placeholder-page">
+            <div class="service-placeholder-hero"></div>
+            <div class="service-placeholder-shell">
+                <div class="service-placeholder-card reveal">
+                    <nav class="service-placeholder-breadcrumb" aria-label="Fil d’Ariane">
+                        <button type="button" onclick="switchTab('section-accueil')">Nos services</button>
+                        <span>›</span>
+                        <span id="service-placeholder-category">Catégorie</span>
+                        <span>›</span>
+                        <strong id="service-placeholder-name">Service</strong>
+                    </nav>
+                    <div class="service-placeholder-message">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v5m0 3.5h.01M3 12a9 9 0 1 1 18 0 9 9 0 0 1-18 0Z"/></svg>
+                        <h2>Prochainement, on y travaille !</h2>
+                        <p>Promis, ce service sera bientôt disponible directement depuis le site.</p>
+                        <button type="button" onclick="switchTab('section-contact-location')">Nous contacter en attendant</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="section-contact-location" class="content-section hidden contact-location-page">
             <div class="contact-location-shell">
                 <nav class="contact-location-breadcrumb" aria-label="Fil d’Ariane"><button type="button" onclick="switchTab('section-accueil')">Accueil</button><span>›</span><strong>Localisation magasin</strong></nav>
@@ -1579,8 +2215,8 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
                     <article class="contact-location-details reveal delay-100">
                         <h2>Librairie &amp; Papeterie El Qods</h2>
                         <p data-contact-address>Chargement de l’adresse...</p>
-                        <p>Téléphone &amp; WhatsApp : <a id="contact-page-phone-link" href="#"><span data-contact-phone>...</span></a></p>
-                        <p>E-mail : <a id="contact-page-email-link" href="#"><span data-contact-email>...</span></a></p>
+                        <p>Téléphone &amp; WhatsApp : <a id="contact-page-phone-link" href="#"><span data-contact-phone dir="ltr">...</span></a></p>
+                        <p>E-mail : <a id="contact-page-email-link" href="#"><span data-contact-email dir="ltr">...</span></a></p>
                         <section class="contact-opening-hours" aria-labelledby="contact-hours-title">
                             <h3 id="contact-hours-title">Horaires d’ouverture</h3>
                             <div class="contact-hours-row"><span>Du lundi au vendredi :</span><strong><i id="opening-week-morning">09h30 - 13h00</i><i id="opening-week-afternoon">15h00 - 20h00</i></strong></div>
@@ -1590,46 +2226,67 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
                     </article>
                 </div>
             </div>
-            <footer class="site-footer-full contact-location-footer bg-[#0D0D0D] text-stone-400 border-t border-white/10 w-full pt-16 pb-8 px-6 md:px-12 relative z-20 font-header overflow-hidden">
-                <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 border-b border-white/10 pb-16 items-start">
-                    <div class="md:col-span-4 space-y-5 reveal">
-                        <img src="images/logo.png" class="block mx-auto h-14 w-auto object-contain brightness-0 invert">
-                        <div class="space-y-1 text-sm font-light text-left">
-                            <h4 class="font-bold text-stone-400 tracking-wide text-xs uppercase mb-1">Librairie El Qods</h4>
-                            <p data-contact-address class="leading-relaxed pr-4">Chargement de l'adresse...</p>
-                            <p class="pt-2">T. Fixe : <span data-contact-phone class="text-stone-400 font-normal">...</span></p>
-                            <p>E-mail : <span data-contact-email class="text-stone-400 font-normal">...</span></p>
-                        </div>
-                        <div class="pt-2 text-left">
-                            <a data-contact-whatsapp href="#" target="_blank" class="inline-block bg-[#E75C25] hover:bg-[#CE4E1D] text-white text-xs font-bold uppercase px-8 py-4 rounded-lg transition shadow-md">Nous Contacter</a>
-                        </div>
-                    </div>
-                    <div class="md:col-span-3 flex items-center justify-center relative reveal delay-100">
-                        <img src="images/map-maroc.png" class="w-full h-auto object-contain">
-                        <div class="absolute top-[12%] right-[22%] w-10 h-10 flex items-center justify-center">
-                            <div class="absolute w-12 h-12 bg-[#E75C25] rounded-full opacity-30 blur-md"></div>
-                            <div class="absolute w-6 h-6 bg-[#E75C25] rounded-full map-marker-pulse"></div>
-                            <div class="absolute w-2 h-2 bg-[#E75C25] rounded-full shadow shadow-black"></div>
-                        </div>
-                    </div>
-                    <div class="md:col-span-2 flex flex-col space-y-4 md:pl-8 pt-2 reveal delay-200">
-                        <button onclick="switchTab('section-rentree')" class="text-left font-bold text-sm tracking-wider hover:text-[#E75C25] transition uppercase">La Rentrée</button>
-                        <button onclick="switchTab('section-autres')" class="text-left font-bold text-sm tracking-wider hover:text-[#E75C25] transition uppercase">Librairie</button>
-                        <button onclick="switchTab('section-autres')" class="text-left font-bold text-sm tracking-wider hover:text-[#E75C25] transition uppercase">Papeterie</button>
-                    </div>
-                    <div class="md:col-span-3 space-y-5 md:pl-4 reveal delay-300">
-                        <h4 class="text-[11px] font-bold tracking-widest text-stone-400 uppercase text-left">PÔLE DE SERVICES EN LIGNE</h4>
-                        <div class="flex flex-col space-y-3.5 text-xs font-bold text-stone-400 uppercase">
-                            <button onclick="switchTab('section-rentree')" class="flex items-center gap-3 hover:text-[#E75C25] text-left">Formations & Packs</button>
-                            <button onclick="switchTab('section-suivi')" class="flex items-center gap-3 hover:text-[#E75C25] text-left">Suivre mon Pack</button>
-                            <button onclick="window.open('admin.html', '_blank')" class="flex items-center gap-3 hover:text-[#E75C25] text-left">Accès Gestion</button>
-                        </div>
-                    </div>
+            <footer class="site-footer-full elq-footer">
+    <div class="elq-footer-shell">
+        <div class="elq-footer-main">
+            <div class="elq-footer-brand">
+                <img src="images/logo_noir_blanc.png" class="elq-footer-logo" alt="Librairie Al Qods">
+                <div class="elq-footer-contact">
+                    <span data-contact-address>Avenue Hassan II, Berkane, Maroc</span>
+                    <span>Téléphone &amp; WhatsApp : <span data-contact-phone dir="ltr">+212 5 36 60 00 00</span></span>
+                    <span>E-mail : <span data-contact-email dir="ltr">contact@papeterieberkane.ma</span></span>
                 </div>
-                <div class="max-w-7xl mx-auto pt-6 flex justify-center items-center text-center text-[11px] text-stone-500 font-light gap-2 reveal delay-400">
-                    <p>&copy; 2026 Librairie El Qods Berkane - Tous droits réservés.</p>
-                </div>
-            </footer>
+                <a href="#" data-contact-whatsapp target="_blank" rel="noopener" class="elq-footer-contact-btn">Nous contacter</a>
+            </div>
+            <div class="elq-footer-columns">
+                <section class="elq-footer-column">
+                    <h3>Navigation</h3>
+                    <div class="elq-footer-links">
+                        <button onclick="switchTab('section-accueil')">Accueil</button>
+                        <button onclick="switchTab('section-rentree')">Rentrée scolaire</button>
+                        <button onclick="switchTab('section-suivi')">Suivre ma commande</button>
+                        <button onclick="switchTab('section-contact-location')">Localisation</button>
+                    </div>
+                </section>
+                <section class="elq-footer-column">
+                    <h3>Nos produits</h3>
+                    <div class="elq-footer-links">
+                        <button>Fourniture scolaire</button>
+                        <button>Fourniture bureautique</button>
+                        <button>Fourniture informatique</button>
+                        <button>Le Saint Qoran</button>
+                        <button>Livre arabe</button>
+                        <button>Livre français</button>
+                        <button>Livre anglais</button>
+                        <button>Jeux &amp; loisir</button>
+                        <button>Beaux arts</button>
+                        <button>Cadeaux</button>
+                    </div>
+                </section>
+                <section class="elq-footer-column">
+                    <h3>Nos services</h3>
+                    <div class="elq-footer-links">
+                        <button data-service-category="Procédures administratives" data-service-name="Inscription faculté" data-service-image="inscription_fond.png">Inscriptions faculté</button>
+                        <button data-service-category="Procédures administratives" data-service-name="Renouvellement/demande passeport" data-service-image="passport_fond.png">Procédure administrative</button>
+                        <button data-service-category="Services informatiques" data-service-name="Réparer un ordinateur" data-service-image="ordinateur_fond.png">Réparer un ordinateur</button>
+                        <button data-service-category="Services informatiques" data-service-name="Acheter une licence" data-service-image="licence_fond.png">Acheter une licence</button>
+                        <button data-service-category="Autres services" data-service-name="Impression" data-service-image="impression_fond.png">Impressions</button>
+                    </div>
+                </section>
+            </div>
+        </div>
+        <div class="elq-footer-social">
+            <span>Follow us :</span>
+            <a href="#" data-social="facebook" target="_blank" rel="noopener" aria-label="Facebook" hidden><svg viewBox="0 0 24 24"><path d="M13.5 21v-8h2.7l.4-3.1h-3.1V7.9c0-.9.25-1.5 1.55-1.5H16.7V3.6c-.28-.04-1.24-.12-2.36-.12-2.33 0-3.93 1.42-3.93 4.03v2.37H7.7V13h2.71v8h3.09Z"/></svg></a>
+            <a href="#" data-social="x" target="_blank" rel="noopener" aria-label="X" hidden><svg viewBox="0 0 24 24"><path d="m4 4 7.2 9.6L4.4 20h1.9l6-6.4 4.6 6.4H20l-7.5-10L19 4h-1.9l-5.6 6-4.3-6H4Z"/></svg></a>
+            <a href="#" data-social="instagram" target="_blank" rel="noopener" aria-label="Instagram" hidden><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.1" cy="6.9" r="1.1" fill="currentColor" stroke="none"/></svg></a>
+            <a href="#" data-social="youtube" target="_blank" rel="noopener" aria-label="YouTube" hidden><svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="3.5"/><path d="M10.5 9.5v5l4.5-2.5-4.5-2.5Z" fill="currentColor" stroke="none"/></svg></a>
+            <a href="#" data-social="linkedin" target="_blank" rel="noopener" aria-label="LinkedIn" hidden><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><circle cx="7.7" cy="8.2" r="1.15" fill="currentColor" stroke="none"/><path d="M7.7 11v6.2M11.5 17.2V13c0-1.4.9-2.2 2.1-2.2s2 .8 2 2.2v4.2"/></svg></a>
+        </div>
+    </div>
+    <div class="elq-footer-copyright">© 2026 Librairie Al Qods Berkane - Tous droits réservés.</div>
+</footer>
+<div class="elq-footer-credit">Pensé et Développée par Omar KASSMI.</div>
         </section>
 
         <section id="section-plan-magasin" class="content-section hidden max-w-7xl mx-auto px-6 md:px-12 pt-28 pb-16">
@@ -1684,18 +2341,70 @@ html.qd-lock,body.qd-lock{overflow:hidden!important}
                 </form>
                 <div id="tracking-result" class="hidden text-sm rounded-xl border p-4"></div>
             </div>
-            <footer class="bg-[#0D0D0D] text-stone-400 border-t border-white/10 w-full pt-16 pb-8 px-6 md:px-12 relative z-20 font-header overflow-hidden">
-                <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 border-b border-white/10 pb-16 items-start">
-                    <div class="md:col-span-4 space-y-5 reveal"><img src="images/logo.png" class="block mx-auto h-14 w-auto object-contain brightness-0 invert"><div class="space-y-1 text-sm font-light text-left"><h4 class="font-bold text-stone-400 tracking-wide text-xs uppercase mb-1">Librairie El Qods</h4><p data-contact-address class="leading-relaxed pr-4">Chargement de l'adresse...</p><p class="pt-2">T. Fixe : <span data-contact-phone class="text-stone-400 font-normal">...</span></p><p>E-mail : <span data-contact-email class="text-stone-400 font-normal">...</span></p></div><div class="pt-2 text-left"><a data-contact-whatsapp href="#" target="_blank" class="inline-block bg-[#E75C25] hover:bg-[#CE4E1D] text-white text-xs font-bold uppercase px-8 py-4 rounded-lg transition shadow-md">Nous Contacter</a></div></div>
-                    <div class="md:col-span-3 flex items-center justify-center relative reveal delay-100"><img src="images/map-maroc.png" class="w-full h-auto object-contain"><div class="absolute top-[12%] right-[22%] w-10 h-10 flex items-center justify-center"><div class="absolute w-12 h-12 bg-[#E75C25] rounded-full opacity-30 blur-md"></div><div class="absolute w-6 h-6 bg-[#E75C25] rounded-full map-marker-pulse"></div><div class="absolute w-2 h-2 bg-[#E75C25] rounded-full shadow shadow-black"></div></div></div>
-                    <div class="md:col-span-2 flex flex-col space-y-4 md:pl-8 pt-2 reveal delay-200"><button onclick="switchTab('section-rentree')" class="text-left font-bold text-sm tracking-wider hover:text-[#E75C25] transition uppercase">La Rentrée</button><button onclick="switchTab('section-autres')" class="text-left font-bold text-sm tracking-wider hover:text-[#E75C25] transition uppercase">Librairie</button><button onclick="switchTab('section-plan-magasin')" class="text-left font-bold text-sm tracking-wider hover:text-[#E75C25] transition uppercase">Plan & Rayons</button></div>
-                    <div class="md:col-span-3 space-y-5 md:pl-4 reveal delay-300"><h4 class="text-[11px] font-bold tracking-widest text-stone-400 uppercase text-left">PÔLE DE SERVICES EN LIGNE</h4><div class="flex flex-col space-y-3.5 text-xs font-bold text-stone-400 uppercase"><button onclick="switchTab('section-rentree')" class="flex items-center gap-3 hover:text-[#E75C25] text-left">Formations & Packs</button><button onclick="switchTab('section-suivi')" class="flex items-center gap-3 hover:text-[#E75C25] text-left">Suivre mon Pack</button><button onclick="window.open('admin.html', '_blank')" class="flex items-center gap-3 hover:text-[#E75C25] text-left">Accès Gestion</button></div></div>
+            <footer class="site-footer-full elq-footer">
+    <div class="elq-footer-shell">
+        <div class="elq-footer-main">
+            <div class="elq-footer-brand">
+                <img src="images/logo_noir_blanc.png" class="elq-footer-logo" alt="Librairie Al Qods">
+                <div class="elq-footer-contact">
+                    <span data-contact-address>Avenue Hassan II, Berkane, Maroc</span>
+                    <span>Téléphone &amp; WhatsApp : <span data-contact-phone dir="ltr">+212 5 36 60 00 00</span></span>
+                    <span>E-mail : <span data-contact-email dir="ltr">contact@papeterieberkane.ma</span></span>
                 </div>
-                <div class="max-w-7xl mx-auto pt-6 flex justify-center items-center text-center text-[11px] text-stone-500 font-light gap-2 reveal delay-400"><p>&copy; 2026 Librairie El Qods Berkane - Tous droits réservés.</p></div>
-            </footer>
+                <a href="#" data-contact-whatsapp target="_blank" rel="noopener" class="elq-footer-contact-btn">Nous contacter</a>
+            </div>
+            <div class="elq-footer-columns">
+                <section class="elq-footer-column">
+                    <h3>Navigation</h3>
+                    <div class="elq-footer-links">
+                        <button onclick="switchTab('section-accueil')">Accueil</button>
+                        <button onclick="switchTab('section-rentree')">Rentrée scolaire</button>
+                        <button onclick="switchTab('section-suivi')">Suivre ma commande</button>
+                        <button onclick="switchTab('section-contact-location')">Localisation</button>
+                    </div>
+                </section>
+                <section class="elq-footer-column">
+                    <h3>Nos produits</h3>
+                    <div class="elq-footer-links">
+                        <button>Fourniture scolaire</button>
+                        <button>Fourniture bureautique</button>
+                        <button>Fourniture informatique</button>
+                        <button>Le Saint Qoran</button>
+                        <button>Livre arabe</button>
+                        <button>Livre français</button>
+                        <button>Livre anglais</button>
+                        <button>Jeux &amp; loisir</button>
+                        <button>Beaux arts</button>
+                        <button>Cadeaux</button>
+                    </div>
+                </section>
+                <section class="elq-footer-column">
+                    <h3>Nos services</h3>
+                    <div class="elq-footer-links">
+                        <button data-service-category="Procédures administratives" data-service-name="Inscription faculté" data-service-image="inscription_fond.png">Inscriptions faculté</button>
+                        <button data-service-category="Procédures administratives" data-service-name="Renouvellement/demande passeport" data-service-image="passport_fond.png">Procédure administrative</button>
+                        <button data-service-category="Services informatiques" data-service-name="Réparer un ordinateur" data-service-image="ordinateur_fond.png">Réparer un ordinateur</button>
+                        <button data-service-category="Services informatiques" data-service-name="Acheter une licence" data-service-image="licence_fond.png">Acheter une licence</button>
+                        <button data-service-category="Autres services" data-service-name="Impression" data-service-image="impression_fond.png">Impressions</button>
+                    </div>
+                </section>
+            </div>
+        </div>
+        <div class="elq-footer-social">
+            <span>Follow us :</span>
+            <a href="#" data-social="facebook" target="_blank" rel="noopener" aria-label="Facebook" hidden><svg viewBox="0 0 24 24"><path d="M13.5 21v-8h2.7l.4-3.1h-3.1V7.9c0-.9.25-1.5 1.55-1.5H16.7V3.6c-.28-.04-1.24-.12-2.36-.12-2.33 0-3.93 1.42-3.93 4.03v2.37H7.7V13h2.71v8h3.09Z"/></svg></a>
+            <a href="#" data-social="x" target="_blank" rel="noopener" aria-label="X" hidden><svg viewBox="0 0 24 24"><path d="m4 4 7.2 9.6L4.4 20h1.9l6-6.4 4.6 6.4H20l-7.5-10L19 4h-1.9l-5.6 6-4.3-6H4Z"/></svg></a>
+            <a href="#" data-social="instagram" target="_blank" rel="noopener" aria-label="Instagram" hidden><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.1" cy="6.9" r="1.1" fill="currentColor" stroke="none"/></svg></a>
+            <a href="#" data-social="youtube" target="_blank" rel="noopener" aria-label="YouTube" hidden><svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="3.5"/><path d="M10.5 9.5v5l4.5-2.5-4.5-2.5Z" fill="currentColor" stroke="none"/></svg></a>
+            <a href="#" data-social="linkedin" target="_blank" rel="noopener" aria-label="LinkedIn" hidden><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><circle cx="7.7" cy="8.2" r="1.15" fill="currentColor" stroke="none"/><path d="M7.7 11v6.2M11.5 17.2V13c0-1.4.9-2.2 2.1-2.2s2 .8 2 2.2v4.2"/></svg></a>
+        </div>
+    </div>
+    <div class="elq-footer-copyright">© 2026 Librairie Al Qods Berkane - Tous droits réservés.</div>
+</footer>
+<div class="elq-footer-credit">Pensé et Développée par Omar KASSMI.</div>
         </section>
     </main>
 
-    <script src="app.js?v=cancel-popup-ar-v14"></script>
+    <script src="app.js?v=services-footer-layout-v16"></script>
 </body>
 </html>
